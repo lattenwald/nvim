@@ -11,12 +11,12 @@ Plug 'tpope/vim-sensible'
 
 Plug 'vim-scripts/wombat256.vim'
 
-"Plug 'dense-analysis/ale'
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'dense-analysis/ale'
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'itchyny/lightline.vim'
-Plug 'maximbaz/lightline-ale'
+" Plug 'maximbaz/lightline-ale'
 " Plug 'mengelbrecht/lightline-bufferline'
 
 Plug 'airblade/vim-gitgutter'
@@ -35,9 +35,18 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'plasticboy/vim-markdown'
 
+Plug 'mattn/webapi-vim'
+Plug 'mattn/vim-gist'
+
+" Plug 'lambdalisue/vim-gista'
+
+Plug 'preservim/nerdcommenter'
+
 call plug#end()
 
 colorscheme wombat256mod
+
+let mapleader="\<Space>"
 
 set tabstop=4
 set shiftwidth=4
@@ -154,3 +163,6 @@ set listchars=tab:→\ ,trail:·
 set list
 map <C-P> :set list!<cr>
 imap <C-P> <Esc>:set list!<cr>i
+
+let g:gist_post_private = 1
+let g:NERDSpaceDelims = 1
