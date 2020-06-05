@@ -1,6 +1,7 @@
 mapleader : space
 <Leader>b : buffers list
-Ctrl+f : show NERDTree
+Ctrl+f : toggle NERDTree
+Ctrl+F (Ctrl+Shift+f) : toggle NERDTreeVCS (NERDTree with root fixed at VCS root)
 <Leader>t : ripgrep TODOs and stuff
 
 = : re-indent selection
@@ -27,5 +28,5 @@ K : show documentation
 ]c : go to next change
 [c : go to previous change
 <Leader>hs : stage chunk
-<Leader>hu : unstage chunk
+<Leader>hu : undo chunk
 <Leader>hp : preview chunk
