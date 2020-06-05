@@ -190,6 +190,10 @@ nmap <M-Down> <C-w><Down>
 " BufferGator
 let g:buffergator_viewport_split_policy = "R"
 let g:buffergator_autoupdate = 1
+let g:buffergator_autodismiss_on_select = 0
+let g:buffergator_vsplit_size = 36
+let g:buffergator_sort_regime = "basename"
+let g:buffergator_show_full_directory_path = 0
 
 " TODOlist
 nnoremap <leader>t :Rg FIXME\\|TODO\\|XXX<cr>
