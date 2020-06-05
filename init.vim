@@ -23,7 +23,9 @@ Plug 'airblade/vim-gitgutter'
 Plug 'itchyny/vim-gitbranch'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc-json'
 Plug 'hyhugh/coc-erlang_ls', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 
 Plug 'junegunn/vim-easy-align'
 
@@ -38,9 +40,15 @@ Plug 'plasticboy/vim-markdown'
 Plug 'mattn/webapi-vim'
 Plug 'mattn/vim-gist'
 
+Plug 'pangloss/vim-javascript'
+
 " Plug 'lambdalisue/vim-gista'
 
 Plug 'preservim/nerdcommenter'
+
+Plug 'jeetsukumaran/vim-buffergator'
+
+Plug 'jremmen/vim-ripgrep'
 
 call plug#end()
 
@@ -62,7 +70,9 @@ cnoremap <expr> <down> wildmenumode() ? "\<right>" : "\<down>"
 cnoremap <expr> <left> wildmenumode() ? "\<up>" : "\<left>"
 cnoremap <expr> <right> wildmenumode() ? " \<bs>\<C-Z>" : "\<right>"
 
+" NERDTree
 map <C-f> :NERDTreeToggle<CR>
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Coc configuration
@@ -166,3 +176,20 @@ imap <C-P> <Esc>:set list!<cr>i
 
 let g:gist_post_private = 1
 let g:NERDSpaceDelims = 1
+
+" remove trainling whitespaces
+autocmd BufWritePre * :%s/\s\+$//e
+
+" navigations between buffers
+"" Alt+arrows
+nmap <M-Left> <C-w><Left>
+nmap <M-Right> <C-w><Right>
+nmap <M-Up> <C-w><Up>
+nmap <M-Down> <C-w><Down>
+
+" BufferGator
+let g:buffergator_viewport_split_policy = "R"
+let g:buffergator_autoupdate = 1
+
+" TODOlist
+nnoremap <leader>t :Rg FIXME\\|TODO\\|XXX<cr>
