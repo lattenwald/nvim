@@ -50,6 +50,9 @@ Plug 'jeetsukumaran/vim-buffergator'
 
 Plug 'jremmen/vim-ripgrep'
 
+Plug 'vim-erlang/erlang-motions.vim'
+Plug 'vim-erlang/vim-erlang-runtime'
+
 call plug#end()
 
 colorscheme wombat256mod
@@ -74,6 +77,7 @@ cnoremap <expr> <right> wildmenumode() ? " \<bs>\<C-Z>" : "\<right>"
 map <C-f> :NERDTreeToggle<CR>
 map <C-F> :NERDTreeToggleVCS<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+let NERDTreeIgnore=['#$', '^#']
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Coc configuration

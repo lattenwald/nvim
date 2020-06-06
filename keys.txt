@@ -30,3 +30,12 @@ K : show documentation
 <Leader>hs : stage chunk
 <Leader>hu : undo chunk
 <Leader>hp : preview chunk
+
+* erlang motions
+]] : go to next function declaration
+[[ : previous function declaration
+]m : next function clause
+[m : previous function clause
+And more: ]M, [M, ][, [] go to end of next/previous clause/declaration
+im, am inside/around function clause. vim : select inside of function
+iM, aM inside/around function declaration. vaM : select outside of function
