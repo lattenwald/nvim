@@ -29,7 +29,7 @@ Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 
 Plug 'junegunn/vim-easy-align'
 
-Plug 'preservim/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'preservim/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
