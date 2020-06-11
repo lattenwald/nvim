@@ -56,6 +56,7 @@ Plug 'vim-erlang/vim-erlang-runtime'
 
 Plug 'elixir-editors/vim-elixir'
 Plug 'cespare/vim-toml'
+Plug 'ekalinin/Dockerfile.vim'
 
 call plug#end()
 
@@ -76,6 +77,8 @@ cnoremap <expr> <up> wildmenumode() ? "\<left>" : "\<up>"
 cnoremap <expr> <down> wildmenumode() ? "\<right>" : "\<down>"
 cnoremap <expr> <left> wildmenumode() ? "\<up>" : "\<left>"
 cnoremap <expr> <right> wildmenumode() ? " \<bs>\<C-Z>" : "\<right>"
+
+set clipboard=unnamedplus
 
 " NERDTree
 map <C-f> :NERDTreeToggle<CR>
