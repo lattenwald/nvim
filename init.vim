@@ -58,6 +58,8 @@ Plug 'elixir-editors/vim-elixir'
 Plug 'cespare/vim-toml'
 Plug 'ekalinin/Dockerfile.vim'
 
+Plug 'terminalnode/sway-vim-syntax'
+
 call plug#end()
 
 colorscheme wombat256mod
@@ -210,3 +212,13 @@ let g:buffergator_show_full_directory_path = 0
 
 " TODOlist
 nnoremap <leader>t :Rg FIXME\\|TODO\\|XXX<cr>
+
+" Matches
+function! Matches(pat)
+    let buffer=bufnr("") "current buffer number
+    let b:lines=[]
+    execute ":%g/" . a:pat . "/let b:lines+=[{'bufnr':" . 'buffer' . ", 'lnum':" . "line('.')" . ", 'text': escape(getline('.'),'\"')}]"
+    call setloclist(0, [], ' ', {'items': b:lines})
+    lopen
+endfunction
+command! -nargs=1 Mat call Matches(<f-args>)
