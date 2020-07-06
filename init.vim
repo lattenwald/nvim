@@ -222,3 +222,4 @@ function! Matches(pat)
     lopen
 endfunction
 command! -nargs=1 Mat call Matches(<f-args>)
+nnoremap <F3> :exec 'Mat' expand("<cword>")<CR>
