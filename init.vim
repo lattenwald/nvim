@@ -60,6 +60,12 @@ Plug 'ekalinin/Dockerfile.vim'
 
 Plug 'terminalnode/sway-vim-syntax'
 
+Plug 's3rvac/vim-syntax-redminewiki'
+
+Plug 'liuchengxu/vista.vim'
+
+Plug 'vimwiki/vimwiki'
+
 call plug#end()
 
 colorscheme wombat256mod
@@ -209,9 +215,11 @@ let g:buffergator_autodismiss_on_select = 0
 let g:buffergator_vsplit_size = 36
 let g:buffergator_sort_regime = "basename"
 let g:buffergator_show_full_directory_path = 0
+nmap <leader>b :BuffergatorToggle<Return>
 
 " TODOlist
-nnoremap <leader>t :Rg FIXME\\|TODO\\|XXX<cr>
+" nnoremap :Rg FIXME\\\\\|TODO\\\\\|XXX<return>
+nmap <leader>t :Rg FIXME\\\\|TODO\\\\|XXX
 
 " Matches
 function! Matches(pat)
@@ -223,3 +231,11 @@ function! Matches(pat)
 endfunction
 command! -nargs=1 Mat call Matches(<f-args>)
 nnoremap <F3> :exec 'Mat' expand("<cword>")<CR>
+
+let g:vista_icon_indent = ["> ", "|> "]
+nnoremap <leader>v :Vista ctags<Return>
+nnoremap <leader>V :Vista coc<Return>
+nmap <C-k> :Vista finder fzf:ctags<Return>
+nmap <C-i> :Vista finder fzf:coc<Return>
+
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
