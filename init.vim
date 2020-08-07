@@ -66,6 +66,8 @@ Plug 'liuchengxu/vista.vim'
 
 Plug 'vimwiki/vimwiki'
 
+Plug 'dkarter/bullets.vim'
+
 call plug#end()
 
 colorscheme wombat256mod
@@ -197,6 +199,7 @@ imap <C-P> <Esc>:set list!<cr>i
 
 let g:gist_post_private = 1
 let g:NERDSpaceDelims = 1
+let g:NERDDefaultAlign = 'left'
 
 " remove trainling whitespaces
 autocmd BufWritePre * :%s/\s\+$//e
@@ -232,10 +235,25 @@ endfunction
 command! -nargs=1 Mat call Matches(<f-args>)
 nnoremap <F3> :exec 'Mat' expand("<cword>")<CR>
 
-let g:vista_icon_indent = ["> ", "|> "]
+let g:vista_icon_indent = ["|_ ", "|- "]
+let g:vista_fold_toggle_icons = ['v', '>']
+let g:vista_default_executive = 'ctags'
+let g:vista_executive_for = {
+    \ 'erl': 'coc',
+    \ 'js': 'coc',
+    \ 'ex': 'coc',
+    \ 'vimwiki': 'markdown',
+    \ 'md': 'markdown',
+    \ 'markdown': 'toc',
+    \ }
+let g:vista_fzf_opt = ['--reverse']
+
 nnoremap <leader>v :Vista ctags<Return>
 nnoremap <leader>V :Vista coc<Return>
-nmap <C-k> :Vista finder fzf:ctags<Return>
-nmap <C-i> :Vista finder fzf:coc<Return>
+nnoremap <leader>i :Vista finder fzf:ctags<Return>
+nnoremap <leader>I :Vista finder fzf:coc<Return>
 
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+
+
+" map <silent><Leader>g :call setbufvar(winbufnr(popup_atcursor(systemlist("cd " . shellescape(fnamemodify(resolve(expand('%:p')), ":h")) . " && git log --no-merges -n 1 -L " . shellescape(line("v") . "," . line(".") . ":" . resolve(expand("%:p")))), { "padding": [1,1,1,1], "pos": "botleft", "wrap": 0 })), "&filetype", "git")<CR>
