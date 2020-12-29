@@ -24,7 +24,7 @@ Plug 'itchyny/vim-gitbranch'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-json'
-Plug 'hyhugh/coc-erlang_ls', {'do': 'yarn install --frozen-lockfile'}
+" Plug 'hyhugh/coc-erlang_ls', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
 
@@ -171,15 +171,23 @@ command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport
 "      \ 'component_type': {
 "      \   'buffers': 'tabsel'
 "      \ },
+function! NearestScope() abort
+  let info = get(b:, 'vista_cursor_info', {})
+  return get(info, 'scope', '')
+endfunction
+
+set statusline+=%{NearestScope()}
+
 let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
+      \   'left': [ [ 'mode', 'paste', 'scope' ],
       \             [ 'cocstatus',  'currentfunction', 'readonly', 'filename', 'modified' ] ]
       \ },
       \ 'component_function': {
       \   'cocstatus': 'coc#status',
-      \   'currentfunction': 'CocCurrentFunction'
+      \   'currentfunction': 'CocCurrentFunction',
+      \   'scope': 'NearestScope'
       \ },
       \ }
 

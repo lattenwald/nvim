@@ -1,4 +1,8 @@
 {
-  "erlang_ls.erlang_ls_path": "/home/qalex/bin/erlang_ls",
-  "erlang_ls.trace.server": "off"
+    "languageserver": {
+        "erlang": {
+            "command": "erlang_ls",
+            "filetypes": ["erlang"]
+        }
+    }
 }
