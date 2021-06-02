@@ -21,6 +21,7 @@ Plug 'itchyny/lightline.vim'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'itchyny/vim-gitbranch'
+Plug 'tpope/vim-fugitive'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-json'
@@ -67,6 +68,8 @@ Plug 'liuchengxu/vista.vim'
 Plug 'vimwiki/vimwiki'
 
 Plug 'dkarter/bullets.vim'
+
+Plug 'michal-h21/vimwiki-sync'
 
 call plug#end()
 
@@ -263,5 +266,7 @@ nnoremap <leader>I :Vista finder fzf:coc<Return>
 
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 
+" neovim-qt
+" set guiTabline=0
 
 " map <silent><Leader>g :call setbufvar(winbufnr(popup_atcursor(systemlist("cd " . shellescape(fnamemodify(resolve(expand('%:p')), ":h")) . " && git log --no-merges -n 1 -L " . shellescape(line("v") . "," . line(".") . ":" . resolve(expand("%:p")))), { "padding": [1,1,1,1], "pos": "botleft", "wrap": 0 })), "&filetype", "git")<CR>
