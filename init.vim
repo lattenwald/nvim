@@ -259,6 +259,8 @@ let g:vista_executive_for = {
     \ }
 let g:vista_fzf_opt = ['--reverse']
 
+autocmd FileType erlang let b:surround_98 = "<<\"\r\">>"
+
 nnoremap <leader>v :Vista ctags<Return>
 nnoremap <leader>V :Vista coc<Return>
 nnoremap <leader>i :Vista finder fzf:ctags<Return>
