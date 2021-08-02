@@ -229,7 +229,12 @@ let g:buffergator_autodismiss_on_select = 0
 let g:buffergator_vsplit_size = 36
 let g:buffergator_sort_regime = "basename"
 let g:buffergator_show_full_directory_path = 0
-nmap <leader>b :BuffergatorToggle<Return>
+nmap <leader>B :BuffergatorToggle<Return>
+
+" Other buffers/tabs stuff
+nmap <leader>b :Buffers<Return>
+nmap <C-S-PageDown> :tabmove +1<Return>
+nmap <C-S-PageUp> :tabmove -1<Return>
 
 " TODOlist
 " nnoremap :Rg FIXME\\\\\|TODO\\\\\|XXX<return>
@@ -267,6 +272,35 @@ nnoremap <leader>i :Vista finder fzf:ctags<Return>
 nnoremap <leader>I :Vista finder fzf:coc<Return>
 
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+
+function! DoPrettyXML()
+  " save the filetype so we can restore it later
+  let l:origft = &ft
+  set ft=
+  " delete the xml header if it exists. This will
+  " permit us to surround the document with fake tags
+  " without creating invalid xml.
+  1s/<?xml .*?>//e
+  " insert fake tags around the entire document.
+  " This will permit us to pretty-format excerpts of
+  " XML that may contain multiple top-level elements.
+  0put ='<PrettyXML>'
+  $put ='</PrettyXML>'
+  silent %!xmllint --format -
+  " xmllint will insert an <?xml?> header. it's easy enough to delete
+  " if you don't want it.
+  " delete the fake tags
+  2d
+  $d
+  " restore the 'normal' indentation, which is one extra level
+  " too deep due to the extra tags we wrapped around the document.
+  silent %<
+  " back to home
+  1
+  " restore the filetype
+  exe "set ft=" . l:origft
+endfunction
+command! PrettyXML call DoPrettyXML()
 
 " neovim-qt
 " set guiTabline=0
