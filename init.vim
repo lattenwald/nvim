@@ -223,6 +223,7 @@ nmap <M-Up> <C-w><Up>
 nmap <M-Down> <C-w><Down>
 
 " BufferGator
+let g:buffergator_suppress_keymaps = 1
 let g:buffergator_viewport_split_policy = "R"
 let g:buffergator_autoupdate = 1
 let g:buffergator_autodismiss_on_select = 0
@@ -232,9 +233,15 @@ let g:buffergator_show_full_directory_path = 0
 nmap <leader>B :BuffergatorToggle<Return>
 
 " Other buffers/tabs stuff
-nmap <leader>b :Buffers<Return>
 nmap <C-S-PageDown> :tabmove +1<Return>
 nmap <C-S-PageUp> :tabmove -1<Return>
+
+" fzf
+" Mapping selecting mappings
+nmap <leader><tab> <plug>(fzf-maps-n)
+xmap <leader><tab> <plug>(fzf-maps-x)
+omap <leader><tab> <plug>(fzf-maps-o)
+nmap <leader>b :Buffers<Return>
 
 " TODOlist
 " nnoremap :Rg FIXME\\\\\|TODO\\\\\|XXX<return>
