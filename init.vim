@@ -48,8 +48,6 @@ Plug 'pangloss/vim-javascript'
 
 Plug 'preservim/nerdcommenter'
 
-Plug 'jeetsukumaran/vim-buffergator'
-
 Plug 'jremmen/vim-ripgrep'
 
 Plug 'vim-erlang/erlang-motions.vim'
@@ -221,16 +219,6 @@ nmap <M-Left> <C-w><Left>
 nmap <M-Right> <C-w><Right>
 nmap <M-Up> <C-w><Up>
 nmap <M-Down> <C-w><Down>
-
-" BufferGator
-let g:buffergator_suppress_keymaps = 1
-let g:buffergator_viewport_split_policy = "R"
-let g:buffergator_autoupdate = 1
-let g:buffergator_autodismiss_on_select = 0
-let g:buffergator_vsplit_size = 36
-let g:buffergator_sort_regime = "basename"
-let g:buffergator_show_full_directory_path = 0
-nmap <leader>B :BuffergatorToggle<Return>
 
 " Other buffers/tabs stuff
 nmap <C-S-PageDown> :tabmove +1<Return>
