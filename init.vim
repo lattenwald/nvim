@@ -36,6 +36,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'antoinemadec/coc-fzf'
 
 Plug 'plasticboy/vim-markdown'
 
