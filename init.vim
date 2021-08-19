@@ -267,6 +267,8 @@ nnoremap <leader>V :Vista coc<Return>
 nnoremap <leader>i :Vista finder fzf:ctags<Return>
 nnoremap <leader>I :Vista finder fzf:coc<Return>
 
+cnoremap <S-Insert>  <C-R>+
+
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 
 function! DoPrettyXML()
