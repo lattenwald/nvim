@@ -11,13 +11,9 @@ Plug 'tpope/vim-sensible'
 
 Plug 'vim-scripts/wombat256.vim'
 
-" Plug 'dense-analysis/ale'
-" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
 Plug 'itchyny/lightline.vim'
-" Plug 'maximbaz/lightline-ale'
-" Plug 'mengelbrecht/lightline-bufferline'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'itchyny/vim-gitbranch'
@@ -25,7 +21,6 @@ Plug 'tpope/vim-fugitive'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neoclide/coc-json'
-" Plug 'hyhugh/coc-erlang_ls', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
 Plug 'elixir-lsp/coc-elixir', {'do': 'yarn install && yarn prepack'}
@@ -46,11 +41,7 @@ Plug 'mattn/vim-gist'
 
 Plug 'pangloss/vim-javascript'
 
-" Plug 'lambdalisue/vim-gista'
-
 Plug 'preservim/nerdcommenter'
-
-Plug 'jremmen/vim-ripgrep'
 
 Plug 'vim-erlang/erlang-motions.vim'
 Plug 'vim-erlang/vim-erlang-runtime'
@@ -70,6 +61,8 @@ Plug 'vimwiki/vimwiki'
 Plug 'dkarter/bullets.vim'
 
 Plug 'michal-h21/vimwiki-sync'
+
+Plug 'ron-rs/ron.vim'
 
 call plug#end()
 
@@ -271,6 +264,7 @@ nnoremap <leader>I :Vista finder fzf:coc<Return>
 cnoremap <S-Insert>  <C-R>+
 
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_foldding = ''
 
 function! DoPrettyXML()
   " save the filetype so we can restore it later
