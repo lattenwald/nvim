@@ -26,5 +26,10 @@
     },
     "diagnostic": {
         "level": "information"
+    },
+    "coc": {
+        "preferences": {
+            "jumpCommand": "tab drop"
+        }
     }
 }
