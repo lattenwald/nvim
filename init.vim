@@ -20,10 +20,6 @@ Plug 'itchyny/vim-gitbranch'
 Plug 'tpope/vim-fugitive'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'neoclide/coc-json'
-Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
-Plug 'elixir-lsp/coc-elixir', {'do': 'yarn install && yarn prepack'}
 
 Plug 'junegunn/vim-easy-align'
 
@@ -66,6 +62,8 @@ Plug 'ron-rs/ron.vim'
 
 call plug#end()
 
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rls', 'coc-elixir']
+
 colorscheme wombat256mod
 
 let mapleader="\<Space>"
@@ -74,7 +72,6 @@ set tabstop=4
 set shiftwidth=4
 set novisualbell
 set expandtab
-set autochdir
 
 set wildmenu
 set wildmode=longest:full,full
@@ -226,6 +223,9 @@ xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
 nmap <leader>b :Buffers<Return>
 
+let g:fzf_action = {
+  \ "\\\\": 'tab drop' }
+
 " TODOlist
 " nnoremap :Rg FIXME\\\\\|TODO\\\\\|XXX<return>
 nmap <leader>t :Rg FIXME\\\\|TODO\\\\|XXX
@@ -294,6 +294,10 @@ function! DoPrettyXML()
   exe "set ft=" . l:origft
 endfunction
 command! PrettyXML call DoPrettyXML()
+
+nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+" set autochdir
+autocmd BufEnter * silent! lcd %:p:h
 
 " neovim-qt
 " set guiTabline=0
