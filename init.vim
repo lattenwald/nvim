@@ -42,6 +42,8 @@ Plug 'preservim/nerdcommenter'
 Plug 'vim-erlang/erlang-motions.vim'
 Plug 'vim-erlang/vim-erlang-runtime'
 
+Plug 'sbdchd/neoformat'
+
 Plug 'elixir-editors/vim-elixir'
 Plug 'cespare/vim-toml'
 Plug 'ekalinin/Dockerfile.vim'
@@ -60,9 +62,17 @@ Plug 'michal-h21/vimwiki-sync'
 
 Plug 'ron-rs/ron.vim'
 
+Plug 'sersorrel/vim-lilypond'
+
+Plug 'AndrewRadev/bufferize.vim'
+
+Plug 'purescript-contrib/purescript-vim'
+
+Plug 'npatsakula/kql-nvim'
+
 call plug#end()
 
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rls', 'coc-elixir']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rls', 'coc-elixir', 'coc-pyright', 'coc-perl']
 
 colorscheme wombat256mod
 
@@ -223,8 +233,8 @@ xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
 nmap <leader>b :Buffers<Return>
 
-let g:fzf_action = {
-  \ "\\\\": 'tab drop' }
+" let g:fzf_action = {
+"   \ "\\\\": 'tab drop' }
 
 " TODOlist
 " nnoremap :Rg FIXME\\\\\|TODO\\\\\|XXX<return>
@@ -264,7 +274,7 @@ nnoremap <leader>I :Vista finder fzf:coc<Return>
 cnoremap <S-Insert>  <C-R>+
 
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
-let g:vimwiki_foldding = ''
+let g:vimwiki_folding = 'list'
 
 function! DoPrettyXML()
   " save the filetype so we can restore it later
@@ -301,5 +311,17 @@ autocmd BufEnter * silent! lcd %:p:h
 
 " neovim-qt
 " set guiTabline=0
+
+" neovide
+set guifont=Hack:h11
+
+" Erlang autoformat
+let g:neoformat_erlang_steamroller = {
+  \ 'exe': 'rebar3',
+  \ 'args': ['steamroll -f'],
+  \ 'stdin': 0,
+  \ 'replace': 1,
+  \ }
+let g:neoformat_enabled_erlang = ['steamroller']
 
 " map <silent><Leader>g :call setbufvar(winbufnr(popup_atcursor(systemlist("cd " . shellescape(fnamemodify(resolve(expand('%:p')), ":h")) . " && git log --no-merges -n 1 -L " . shellescape(line("v") . "," . line(".") . ":" . resolve(expand("%:p")))), { "padding": [1,1,1,1], "pos": "botleft", "wrap": 0 })), "&filetype", "git")<CR>

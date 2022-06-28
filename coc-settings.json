@@ -22,6 +22,19 @@
                 "haskell": {
                 }
             }
+        },
+        "purescript": {
+            "command": "purescript-language-server",
+            "args": ["--stdio"],
+            "filetypes": ["purescript"],
+            "trace.server": "off",
+            "rootPatterns": ["bower.json", "psc-package.json", "spago.dhall"],
+            "settings": {
+                "purescript": {
+                    "addSpagoSources": true,
+                    "addNpmPath": true
+                }
+            }
         }
     },
     "diagnostic": {
@@ -31,5 +44,6 @@
         "preferences": {
             "jumpCommand": "tab drop"
         }
-    }
+    },
+    "elixir.pathToElixirLS": "~/.elixir-ls/release/language_server.sh"
 }
