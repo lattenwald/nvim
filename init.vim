@@ -275,6 +275,7 @@ cnoremap <S-Insert>  <C-R>+
 
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 let g:vimwiki_folding = 'list'
+nnoremap <leader><Space> <Plug>VimwikiToggleListItem
 
 function! DoPrettyXML()
   " save the filetype so we can restore it later
