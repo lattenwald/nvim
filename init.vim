@@ -5,77 +5,86 @@ endif
 
 call plug#begin(stdpath('data') . '/plugged')
 
+" vim-plug
 Plug 'junegunn/vim-plug'
 
+" Think of sensible.vim as one step above 'nocompatible' mode: a universal set of defaults that (hopefully) everyone can agree on.
 Plug 'tpope/vim-sensible'
 
+" color theme
 Plug 'vim-scripts/wombat256.vim'
 
+" parens/braces/…
 Plug 'jiangmiao/auto-pairs'
 Plug 'tpope/vim-surround'
+
+" status line
 Plug 'itchyny/lightline.vim'
 
+" git stuff
 Plug 'airblade/vim-gitgutter'
 Plug 'itchyny/vim-gitbranch'
 Plug 'tpope/vim-fugitive'
 
+" the coc
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+" TODO check bindings
 Plug 'junegunn/vim-easy-align'
 
+" nerdtree
 Plug 'preservim/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 
+" fzf and coc integration
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'antoinemadec/coc-fzf'
 
-Plug 'plasticboy/vim-markdown'
+" tags view
+Plug 'liuchengxu/vista.vim'
 
+" github gist
 Plug 'mattn/webapi-vim'
 Plug 'mattn/vim-gist'
 
-Plug 'pangloss/vim-javascript'
-
+" TODO check bindings
 Plug 'preservim/nerdcommenter'
 
-Plug 'vim-erlang/erlang-motions.vim'
-Plug 'vim-erlang/vim-erlang-runtime'
-
+" formatter
 Plug 'sbdchd/neoformat'
 
-Plug 'elixir-editors/vim-elixir'
-Plug 'cespare/vim-toml'
+" misc syntaxes not supported by polyglot
 Plug 'ekalinin/Dockerfile.vim'
-
-Plug 'terminalnode/sway-vim-syntax'
-
 Plug 's3rvac/vim-syntax-redminewiki'
-
-Plug 'liuchengxu/vista.vim'
-
-Plug 'vimwiki/vimwiki'
-
-Plug 'dkarter/bullets.vim'
-
-Plug 'michal-h21/vimwiki-sync'
-
 Plug 'ron-rs/ron.vim'
+Plug 'npatsakula/kql-nvim'
 
-Plug 'sersorrel/vim-lilypond'
-
+" The plugin exposes the :Bufferize command, which runs the given command and shows its output in a temporary buffer.
 Plug 'AndrewRadev/bufferize.vim'
 
-Plug 'purescript-contrib/purescript-vim'
+" vimwiki
+Plug 'vimwiki/vimwiki'
+Plug 'dkarter/bullets.vim'
+Plug 'michal-h21/vimwiki-sync'
 
-Plug 'npatsakula/kql-nvim'
+"" stuff replaced with polyglot
+" Plug 'plasticboy/vim-markdown'
+" Plug 'pangloss/vim-javascript'
+" Plug 'vim-erlang/erlang-motions.vim'
+" Plug 'vim-erlang/vim-erlang-runtime'
+" Plug 'elixir-editors/vim-elixir'
+" Plug 'cespare/vim-toml'
+" Plug 'terminalnode/sway-vim-syntax'
+" Plug 'sersorrel/vim-lilypond'
+" Plug 'purescript-contrib/purescript-vim'
+
+" polyglot
+Plug 'sheerun/vim-polyglot'
 
 call plug#end()
 
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rls', 'coc-elixir', 'coc-pyright', 'coc-perl']
-
 colorscheme wombat256mod
-
 let mapleader="\<Space>"
 
 set tabstop=4
@@ -83,6 +92,7 @@ set shiftwidth=4
 set novisualbell
 set expandtab
 
+" command-line completion
 set wildmenu
 set wildmode=longest:full,full
 set wildcharm=<C-Z>
@@ -102,11 +112,21 @@ let NERDTreeIgnore=['#$', '^#']
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Coc configuration
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
+
+" coc lsp engines
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rls', 'coc-elixir', 'coc-pyright', 'coc-perl', '@yaegassy/coc-ansible']
+
+" yaml.ansible filetype and coc filetype
+au BufRead,BufNewFile *.yaml.ansible set filetype=yaml.ansible
+let g:coc_filetype_map = {
+  \ 'yaml.ansible': 'ansible',
+  \ }
+
 set hidden
 set nobackup
 set nowritebackup
 set cmdheight=2
-set updatetime=300
+set updatetime=500
 set shortmess+=c
 " Use `[g` and `]g` to navigate diagnostics
 nmap <silent> [g <Plug>(coc-diagnostic-prev)
@@ -149,6 +169,35 @@ augroup mygroup
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
+" Applying codeAction to the selected region.
+" Example: `<leader>aap` for current paragraph
+xmap <leader>a  <Plug>(coc-codeaction-selected)
+nmap <leader>a  <Plug>(coc-codeaction-selected)
+
+" Remap keys for applying codeAction to the current buffer.
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Run the Code Lens action on the current line.
+nmap <leader>cl  <Plug>(coc-codelens-action)
+
+" Map function and class text objects
+" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+xmap if <Plug>(coc-funcobj-i)
+omap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap af <Plug>(coc-funcobj-a)
+xmap ic <Plug>(coc-classobj-i)
+omap ic <Plug>(coc-classobj-i)
+xmap ac <Plug>(coc-classobj-a)
+omap ac <Plug>(coc-classobj-a)
+
+" Use CTRL-S for selections ranges.
+" Requires 'textDocument/selectionRange' support of language server.
+nmap <silent> <C-s> <Plug>(coc-range-select)
+xmap <silent> <C-s> <Plug>(coc-range-select)
+
 " Add `:Format` command to format current buffer.
 command! -nargs=0 Format :call CocAction('format')
 "
@@ -158,16 +207,6 @@ command! -nargs=? Fold :call CocAction('fold', <f-args>)
 " Add `:OR` command for organize imports of the current buffer.
 command! -nargs=0 OR :call CocAction('runCommand', 'editor.action.organizeImport')
 
-"      \ 'tabline': {
-"      \   'left': [ ['buffers'] ],
-"      \   'right': [ ['close'] ]
-"      \ },
-"      \ 'component_expand': {
-"      \   'buffers': 'lightline#bufferline#buffers'
-"      \ },
-"      \ 'component_type': {
-"      \   'buffers': 'tabsel'
-"      \ },
 function! NearestScope() abort
   let info = get(b:, 'vista_cursor_info', {})
   return get(info, 'scope', '')
@@ -188,8 +227,29 @@ let g:lightline = {
       \ },
       \ }
 
-" Use auocmd to force lightline update.
+" Use autocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
+
+" Mappings for CoCList
+" Show all diagnostics.
+nnoremap <silent><nowait> ca  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent><nowait> ce  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent><nowait> cc  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent><nowait> co  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent><nowait> cs  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent><nowait> cj  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent><nowait> ck  :<C-u>CocPrev<CR>
+" Resume latest coc list.
+nnoremap <silent><nowait> cp  :<C-u>CocListResume<CR>
+
+" https://github.com/neoclide/coc.nvim/issues/1775
+let g:coc_disable_transparent_cursor = 1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set number
@@ -226,9 +286,6 @@ nmap <leader><tab> <plug>(fzf-maps-n)
 xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
 nmap <leader>b :Buffers<Return>
-
-" let g:fzf_action = {
-"   \ "\\\\": 'tab drop' }
 
 " TODOlist
 " nnoremap :Rg FIXME\\\\\|TODO\\\\\|XXX<return>
@@ -318,5 +375,3 @@ let g:neoformat_erlang_steamroller = {
   \ 'replace': 1,
   \ }
 let g:neoformat_enabled_erlang = ['steamroller']
-
-" map <silent><Leader>g :call setbufvar(winbufnr(popup_atcursor(systemlist("cd " . shellescape(fnamemodify(resolve(expand('%:p')), ":h")) . " && git log --no-merges -n 1 -L " . shellescape(line("v") . "," . line(".") . ":" . resolve(expand("%:p")))), { "padding": [1,1,1,1], "pos": "botleft", "wrap": 0 })), "&filetype", "git")<CR>
