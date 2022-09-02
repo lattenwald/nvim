@@ -114,7 +114,7 @@ let NERDTreeIgnore=['#$', '^#']
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
 
 " coc lsp engines
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rls', 'coc-elixir', 'coc-pyright', 'coc-perl', '@yaegassy/coc-ansible']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rust-analyzer', 'coc-elixir', 'coc-pyright', 'coc-perl', '@yaegassy/coc-ansible']
 
 " yaml.ansible filetype and coc filetype
 au BufRead,BufNewFile *.yaml.ansible set filetype=yaml.ansible
