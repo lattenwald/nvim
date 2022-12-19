@@ -68,19 +68,15 @@ Plug 'vimwiki/vimwiki'
 Plug 'dkarter/bullets.vim'
 Plug 'michal-h21/vimwiki-sync'
 
-"" stuff replaced with polyglot
-" Plug 'plasticboy/vim-markdown'
-" Plug 'pangloss/vim-javascript'
-" Plug 'vim-erlang/erlang-motions.vim'
-" Plug 'vim-erlang/vim-erlang-runtime'
-" Plug 'elixir-editors/vim-elixir'
-" Plug 'cespare/vim-toml'
-" Plug 'terminalnode/sway-vim-syntax'
-" Plug 'sersorrel/vim-lilypond'
-" Plug 'purescript-contrib/purescript-vim'
-
 " polyglot
 Plug 'sheerun/vim-polyglot'
+
+" sudoedit
+Plug 'lambdalisue/suda.vim'
+
+" snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 
 call plug#end()
 
@@ -113,8 +109,8 @@ let NERDTreeIgnore=['#$', '^#']
 " Coc configuration
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
 
-" coc lsp engines
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rust-analyzer', 'coc-elixir', 'coc-pyright', 'coc-perl', '@yaegassy/coc-ansible']
+" coc lsp engines and plugins
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rust-analyzer', 'coc-elixir', 'coc-pyright', 'coc-perl', '@yaegassy/coc-ansible', 'coc-ultisnips']
 
 " yaml.ansible filetype and coc filetype
 au BufRead,BufNewFile *.yaml.ansible set filetype=yaml.ansible
@@ -136,6 +132,11 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
+let g:UltiSnipsExpandTrigger = '<Nop>'
+let g:UltiSnipsListSnippets = '<Nop>'
+let g:UltiSnipsJumpForwardTrigger = '<Nop>'
+let g:UltiSnipsJumpBackwardTrigger = '<Nop>'
 
 inoremap <silent><expr> <tab> coc#pum#visible() ? coc#pum#confirm() : "\<tab>"
 inoremap <silent><expr> <c-cr> coc#pum#visible() ? coc#pum#confirm() : "\<c-cr>"
@@ -286,6 +287,9 @@ nmap <leader><tab> <plug>(fzf-maps-n)
 xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
 nmap <leader>b :Buffers<Return>
+nmap <leader>f :Files<Return>
+nmap <leader>c :Commits<Return>
+nmap <leader>s :Snippets<Return>
 
 " TODOlist
 " nnoremap :Rg FIXME\\\\\|TODO\\\\\|XXX<return>
@@ -314,6 +318,7 @@ let g:vista_executive_for = {
     \ 'markdown': 'toc',
     \ }
 let g:vista_fzf_opt = ['--reverse']
+let g:fzf_buffers_jump = 1
 
 autocmd FileType erlang let b:surround_98 = "<<\"\r\">>"
 
@@ -375,3 +380,32 @@ let g:neoformat_erlang_steamroller = {
   \ 'replace': 1,
   \ }
 let g:neoformat_enabled_erlang = ['steamroller']
+
+"FZF Buffer Delete
+
+function! s:list_buffers()
+  redir => list
+  silent ls
+  redir END
+  return split(list, "\n")
+endfunction
+
+function! s:delete_buffers(lines)
+  execute 'bwipeout!' join(map(a:lines, {_, line -> split(line)[0]}))
+endfunction
+
+command! BD call fzf#run(fzf#wrap({
+  \ 'source': s:list_buffers(),
+  \ 'sink*': { lines -> s:delete_buffers(lines) },
+  \ 'options': '--multi --bind ctrl-a:select-all+accept'
+\ }))
+
+function! RipgrepFzf(query, fullscreen)
+    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+    let initial_command = printf(command_fmt, shellescape(a:query))
+    let reload_command = printf(command_fmt, '{q}')
+    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
+    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
+endfunction
+
+command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
