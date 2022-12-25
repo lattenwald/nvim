@@ -75,7 +75,6 @@ Plug 'sheerun/vim-polyglot'
 Plug 'lambdalisue/suda.vim'
 
 " snippets
-Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 call plug#end()
@@ -110,7 +109,7 @@ let NERDTreeIgnore=['#$', '^#']
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
 
 " coc lsp engines and plugins
-let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rust-analyzer', 'coc-elixir', 'coc-pyright', 'coc-perl', '@yaegassy/coc-ansible', 'coc-ultisnips']
+let g:coc_global_extensions = ['coc-json', 'coc-tsserver', 'coc-yaml', 'coc-rust-analyzer', 'coc-elixir', 'coc-pyright', 'coc-perl', '@yaegassy/coc-ansible', 'coc-snippets']
 
 " yaml.ansible filetype and coc filetype
 au BufRead,BufNewFile *.yaml.ansible set filetype=yaml.ansible
@@ -133,13 +132,20 @@ nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-let g:UltiSnipsExpandTrigger = '<Nop>'
-let g:UltiSnipsListSnippets = '<Nop>'
-let g:UltiSnipsJumpForwardTrigger = '<Nop>'
-let g:UltiSnipsJumpBackwardTrigger = '<Nop>'
-
-inoremap <silent><expr> <tab> coc#pum#visible() ? coc#pum#confirm() : "\<tab>"
+" inoremap <silent><expr> <tab> coc#pum#visible() ? coc#pum#confirm() : "\<tab>"
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ CheckBackspace() ? "\<TAB>" :
+      \ coc#refresh()
 inoremap <silent><expr> <c-cr> coc#pum#visible() ? coc#pum#confirm() : "\<c-cr>"
+
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
 
 " Use K to show documentation in preview window.
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -326,6 +332,8 @@ nnoremap <leader>v :Vista ctags<Return>
 nnoremap <leader>V :Vista coc<Return>
 nnoremap <leader>i :Vista finder fzf:ctags<Return>
 nnoremap <leader>I :Vista finder fzf:coc<Return>
+
+let g:vista_sidebar_position = "vertical topleft"
 
 cnoremap <S-Insert>  <C-R>+
 
