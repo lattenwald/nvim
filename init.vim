@@ -80,6 +80,7 @@ Plug 'honza/vim-snippets'
 call plug#end()
 
 colorscheme wombat256mod
+highlight Underlined guisp=#80a0ff
 let mapleader="\<Space>"
 
 set tabstop=4
@@ -339,6 +340,7 @@ cnoremap <S-Insert>  <C-R>+
 
 let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': '.md'}]
 let g:vimwiki_folding = 'list'
+let g:vimwiki_key_mappings = { 'table_mappings': 0, }
 nnoremap <leader><Space> <Plug>VimwikiToggleListItem
 
 function! DoPrettyXML()
