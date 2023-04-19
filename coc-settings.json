@@ -37,14 +37,10 @@
             }
         }
     },
-    "diagnostic": {
-        "level": "information"
-    },
-    "coc": {
-        "preferences": {
-            "jumpCommand": "tab drop"
-        }
-    },
+    "diagnostic.level": "information",
+    "coc.preferences.jumpCommand": "tab drop",
     "elixir.pathToElixirLS": "~/elixir-ls/language_server.sh",
-    "snippets.ultisnips.directories": ["UltiSnips", "snips"]
+    "snippets.ultisnips.directories": ["UltiSnips", "snips"],
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.checkOnSave": true
 }
