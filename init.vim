@@ -105,6 +105,9 @@ map <C-F> :NERDTreeToggleVCS<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let NERDTreeIgnore=['#$', '^#']
 
+let NERDCreateDefaultMappings=0
+nnoremap <Leader>c<space> <Plug>NERDCommenterToggle
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Coc configuration
 " https://github.com/neoclide/coc.nvim#example-vim-configuration
