@@ -107,6 +107,9 @@ let NERDTreeIgnore=['#$', '^#']
 
 let NERDCreateDefaultMappings=0
 nnoremap <Leader>c<space> <Plug>NERDCommenterToggle
+vnoremap <Leader>c<space> <Plug>NERDCommenterToggle
+nnoremap <Leader>cc <Plug>NERDCommentedComment
+vnoremap <Leader>cc <Plug>NERDCommentedComment
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Coc configuration
@@ -151,8 +154,8 @@ endfunction
 
 let g:coc_snippet_next = '<tab>'
 
-" Use K to show documentation in preview window.
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+" Use <leader>d to show documentation in preview window.
+nnoremap <Leader>d :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -223,20 +226,29 @@ function! NearestScope() abort
   return get(info, 'scope', '')
 endfunction
 
-set statusline+=%{NearestScope()}
-
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste', 'scope' ],
-      \             [ 'cocstatus',  'currentfunction', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'cocstatus': 'coc#status',
-      \   'currentfunction': 'CocCurrentFunction',
-      \   'scope': 'NearestScope'
-      \ },
-      \ }
+            \ 'colorscheme': 'wombat',
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste', 'scope' ],
+            \             [ 'cocstatus', 'readonly', 'filename', 'modified' ] ]
+            \ },
+            \ 'component_function': {
+            \   'cocstatus': 'coc#status',
+            \   'filename': 'LightlineFilename',
+            \   'scope': 'NearestScope',
+            \ }
+            \ }
+
+
+" https://github.com/itchyny/lightline.vim/issues/293#issuecomment-373710096
+function! LightlineFilename()
+  let root = fnamemodify(get(b:, 'gitbranch_path'), ':h:h')
+  let path = expand('%:p')
+  if path[:len(root)-1] ==# root
+    return path[len(root)+1:]
+  endif
+  return expand('%')
+endfunction
 
 " Use autocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
