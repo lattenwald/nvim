@@ -77,6 +77,10 @@ Plug 'lambdalisue/suda.vim'
 " snippets
 Plug 'honza/vim-snippets'
 
+" telescope
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
 call plug#end()
 
 colorscheme wombat256mod
@@ -108,8 +112,8 @@ let NERDTreeIgnore=['#$', '^#']
 let NERDCreateDefaultMappings=0
 nnoremap <Leader>c<space> <Plug>NERDCommenterToggle
 vnoremap <Leader>c<space> <Plug>NERDCommenterToggle
-nnoremap <Leader>cc <Plug>NERDCommentedComment
-vnoremap <Leader>cc <Plug>NERDCommentedComment
+nnoremap <Leader>cc <Plug>NERDCommenterComment
+vnoremap <Leader>cc <Plug>NERDCommenterComment
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Coc configuration
@@ -273,6 +277,16 @@ nnoremap <silent><nowait> cp  :<C-u>CocListResume<CR>
 
 " https://github.com/neoclide/coc.nvim/issues/1775
 let g:coc_disable_transparent_cursor = 1
+
+" https://github.com/nvim-treesitter/nvim-treesitter
+lua <<TREESITTER
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "rust", "erlang", "elixir", "perl", "bash", "lua",
+    "dockerfile", "gitignore", "vim", "json5", "html", },
+  sync_install = false,
+  auto_install = true,
+  }
+TREESITTER
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set number
