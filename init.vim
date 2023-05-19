@@ -286,6 +286,16 @@ require'nvim-treesitter.configs'.setup {
   sync_install = false,
   auto_install = true,
   }
+
+require'telescope'.setup{
+  extensions = {
+    coc = {
+        theme = 'ivy',
+        prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc
+    }
+  },
+}
+require'telescope'.load_extension'coc'
 TREESITTER
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -322,14 +332,9 @@ nmap <C-S-PageUp> :tabmove -1<Return>
 nmap <leader><tab> <plug>(fzf-maps-n)
 xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
-nmap <leader>b :Buffers<Return>
+nmap <leader>b :Telescope buffers<Return>
 nmap <leader>f :Files<Return>
-nmap <leader>c :Commits<Return>
-nmap <leader>s :Snippets<Return>
-
-" TODOlist
-" nnoremap :Rg FIXME\\\\\|TODO\\\\\|XXX<return>
-nmap <leader>t :Rg FIXME\\\\|TODO\\\\|XXX
+nmap <leader>c :Telescope git_commits<Return>
 
 " Matches
 function! Matches(pat)
@@ -437,14 +442,4 @@ command! BD call fzf#run(fzf#wrap({
   \ 'source': s:list_buffers(),
   \ 'sink*': { lines -> s:delete_buffers(lines) },
   \ 'options': '--multi --bind ctrl-a:select-all+accept'
-\ }))
-
-function! RipgrepFzf(query, fullscreen)
-    let command_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
-    let initial_command = printf(command_fmt, shellescape(a:query))
-    let reload_command = printf(command_fmt, '{q}')
-    let spec = {'options': ['--phony', '--query', a:query, '--bind', 'change:reload:'.reload_command]}
-    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), a:fullscreen)
-endfunction
-
-command! -nargs=* -bang RG call RipgrepFzf(<q-args>, <bang>0)
+  \ }))
