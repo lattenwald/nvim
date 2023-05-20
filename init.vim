@@ -286,16 +286,6 @@ require'nvim-treesitter.configs'.setup {
   sync_install = false,
   auto_install = true,
   }
-
-require'telescope'.setup{
-  extensions = {
-    coc = {
-        theme = 'ivy',
-        prefer_locations = true, -- always use Telescope locations to preview definitions/declarations/implementations etc
-    }
-  },
-}
-require'telescope'.load_extension'coc'
 TREESITTER
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
