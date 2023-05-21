@@ -8,6 +8,7 @@
   "lush.nvim": { "branch": "main", "commit": "fb148c0082488ba048f681792c4044e3229fd1a6" },
   "material.nvim": { "branch": "main", "commit": "0c725897bc3d22c45fbf25a602002ee02f06f619" },
   "neoformat": { "branch": "master", "commit": "2d5d071d5957681ae677ee06f6eb879a61b7b618" },
+  "neogit": { "branch": "master", "commit": "5ea830c42d833bf425ec669abe2fb649afc6fc7c" },
   "nvim-autopairs": { "branch": "master", "commit": "7747bbae60074acf0b9e3a4c13950be7a2dff444" },
   "nvim-comment": { "branch": "main", "commit": "e9ac16ab056695cad6461173693069ec070d2b23" },
   "nvim-lspconfig": { "branch": "master", "commit": "6f1d124bbcf03c4c410c093143a86415f46d16a0" },

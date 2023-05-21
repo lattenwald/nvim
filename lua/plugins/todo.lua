@@ -8,6 +8,12 @@ return {
                         icon = " ",
                         color = "error",
                     }
+                },
+                highlight = {
+                    pattern = [[.*<(KEYWORDS)\s*]],
+                },
+                search = {
+                    pattern = [[\b(KEYWORDS)\b]] -- ripgrep regex
                 }
             }
         end,
