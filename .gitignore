@@ -4,3 +4,5 @@
 /shada
 /rplugin.vim
 /.netrwhist
+/lazy
+/telescope_history
