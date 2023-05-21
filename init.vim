@@ -45,6 +45,7 @@ Plug 'antoinemadec/coc-fzf'
 Plug 'liuchengxu/vista.vim'
 
 " github gist
+" XXX lua
 Plug 'mattn/webapi-vim'
 Plug 'mattn/vim-gist'
 
@@ -75,12 +76,14 @@ Plug 'sheerun/vim-polyglot'
 Plug 'lambdalisue/suda.vim'
 
 " snippets
+" XXX lua
 Plug 'honza/vim-snippets'
 
 " telescope
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-telescope/telescope.nvim', { 'branch': '0.1.x' }
+" add debugloop/telescope-undo.nvim
 call plug#end()
 
 colorscheme wombat256mod
@@ -108,8 +111,8 @@ map <C-f> :NERDTreeToggle<CR>
 map <C-F> :NERDTreeToggleVCS<CR>
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let NERDTreeIgnore=['#$', '^#']
-
 let NERDCreateDefaultMappings=0
+
 nnoremap <Leader>c<space> <Plug>NERDCommenterToggle
 vnoremap <Leader>c<space> <Plug>NERDCommenterToggle
 nnoremap <Leader>cc <Plug>NERDCommenterComment
@@ -229,7 +232,6 @@ function! NearestScope() abort
   let info = get(b:, 'vista_cursor_info', {})
   return get(info, 'scope', '')
 endfunction
-
 let g:lightline = {
             \ 'colorscheme': 'wombat',
             \ 'active': {
@@ -242,8 +244,6 @@ let g:lightline = {
             \   'scope': 'NearestScope',
             \ }
             \ }
-
-
 " https://github.com/itchyny/lightline.vim/issues/293#issuecomment-373710096
 function! LightlineFilename()
   let root = fnamemodify(get(b:, 'gitbranch_path'), ':h:h')
@@ -253,7 +253,6 @@ function! LightlineFilename()
   endif
   return expand('%')
 endfunction
-
 " Use autocmd to force lightline update.
 autocmd User CocStatusChange,CocDiagnosticChange call lightline#update()
 
@@ -299,6 +298,7 @@ set list
 map <C-P> :set list!<cr>
 imap <C-P> <Esc>:set list!<cr>i
 
+" XXX lua
 let g:gist_post_private = 1
 let g:NERDSpaceDelims = 1
 let g:NERDDefaultAlign = 'left'
@@ -327,6 +327,7 @@ nmap <leader>f :Files<Return>
 nmap <leader>c :Telescope git_commits<Return>
 
 " Matches
+" XXX lua
 function! Matches(pat)
     let buffer=bufnr("") "current buffer number
     let b:lines=[]
@@ -353,12 +354,11 @@ let g:fzf_buffers_jump = 1
 
 autocmd FileType erlang let b:surround_98 = "<<\"\r\">>"
 
+let g:vista_sidebar_position = "vertical topleft"
 nnoremap <leader>v :Vista ctags<Return>
 nnoremap <leader>V :Vista coc<Return>
 nnoremap <leader>i :Vista finder fzf:ctags<Return>
 nnoremap <leader>I :Vista finder fzf:coc<Return>
-
-let g:vista_sidebar_position = "vertical topleft"
 
 cnoremap <S-Insert>  <C-R>+
 
@@ -417,17 +417,16 @@ let g:neoformat_enabled_erlang = ['steamroller']
 
 "FZF Buffer Delete
 
+" XXX lua
 function! s:list_buffers()
   redir => list
   silent ls
   redir END
   return split(list, "\n")
 endfunction
-
 function! s:delete_buffers(lines)
   execute 'bwipeout!' join(map(a:lines, {_, line -> split(line)[0]}))
 endfunction
-
 command! BD call fzf#run(fzf#wrap({
   \ 'source': s:list_buffers(),
   \ 'sink*': { lines -> s:delete_buffers(lines) },
