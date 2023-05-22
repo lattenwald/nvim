@@ -67,6 +67,10 @@ vim.api.nvim_set_keymap('n', '<M-right>', '<C-w><right>', {desc = "Go to right w
 vim.api.nvim_set_keymap('n', '<M-up>', '<C-w><up>', {desc = "Go to top window"})
 vim.api.nvim_set_keymap('n', '<M-down>', '<C-w><down>', {desc = "Go to bottom window"})
 
+-- lsp keybindings
+vim.api.nvim_set_keymap('n', ']g', ":lua vim.diagnostic.goto_next()<cr>", {silent = true, desc = "LSP: go to next diagnostic"})
+vim.api.nvim_set_keymap('n', '[g', ":lua vim.diagnostic.goto_prev()<cr>", {silent = true, desc = "LSP: go to previous diagnostic"})
+
 -- remove trailing whitespaces on save
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
         pattern = { "*" },
