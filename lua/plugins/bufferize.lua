@@ -1,5 +1,6 @@
 return {
     {
-        "AndrewRadev/bufferize.vim"
+        "AndrewRadev/bufferize.vim",
+        event = "VeryLazy",
     }
 }

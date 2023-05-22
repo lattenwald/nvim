@@ -1,18 +1,19 @@
 return {
     {
-        -- TODO do I need it?
         'TimUntersberger/neogit',
-        config = function()
-            require'neogit'.setup{}
-        end
+        event = "VeryLazy",
+        opts = {},
     },
     {
         "airblade/vim-gitgutter",
+        event = "VeryLazy",
     },
     {
         "itchyny/vim-gitbranch",
+        event = "VeryLazy",
     },
     {
         "tpope/vim-fugitive",
+        event = "VeryLazy",
     }
 }

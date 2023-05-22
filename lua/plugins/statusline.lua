@@ -2,11 +2,7 @@ return {
     {
         'nvim-lualine/lualine.nvim',
         requires = { 'nvim-tree/nvim-web-devicons', opt = true },
-        config = function()
-            require'lualine'.setup({
-                    theme = 'auto'
-                })
-        end
+        opts = {theme = 'auto'},
     },
     {
         'nvim-lua/lsp-status.nvim'

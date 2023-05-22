@@ -1,15 +1,12 @@
 return {
     {
         "windwp/nvim-autopairs",
-        config = function()
-            require'nvim-autopairs'.setup{}
-        end
+        event = "VeryLazy",
+        opts = {},
     },
     {
         "kylechui/nvim-surround",
         event = "VeryLazy",
-        config = function()
-            require'nvim-surround'.setup{}
-        end
+        opts = {},
     },
 }

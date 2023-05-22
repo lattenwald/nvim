@@ -1,13 +1,12 @@
 return {
     {
         "vimwiki/vimwiki",
-        lazy = false,
-        config = function ()
-            -- TODO make <leader>ww open index.md ffs
+        event = 'VeryLazy',
+        init = function ()
             vim.g.vimwiki_list = { {
+                    path = "/home/qalex/vimwiki/",
+                    syntax = "markdown",
                     ext = ".md",
-                    path = "~/vimwiki/",
-                    syntax = "markdown"
             } }
             vim.g.vimwiki_global_ext = 0
             vim.g.vimwiki_folding = 'list'
