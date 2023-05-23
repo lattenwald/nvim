@@ -1,10 +1,13 @@
 return {
     {
         'nvim-lualine/lualine.nvim',
-        requires = { 'nvim-tree/nvim-web-devicons', opt = true },
-        opts = {theme = 'auto'},
+        event = 'VeryLazy',
+        requires = {
+            'nvim-tree/nvim-web-devicons',
+            'linrongbin16/lsp-progress.nvim',
+        },
+        opts = {
+            theme = 'auto',
+        },
     },
-    {
-        'nvim-lua/lsp-status.nvim'
-    }
 }

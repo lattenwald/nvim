@@ -1,18 +1,12 @@
 return {
     {
         'neovim/nvim-lspconfig',
+        priority = 100,
         config = function()
             local lspconfig = require'lspconfig'
-            local lsp_status = require'lsp-status'
-            -- TODO incorporate progress and current location in statusline
-            lspconfig.erlangls.setup({
-                capabilities = lsp_status.capabilities,
-                on_attach = lsp_status.on_attach,
-            })
-            lspconfig.rust_analyzer.setup({
-                capabilities = lsp_status.capabilities,
-                on_attach = lsp_status.on_attach,
-            })
+            -- TODO incorporate current location in statusline
+            lspconfig.erlangls.setup{}
+            lspconfig.rust_analyzer.setup{}
             -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
             lspconfig.lua_ls.setup {
                 settings = {
@@ -59,4 +53,27 @@ return {
             vim.api.nvim_set_keymap('n', '<leader>v', ':AerialToggle<cr>', {desc = "Toggle LSP outline"})
         end
     },
+    {
+        'weilbith/nvim-code-action-menu',
+        event = 'VeryLazy',
+        cmd = 'CodeActionMenu',
+        config = function()
+            vim.keymap.set('n', '<leader>a', require'code_action_menu'.open_code_action_menu, {desc = 'LSP code action'})
+        end,
+    },
+    {
+        'kosayoda/nvim-lightbulb',
+        event = 'VeryLazy',
+        opts = {
+            autocmd = {enabled = true}
+        }
+    },
+    {
+        'j-hui/fidget.nvim',
+        opts = {
+            text = {
+                spinner = 'clock'
+            }
+        },
+    }
 }
