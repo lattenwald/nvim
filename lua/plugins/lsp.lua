@@ -34,7 +34,17 @@ return {
     },
     {
         'simrat39/rust-tools.nvim',
-        opts = {},
+        opts = {
+            server = {
+                settings = {
+                    ["rust-analyzer"] = {
+                        checkOnSave = {
+                            command = "clippy"
+                        }
+                    }
+                }
+            }
+        },
     },
     {
         'stevearc/aerial.nvim',
