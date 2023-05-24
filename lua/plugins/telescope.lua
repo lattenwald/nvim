@@ -23,6 +23,7 @@ return {
             vim.api.nvim_set_keymap('n', '<leader>b', ':Telescope buffers<cr>', {desc = 'Jump to buffers'})
             vim.api.nvim_set_keymap('n', '<leader>f', ':Telescope git_files<cr>', {desc = 'Jump to file tracked by git'})
             vim.api.nvim_set_keymap('n', '<leader>c', ':Telescope git_commits<cr>', {desc = 'Jump to git commit'})
+            vim.api.nvim_set_keymap('n', '<leader>r', ':Telescope live_grep<cr>', {desc = 'Live grep with rg'})
         end
     },
 }

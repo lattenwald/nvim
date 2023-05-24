@@ -13,7 +13,11 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.g.mapleader = ' '
 
-require'lazy'.setup'plugins'
+require'lazy'.setup('plugins', {
+    defaults = {
+        version = "*"
+    }
+})
 
 -- vim.g.vimwiki_list = {{path = '~/vimwiki/', syntax = 'markdown', ext = '.md'}}
 
