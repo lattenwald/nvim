@@ -74,6 +74,7 @@ vim.api.nvim_set_keymap('n', '<M-down>', '<C-w><down>', {desc = "Go to bottom wi
 -- lsp keybindings
 vim.keymap.set('n', ']g', vim.diagnostic.goto_next, {silent = true, desc = "LSP: go to next diagnostic"})
 vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, {silent = true, desc = "LSP: go to previous diagnostic"})
+vim.keymap.set('n', '<leader>d', vim.lsp.buf.hover, {silent = true, desc = "LSP: hover"})
 
 -- remove trailing whitespaces on save
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {
