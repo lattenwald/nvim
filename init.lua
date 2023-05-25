@@ -82,4 +82,11 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
         command = [[%s/\s\+$//e]],
     })
 
+-- add ansible.yaml filetype
+vim.filetype.add{
+    pattern = {
+        ['.*.yaml.ansible'] = 'yaml.ansible'
+    }
+}
+
 vim.o.guifont = 'Hack:h11'

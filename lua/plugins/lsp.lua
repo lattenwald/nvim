@@ -4,9 +4,17 @@ return {
         priority = 100,
         config = function()
             local lspconfig = require'lspconfig'
+            local cmp_capabilities = require'cmp_nvim_lsp'.default_capabilities()
             -- TODO incorporate current location in statusline
-            lspconfig.erlangls.setup{}
-            lspconfig.rust_analyzer.setup{}
+            lspconfig.erlangls.setup{
+                capabilities = cmp_capabilities
+            }
+            lspconfig.rust_analyzer.setup{
+                capabilities = cmp_capabilities
+            }
+            lspconfig.ansiblels.setup{
+                capabilities = cmp_capabilities
+            }
             -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#lua_ls
             -- lspconfig.lua_ls.setup {
             --     settings = {
