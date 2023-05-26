@@ -24,10 +24,13 @@ return {
                 mapping = {
                     ['<up>'] = cmp.mapping.select_prev_item(),
                     ['<down>'] = cmp.mapping.select_next_item(),
-                    ['<C-c>'] = cmp.mapping.close(),
                     ['<esc>'] = cmp.mapping.close(),
                     ['<tab>'] = cmp.mapping.confirm{select = true},
                     ['<cr>'] = cmp.mapping.confirm{select = true},
+                    ['<esc>'] = function()
+                        cmp.abort()
+                        vim.cmd('stopinsert')
+                    end,
                 },
             }
 
