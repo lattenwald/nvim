@@ -9,21 +9,45 @@ return {
         },
         config = function()
             local telescope = require'telescope';
+            local actions = require'telescope.actions'
             telescope.setup({
                     extensions = {
                         undo = {}
-                    }
+                    },
+                    defaults = {
+                        mappings = {
+                            i = {
+                                ["<c-cr>"] = actions.select_tab,
+                                ["<esc>"] = actions.close,
+                            },
+                            n = {
+                                ["<c-cr>"] = actions.select_tab,
+                                ["<esc>"] = actions.close,
+                            },
+                        },
+                    },
                 })
             telescope.load_extension('undo')
 
-            vim.api.nvim_set_keymap('n', '<leader>i', ':Telescope lsp_document_symbols<cr>', {desc = 'LSP jump to document symbol'})
-            vim.api.nvim_set_keymap('n', 'gr', ':Telescope lsp_references<cr>', {desc = 'LSP jump to reference'})
-            vim.api.nvim_set_keymap('n', 'gd', ':Telescope lsp_definitions<cr>', {desc = 'LSP jump to definition'})
+            local builtin = require'telescope.builtin'
+            vim.keymap.set('n', '<leader>i', builtin.lsp_document_symbols, {desc = 'LSP jump to document symbol'})
+            vim.keymap.set('n', 'gr', builtin.lsp_references, {desc = 'LSP jump to reference'})
+            vim.keymap.set('n', 'gd', builtin.lsp_definitions, {desc = 'LSP jump to definition'})
 
-            vim.api.nvim_set_keymap('n', '<leader>b', ':Telescope buffers<cr>', {desc = 'Jump to buffers'})
-            vim.api.nvim_set_keymap('n', '<leader>f', ':Telescope git_files<cr>', {desc = 'Jump to file tracked by git'})
-            vim.api.nvim_set_keymap('n', '<leader>c', ':Telescope git_commits<cr>', {desc = 'Jump to git commit'})
-            vim.api.nvim_set_keymap('n', '<leader>r', ':Telescope live_grep<cr>', {desc = 'Live grep with rg'})
+            vim.keymap.set('n', '<leader>I', builtin.treesitter, {desc = 'LSP jump to treesitter symbol'})
+
+            vim.keymap.set('n', '<leader>b', function()
+                require'telescope.builtin'.buffers{
+                    sort_lastused = true,
+                    sort_mru = true,
+                }
+            end, {desc = 'Jump to buffers'})
+
+            vim.keymap.set('n', '<leader>f', builtin.git_files, {desc = 'Jump to file tracked by git'})
+            vim.keymap.set('n', '<leader>c', builtin.git_commits, {desc = 'Jump to git commit'})
+            vim.keymap.set('n', '<leader>r', builtin.live_grep, {desc = 'Live grep with rg'})
+
+            vim.keymap.set('n', '<leader>u', "<cmd>Telescope undo<cr>", {desc = 'undo tree'})
         end
     },
 }
