@@ -9,7 +9,6 @@ return {
         },
         config = function()
             local telescope = require'telescope';
-            local actions = require'telescope.actions'
             telescope.setup({
                     extensions = {
                         undo = {}
@@ -17,17 +16,29 @@ return {
                     defaults = {
                         mappings = {
                             i = {
-                                ["<c-cr>"] = actions.select_tab,
-                                ["<esc>"] = actions.close,
+                                ["<c-cr>"] = "select_tab",
+                                ["<esc>"] = "close",
                             },
                             n = {
-                                ["<c-cr>"] = actions.select_tab,
-                                ["<esc>"] = actions.close,
+                                ["<c-cr>"] = "select_tab",
+                                ["<esc>"] = "close",
                             },
                         },
                     },
+                    pickers = {
+                        buffers = {
+                            mappings = {
+                                i = {
+                                    ["<delete>"] = "delete_buffer"
+                                },
+                                n = {
+                                    ["<delete>"] = "delete_buffer"
+                                },
+
+                            }
+                        }
+                    }
                 })
-            telescope.load_extension('undo')
 
             local builtin = require'telescope.builtin'
             vim.keymap.set('n', '<leader>i', builtin.lsp_document_symbols, {desc = 'LSP jump to document symbol'})
