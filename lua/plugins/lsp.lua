@@ -55,23 +55,6 @@ return {
         },
     },
     {
-        'stevearc/aerial.nvim',
-        event = "VeryLazy",
-        -- Optional dependencies
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter",
-            "nvim-tree/nvim-web-devicons"
-        },
-        config = function()
-            require'aerial'.setup({
-                layout = {
-                    default_direction = 'prefer_left'
-                }
-            })
-            vim.api.nvim_set_keymap('n', '<leader>v', ':AerialToggle<cr>', {desc = "Toggle LSP outline"})
-        end
-    },
-    {
         'weilbith/nvim-code-action-menu',
         event = 'VeryLazy',
         cmd = 'CodeActionMenu',

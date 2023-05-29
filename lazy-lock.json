@@ -7,7 +7,7 @@
   "edge": { "branch": "master", "commit": "5064f59094c42911e2ce57e1b59acda546c3905b" },
   "everforest": { "branch": "master", "commit": "62408f6cb189606bc4b16832ada29be3ae33515f" },
   "fidget.nvim": { "branch": "main", "commit": "0ba1e16d07627532b6cae915cc992ecac249fb97" },
-  "lazy.nvim": { "branch": "main", "commit": "a93d8983c4335b6ae7d6e7d516a191d929186d5b" },
+  "lazy.nvim": { "branch": "main", "commit": "ebdd0499551765e6a7aba220cc8ae4e0cdb6be69" },
   "lualine.nvim": { "branch": "master", "commit": "05d78e9fd0cdfb4545974a5aa14b1be95a86e9c9" },
   "lush.nvim": { "branch": "main", "commit": "6923ccef17c5276bc5d3cca907082e19ee165d55" },
   "material.nvim": { "branch": "main", "commit": "0c725897bc3d22c45fbf25a602002ee02f06f619" },
