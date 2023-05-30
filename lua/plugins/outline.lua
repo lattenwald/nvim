@@ -10,7 +10,7 @@ return {
         config = function()
             require'aerial'.setup({
                 layout = {
-                    default_direction = 'prefer_left',
+                    default_direction = 'prefer_right',
                 },
                 backends = {
                     ['_']  = {"lsp", "treesitter", "markdown", "man"},

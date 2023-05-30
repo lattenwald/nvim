@@ -26,7 +26,7 @@ return {
                     ['<down>'] = cmp.mapping.select_next_item(),
                     ['<esc>'] = cmp.mapping.close(),
                     ['<tab>'] = cmp.mapping.confirm{select = true},
-                    ['<cr>'] = cmp.mapping.confirm{select = true},
+                    ['<cr>'] = cmp.mapping.confirm(),
                     ['<esc>'] = function()
                         cmp.abort()
                         vim.cmd('stopinsert')
