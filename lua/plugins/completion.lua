@@ -17,9 +17,9 @@ return {
                     end
                 },
                 sources = require'cmp'.config.sources{
+                    {name = 'nvim_lsp'},
                     {name = 'buffer'},
                     {name = 'vsnip'},
-                    {name = 'nvim_lsp'},
                 },
                 mapping = {
                     ['<up>'] = cmp.mapping.select_prev_item(),
