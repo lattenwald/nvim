@@ -2,7 +2,7 @@ return {
     {
         'nvim-lualine/lualine.nvim',
         event = 'VeryLazy',
-        requires = {
+        dependencies = {
             'nvim-tree/nvim-web-devicons',
             'linrongbin16/lsp-progress.nvim',
         },

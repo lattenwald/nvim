@@ -55,6 +55,7 @@ return {
             end, {desc = 'Jump to buffers'})
 
             vim.keymap.set('n', '<leader>f', builtin.git_files, {desc = 'Jump to file tracked by git'})
+            vim.keymap.set('n', '<leader>F', builtin.find_files, {desc = 'Jump to file'})
             vim.keymap.set('n', '<leader>c', builtin.git_commits, {desc = 'Jump to git commit'})
             vim.keymap.set('n', '<leader>r', builtin.live_grep, {desc = 'Live grep with rg'})
 
