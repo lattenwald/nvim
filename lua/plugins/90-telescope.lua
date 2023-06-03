@@ -41,11 +41,17 @@ return {
                 })
 
             local builtin = require'telescope.builtin'
-            vim.keymap.set('n', '<leader>i', builtin.lsp_document_symbols, {desc = 'LSP jump to document symbol'})
             vim.keymap.set('n', 'gr', builtin.lsp_references, {desc = 'LSP jump to reference'})
             vim.keymap.set('n', 'gd', function() require'telescope.builtin'.lsp_definitions{jump_type = "tab"} end, {desc = 'LSP jump to definition'})
 
-            vim.keymap.set('n', '<leader>I', builtin.treesitter, {desc = 'LSP jump to treesitter symbol'})
+            vim.keymap.set('n', '<leader>i', function()
+                if next(vim.lsp.buf_get_clients()) then
+                    builtin.lsp_document_symbols()
+                else
+                    builtin.treesitter()
+                end
+            end, {desc = 'Jump to document symbol'})
+            vim.keymap.set('n', '<leader>I', builtin.treesitter, {desc = 'Jump to treesitter symbol'})
 
             vim.keymap.set('n', '<leader>b', function()
                 require'telescope.builtin'.buffers{
