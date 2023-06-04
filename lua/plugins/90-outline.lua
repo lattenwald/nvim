@@ -1,8 +1,6 @@
 return {
     {
         'stevearc/aerial.nvim',
-        event = "VeryLazy",
-        -- Optional dependencies
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "nvim-tree/nvim-web-devicons"
@@ -17,7 +15,7 @@ return {
                     -- vimwiki = {"markdown"},
                 },
             })
-            vim.api.nvim_set_keymap('n', '<leader>v', ':AerialToggle<cr>', {desc = "Toggle LSP outline"})
+            vim.api.nvim_set_keymap('n', '<leader>v', ':AerialToggle<cr>', {desc = "Toggle code outline"})
         end
     },
 }

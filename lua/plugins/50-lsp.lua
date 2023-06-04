@@ -6,14 +6,20 @@ return {
     {
         'WhoIsSethDaniel/mason-tool-installer.nvim',
         opts = {
-            ensure_installed = {'codelldb', 'stylua', 'beautysh', 'shellcheck', 'prettierd'},
+            ensure_installed = {
+                'codelldb', -- rust dap
+                'stylua', -- lua formatter
+                'beautysh', -- sh/zsh/bash/etc formatter
+                'shellcheck', -- bash linter
+                'prettierd', -- html/json/css/etc formatter
+                'ansible-language-server', 'ansible-lint',
+            },
             auto_update = true,
             run_on_start = true,
         },
     },
     {
         'neovim/nvim-lspconfig',
-        priority = 100,
         dependencies = {
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
@@ -22,7 +28,7 @@ return {
         config = function()
             local lspconfig = require'lspconfig'
             local cmp_capabilities = require'cmp_nvim_lsp'.default_capabilities()
-            -- TODO incorporate current location in statusline
+            -- TODO incorporate current code location in statusline
             lspconfig.erlangls.setup{
                 capabilities = cmp_capabilities
             }
@@ -73,18 +79,31 @@ return {
                         return vim.fn.input('Path to executable: ', cwd .. '/target/debug', 'file')
                     end,
                     stopOnEntry = false,
-                    -- args = {},
                     args = function()
-                        local args_str = vim.fn.input('Arguments: ')
-                        local args = {}
-                        for str in string.gmatch(args_str, "([^%s]+)") do
-                            table.insert(args, str)
-                        end
-                        return args
+                        local args_str = vim.fn.input('Program arguments: ')
+                        return vim.fn.split(args_str)
                     end,
                     runInTerminal = false,
                 },
             }
+        end,
+    },
+    {
+        'jose-elias-alvarez/null-ls.nvim',
+        config = function()
+            local null_ls = require'null-ls'
+
+            opts = {
+                sources = {
+                    null_ls.builtins.formatting.stylua,
+                    null_ls.builtins.formatting.beautysh,
+                    null_ls.builtins.code_actions.shellcheck,
+                    null_ls.builtins.formatting.prettierd,
+                    null_ls.builtins.diagnostics.ansiblelint,
+                }
+            }
+
+            null_ls.setup(opts)
         end,
     },
     {
@@ -114,7 +133,6 @@ return {
     },
     {
         'weilbith/nvim-code-action-menu',
-        event = 'VeryLazy',
         cmd = 'CodeActionMenu',
         config = function()
             vim.keymap.set('n', '<leader>a', require'code_action_menu'.open_code_action_menu, {desc = 'LSP code action'})
@@ -123,7 +141,6 @@ return {
     },
     {
         'kosayoda/nvim-lightbulb',
-        event = 'VeryLazy',
         opts = {
             autocmd = {enabled = true}
         }

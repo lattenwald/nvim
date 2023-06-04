@@ -15,7 +15,8 @@ vim.g.mapleader = ' '
 
 require'lazy'.setup('plugins', {
     defaults = {
-        version = "*"
+        version = "*",
+        event = "VeryLazy",
     }
 })
 

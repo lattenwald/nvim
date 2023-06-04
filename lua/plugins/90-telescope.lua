@@ -1,7 +1,6 @@
 return {
     {
         'nvim-telescope/telescope.nvim',
-        event = 'VeryLazy',
         branch = '0.1.x',
         dependencies = {
             'nvim-lua/plenary.nvim',
@@ -41,8 +40,8 @@ return {
                 })
 
             local builtin = require'telescope.builtin'
-            vim.keymap.set('n', 'gr', builtin.lsp_references, {desc = 'LSP jump to reference'})
-            vim.keymap.set('n', 'gd', function() require'telescope.builtin'.lsp_definitions{jump_type = "tab"} end, {desc = 'LSP jump to definition'})
+            vim.keymap.set('n', 'gr', builtin.lsp_references, {desc = 'Jump to reference'})
+            vim.keymap.set('n', 'gd', function() require'telescope.builtin'.lsp_definitions{jump_type = "tab"} end, {desc = 'Jump to definition'})
 
             vim.keymap.set('n', '<leader>i', function()
                 if next(vim.lsp.buf_get_clients()) then
