@@ -50,6 +50,7 @@ return {
         config = function()
             local dap = require'dap'
             local dapui = require'dapui'
+            local dap_ui_widgets = require'dap.ui.widgets'
 
             dapui.setup{}
             dap.listeners.after.event_initialized["dapui_config"] = function()
@@ -66,26 +67,23 @@ return {
             local codelldb_path = codelldb_root .. "adapter/codelldb"
             local liblldb_path = codelldb_root .. "lldb/lib/liblldb.so"
 
-            dap.adapters.rust = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path)
-
-            dap.configurations.rust = {
-                {
-                    type = "rust",
-                    name = "Launch",
-                    request = "launch",
-                    cwd = '${workspaceFolder}',
-                    program = function()
-                        local _, cwd = next(vim.lsp.buf.list_workspace_folders())
-                        return vim.fn.input('Path to executable: ', cwd .. '/target/debug', 'file')
-                    end,
-                    stopOnEntry = false,
-                    args = function()
-                        local args_str = vim.fn.input('Program arguments: ')
-                        return vim.fn.split(args_str)
-                    end,
-                    runInTerminal = false,
-                },
-            }
+            vim.keymap.set('n', '<F5>',  dap.continue, {desc = 'DAP continue'})
+            vim.keymap.set('n', '<F10>', dap.step_over, {desc = 'DAP step over'})
+            vim.keymap.set('n', '<F11>', dap.step_into, {desc = 'DAP step into'})
+            vim.keymap.set('n', '<F12>', dap.step_out, {desc = 'DAP step out'})
+            vim.keymap.set('n', '<Leader>eb', dap.toggle_breakpoint, {desc = 'DAP toggle breakpoint'})
+            vim.keymap.set('n', '<Leader>eB', dap.set_breakpoint, {desc = 'DAP set breakpoint'})
+            vim.keymap.set('n', '<Leader>el', function() dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end, {desc = 'DAP set log breakpoint'})
+            vim.keymap.set('n', '<Leader>er', dap.repl.open, {desc = 'DAP open repl'})
+            vim.keymap.set('n', '<Leader>el', dap.run_last, {desc = 'DAP run last'})
+            vim.keymap.set({'n', 'v'}, '<Leader>eh', dap_ui_widgets.hover, {desc = 'DAP UI hover'})
+            vim.keymap.set({'n', 'v'}, '<Leader>ep', dap_ui_widgets.preview, {desc = 'DAP preview'})
+            vim.keymap.set('n', '<Leader>ef', function()
+                dap_ui_widgets.centered_float(dap_ui_widgets.frames)
+            end, {desc = 'DAP UI frames'})
+            vim.keymap.set('n', '<Leader>es', function()
+                dap_ui_widgets.centered_float(dap_ui_widgets.scopes)
+            end, {desc = 'DAP UI scopes'})
         end,
     },
     {
@@ -108,6 +106,7 @@ return {
     },
     {
         'simrat39/rust-tools.nvim',
+        ft = 'rust',
         config = function()
             local lldb_path = '/usr/lib/codelldb'
             local rt = require'rust-tools'
@@ -120,23 +119,47 @@ return {
                             },
                         },
                     },
+                    on_attach = function(_, bufnr)
+                        vim.keymap.set('n', '<leader>R', rt.workspace_refresh.reload_workspace, {desc = 'Reload workspace', buffer = bufnr})
+                    end,
                 },
                 dap = {
                     adapter = require'rust-tools.dap'.get_codelldb_adapter(
                         lldb_path .. '/adapter/codelldb',
                         lldb_path .. '/lldb/lib/liblldb' )
-                }
+                },
             }
-
             rt.setup(opts)
+
+            local dap = require'dap'
+            dap.adapters.rust = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path)
+            dap.configurations.rust = {
+                {
+                    type = "rust",
+                    name = "Launch",
+                    request = "launch",
+                    cwd = '${workspaceFolder}',
+                    program = function()
+                        local _, cwd = next(vim.lsp.buf.list_workspace_folders())
+                        return vim.fn.input('Path to executable: ', cwd .. '/target/debug', 'file')
+                    end,
+                    stopOnEntry = false,
+                    args = function()
+                        local args_str = vim.fn.input('Program arguments: ')
+                        return vim.fn.split(args_str)
+                    end,
+                    runInTerminal = false,
+                },
+            }
         end,
     },
     {
         'weilbith/nvim-code-action-menu',
-        cmd = 'CodeActionMenu',
+        cmd = {'CodeActionMenu'},
+        keys = {'<leader>a'},
         config = function()
-            vim.keymap.set('n', '<leader>a', require'code_action_menu'.open_code_action_menu, {desc = 'LSP code action'})
-            vim.keymap.set('v', '<leader>a', require'code_action_menu'.open_code_action_menu, {desc = 'LSP code action'})
+            local code_action_menu = require'code_action_menu'
+            vim.keymap.set({'n', 'v'}, '<leader>a', code_action_menu.open_code_action_menu, {desc = 'LSP code action'})
         end,
     },
     {
