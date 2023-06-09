@@ -7,7 +7,12 @@ return {
                     XXX = {
                         icon = " ",
                         color = "error",
-                    }
+                    },
+                    TODO = {
+                        icon = " ",
+                        color = "info",
+                        alt = { "todo" },
+                    },
                 },
                 highlight = {
                     pattern = [[.*<(KEYWORDS)\s*]],

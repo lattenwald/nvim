@@ -13,6 +13,7 @@ return {
                 'shellcheck', -- bash linter
                 'prettierd', -- html/json/css/etc formatter
                 'ansible-language-server', 'ansible-lint',
+                'xmlformatter',
             },
             auto_update = true,
             run_on_start = true,
@@ -63,10 +64,6 @@ return {
                 dapui.close()
             end
 
-            local codelldb_root = require'mason-registry'.get_package("codelldb"):get_install_path() .. "/extension/"
-            local codelldb_path = codelldb_root .. "adapter/codelldb"
-            local liblldb_path = codelldb_root .. "lldb/lib/liblldb.so"
-
             vim.keymap.set('n', '<F5>',  dap.continue, {desc = 'DAP continue'})
             vim.keymap.set('n', '<F10>', dap.step_over, {desc = 'DAP step over'})
             vim.keymap.set('n', '<F11>', dap.step_into, {desc = 'DAP step into'})
@@ -98,6 +95,7 @@ return {
                     null_ls.builtins.code_actions.shellcheck,
                     null_ls.builtins.formatting.prettierd,
                     null_ls.builtins.diagnostics.ansiblelint,
+                    null_ls.builtins.formatting.xmlformat,
                 }
             }
 
@@ -108,8 +106,12 @@ return {
         'simrat39/rust-tools.nvim',
         ft = 'rust',
         config = function()
-            local lldb_path = '/usr/lib/codelldb'
             local rt = require'rust-tools'
+            local dap = require'dap'
+            local codelldb_root = require'mason-registry'.get_package("codelldb"):get_install_path() .. "/extension/"
+            local codelldb_path = codelldb_root .. "adapter/codelldb"
+            local liblldb_path = codelldb_root .. "lldb/lib/liblldb.so"
+
             opts = {
                 server = {
                     settings = {
@@ -117,21 +119,18 @@ return {
                             checkOnSave = {
                                 command = "clippy"
                             },
+                            procMacro = {
+                                enable = true,
+                            },
                         },
                     },
                     on_attach = function(_, bufnr)
                         vim.keymap.set('n', '<leader>R', rt.workspace_refresh.reload_workspace, {desc = 'Reload workspace', buffer = bufnr})
                     end,
                 },
-                dap = {
-                    adapter = require'rust-tools.dap'.get_codelldb_adapter(
-                        lldb_path .. '/adapter/codelldb',
-                        lldb_path .. '/lldb/lib/liblldb' )
-                },
             }
             rt.setup(opts)
 
-            local dap = require'dap'
             dap.adapters.rust = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path)
             dap.configurations.rust = {
                 {
