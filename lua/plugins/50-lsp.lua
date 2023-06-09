@@ -174,5 +174,9 @@ return {
                 spinner = 'clock'
             }
         },
+    },
+    {
+        'smjonas/inc-rename.nvim',
+        opts = {},
     }
 }
