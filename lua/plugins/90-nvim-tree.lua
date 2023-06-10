@@ -7,7 +7,7 @@ return {
             vim.g.loaded_netrwPlugin = 1
             require'nvim-tree'.setup()
 
-            vim.api.nvim_set_keymap('n', '<C-f>', ':NvimTreeToggle<cr>', {desc = "NvimTree toggle"})
+            vim.keymap.set('n', '<C-f>', '<cmd>NvimTreeToggle<cr>', {desc = "NvimTree toggle"})
         end,
     }
 }

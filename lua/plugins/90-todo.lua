@@ -21,8 +21,8 @@ return {
                     pattern = [[\b(KEYWORDS)\b]] -- ripgrep regex
                 }
             }
-            vim.api.nvim_set_keymap('n', '<leader>t', ':TodoTrouble<cr>', {silent = true, desc = 'Show TODOs in Trouble list'})
-            vim.api.nvim_set_keymap('n', '<leader>T', ':TodoTelescope<cr>', {silent = true, desc = 'Show TODOs in Telescope picker'})
+            vim.keymap.set('n', '<leader>t', '<cmd>TodoTrouble<cr>', {silent = true, desc = 'Show TODOs in Trouble list'})
+            vim.keymap.set('n', '<leader>T', '<cmd>TodoTelescope<cr>', {silent = true, desc = 'Show TODOs in Telescope picker'})
         end,
     }
 }

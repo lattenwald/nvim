@@ -39,6 +39,36 @@ return {
             lspconfig.ansiblels.setup{
                 capabilities = cmp_capabilities
             }
+
+
+            vim.api.nvim_create_autocmd('LspAttach', {
+                group = vim.api.nvim_create_augroup('UserLspConfig', {}),
+                callback = function(ev)
+                    print("LS attached buf=" .. ev.buf .. " client=" .. vim.lsp.get_client_by_id(ev.data.client_id).name)
+
+                    local buf = ev.buf
+                    local opts = { buffer = buf }
+
+                    vim.keymap.set('n', 'gr', require'telescope.builtin'.lsp_references, {buffer = buf, desc = 'Jump to reference'})
+                    vim.keymap.set('n', 'gd', function() require'telescope.builtin'.lsp_definitions{jump_type = "tab"} end, {buffer = buf, desc = 'Jump to definition'})
+                    vim.keymap.set('n', 'gi', require'telescope.builtin'.lsp_implementations, {buffer = buf, desc = 'Jump to implementation'})
+
+                    vim.keymap.set('n', '<leader>d', '<cmd>Lspsaga hover_doc<cr>', {desc = "LSP hover doc", buffer = buf})
+                    vim.keymap.set('n', 'gD', '<cmd>Lspsaga peek_definition<cr>', {desc = "LSP peek definition", buffer = buf})
+                    vim.keymap.set('n', 'gT', '<cmd>Lspsaga peek_type_definition<cr>', {desc = "LSP peek type definition", buffer = buf})
+                    vim.keymap.set('n', '<leader>v', '<cmd>Lspsaga outline<cr>', {desc = "LSP outline", buffer = buf})
+                    vim.keymap.set('n', '<leader>Q', '<cmd>Lspsaga show_workspace_diagnostics<cr>', {desc = "LSP diagnostics", buffer = buf})
+
+                    vim.keymap.set('n', '<leader>n', function() return ':IncRename ' .. vim.fn.expand('<cword>') end, {buffer = buf, expr = true, desc = 'LSP rename symbol'})
+
+                    vim.keymap.set('n', '<leader>F', function()
+                        vim.lsp.buf.format { async = true }
+                    end, {buffer = buf, desc = 'Format buffer'})
+
+
+                    vim.keymap.set({'n', 'v'}, '<leader>a', require'code_action_menu'.open_code_action_menu, {desc = 'LSP code action', buffer = buf})
+                end,
+            })
         end
     },
     {
@@ -125,6 +155,7 @@ return {
                         },
                     },
                     on_attach = function(_, bufnr)
+                        print("rust LS attached")
                         vim.keymap.set('n', '<leader>R', rt.workspace_refresh.reload_workspace, {desc = 'Reload workspace', buffer = bufnr})
                     end,
                 },
@@ -156,10 +187,6 @@ return {
         'weilbith/nvim-code-action-menu',
         cmd = {'CodeActionMenu'},
         keys = {'<leader>a'},
-        config = function()
-            local code_action_menu = require'code_action_menu'
-            vim.keymap.set({'n', 'v'}, '<leader>a', code_action_menu.open_code_action_menu, {desc = 'LSP code action'})
-        end,
     },
     {
         'kosayoda/nvim-lightbulb',
@@ -169,6 +196,7 @@ return {
     },
     {
         'j-hui/fidget.nvim',
+        version = 'legacy',
         opts = {
             text = {
                 spinner = 'clock'
@@ -178,5 +206,9 @@ return {
     {
         'smjonas/inc-rename.nvim',
         opts = {},
-    }
+    },
+    {
+        'glepnir/lspsaga.nvim',
+        opts = {},
+    },
 }

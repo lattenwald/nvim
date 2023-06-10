@@ -15,7 +15,7 @@ return {
                     -- vimwiki = {"markdown"},
                 },
             })
-            vim.api.nvim_set_keymap('n', '<leader>v', ':AerialToggle<cr>', {desc = "Toggle code outline"})
+            vim.keymap.set('n', '<leader>V', '<cmd>AerialToggle<cr>', {desc = "Toggle code outline"})
         end
     },
 }

@@ -73,9 +73,29 @@ vim.api.nvim_set_keymap('n', '<M-up>', '<C-w><up>', {desc = "Go to top window"})
 vim.api.nvim_set_keymap('n', '<M-down>', '<C-w><down>', {desc = "Go to bottom window"})
 
 -- lsp keybindings
-vim.keymap.set('n', ']g', vim.diagnostic.goto_next, {silent = true, desc = "LSP: go to next diagnostic"})
-vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, {silent = true, desc = "LSP: go to previous diagnostic"})
-vim.keymap.set('n', '<leader>d', vim.lsp.buf.hover, {silent = true, desc = "LSP: hover"})
+vim.keymap.set('n', ']g', vim.diagnostic.goto_next, {silent = true, desc = "Go to next diagnostic"})
+vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, {silent = true, desc = "Go to previous diagnostic"})
+-- vim.keymap.set('n', '<leader>d', vim.lsp.buf.hover, {silent = true, desc = "LSP: hover"})
+
+util = require'util';
+vim.keymap.set('n', '<esc>', function()
+    util.close_floats()
+    vim.cmd('noh')
+    if util.lsp_active() then
+        vim.lsp.buf.clear_references()
+        for _, buffer in pairs(util.visible_buffers()) do
+            vim.lsp.util.buf_clear_references(buffer)
+        end
+    end
+end, {desc = 'close floats, clear highligths, etc.'})
+
+-- <c-o> and <c-O> to enter insert mode without continuing comments
+vim.keymap.set('n', '<c-o>', function()
+    local fo = vim.opt.formatoptions:get()
+    vim.opt.formatoptions:remove{'c', 'r', 'o'}
+    vim.api.nvim_feedkeys('o', 't', true)
+    vim.opt.formatoptions = fo
+end, {desc = '"o" but without comments'})
 
 -- remove trailing whitespaces on save
 vim.api.nvim_create_autocmd({ "BufWritePre" }, {

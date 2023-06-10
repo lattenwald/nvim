@@ -14,6 +14,8 @@ return {
                 "vim",
                 "json5",
                 "html",
+                "markdown",
+                "markdown_inline"
             },
             sync_install = false,
             auto_install = true,
