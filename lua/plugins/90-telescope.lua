@@ -16,7 +16,8 @@ return {
                         mappings = {
                             i = {
                                 ["<c-cr>"] = "select_tab",
-                                ["<esc>"] = "close",
+                                ["<c-c>"] = "close",
+                                ["q"] = "close",
                             },
                             n = {
                                 ["<c-cr>"] = "select_tab",
@@ -65,4 +66,19 @@ return {
             vim.keymap.set('n', '<leader>u', "<cmd>Telescope undo<cr>", {desc = 'undo tree'})
         end
     },
+    {
+        'nvim-telescope/telescope-file-browser.nvim',
+        dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+        config = function()
+            require'telescope'.load_extension'file_browser'
+        end,
+    },
+    {
+        'nvim-telescope/telescope-project.nvim',
+        dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim", "nvim-telescope/telescope-file-browser.nvim" },
+        config = function()
+            require'telescope'.load_extension'project'
+            vim.keymap.set('n', '<leader>p', require'telescope'.extensions.project.project, {desc = 'Projects'})
+        end,
+    }
 }

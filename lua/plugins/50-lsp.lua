@@ -14,6 +14,8 @@ return {
                 'prettierd', -- html/json/css/etc formatter
                 'ansible-language-server', 'ansible-lint',
                 'xmlformatter',
+                'erlang-ls', -- erlang ls/dap
+                'elixir-ls', -- elixir ls/dap
             },
             auto_update = true,
             run_on_start = true,
