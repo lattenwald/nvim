@@ -9,3 +9,5 @@
 /neovide-settings.json
 /mason
 /lua/.luarc.json
+/telescope-projects.txt
+/telescope-workspaces.txt
