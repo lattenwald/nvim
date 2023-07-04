@@ -18,4 +18,8 @@ return {
             vim.keymap.set('n', '<leader>V', '<cmd>AerialToggle<cr>', {desc = "Toggle code outline"})
         end
     },
+    {
+        'simrat39/symbols-outline.nvim',
+        opts = {},
+    },
 }

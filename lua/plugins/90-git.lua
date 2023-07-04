@@ -1,6 +1,6 @@
 return {
     {
-        'TimUntersberger/neogit',
+        'NeogitOrg/neogit',
         opts = {},
     },
     {
@@ -15,5 +15,9 @@ return {
     {
         'sindrets/diffview.nvim',
         opts = {},
+    },
+    {
+        'kdheepak/lazygit.nvim',
+        dependencies = {'nvim-lua/plenary.nvim'},
     }
 }

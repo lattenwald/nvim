@@ -17,11 +17,11 @@ return {
                             i = {
                                 ["<c-cr>"] = "select_tab",
                                 ["<c-c>"] = "close",
-                                ["q"] = "close",
                             },
                             n = {
                                 ["<c-cr>"] = "select_tab",
                                 ["<esc>"] = "close",
+                                ["q"] = "close",
                             },
                         },
                     },
