@@ -117,6 +117,7 @@ return {
     },
     {
         'jose-elias-alvarez/null-ls.nvim',
+        enabled = false,
         config = function()
             local null_ls = require'null-ls'
 
@@ -192,6 +193,7 @@ return {
     },
     {
         'kosayoda/nvim-lightbulb',
+        enabled = false,
         opts = {
             autocmd = {enabled = true}
         }

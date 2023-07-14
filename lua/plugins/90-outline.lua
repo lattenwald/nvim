@@ -22,4 +22,9 @@ return {
         'simrat39/symbols-outline.nvim',
         opts = {},
     },
+    {
+        'Bekaboo/dropbar.nvim',
+        enabled = false,
+        opts = {},
+    }
 }
