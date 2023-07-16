@@ -31,6 +31,7 @@ return {
         config = function()
             local lspconfig = require'lspconfig'
             local cmp_capabilities = require'cmp_nvim_lsp'.default_capabilities()
+
             -- TODO incorporate current code location in statusline
             lspconfig.erlangls.setup{
                 capabilities = cmp_capabilities
@@ -213,6 +214,12 @@ return {
     },
     {
         'glepnir/lspsaga.nvim',
-        opts = {},
+        opts = {
+            outline = {
+                keys = {
+                    expand_or_jump = "<cr>"
+                }
+            }
+        },
     },
 }
