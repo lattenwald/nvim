@@ -10,7 +10,7 @@
   "inc-rename.nvim": { "branch": "main", "commit": "ed0f6f2b917cac4eb3259f907da0a481b27a3b7e" },
   "lazy.nvim": { "branch": "main", "commit": "14d76aac4bd3ff07c1fca074c210f28f766a931e" },
   "lazygit.nvim": { "branch": "main", "commit": "146c6294bf0b4db1572fa7232039aaa9003a52b9" },
-  "lsp-progress.nvim": { "branch": "main", "commit": "2454cbb10c8232395ef4f15b5f5f718a0ca14d1d" },
+  "lsp-progress.nvim": { "branch": "main", "commit": "951570c8474cea1bc9c4f11208b076f59cd7792f" },
   "lspsaga.nvim": { "branch": "main", "commit": "e39c210c5f19a01a627e1d25544e5aca52efb522" },
   "lualine.nvim": { "branch": "master", "commit": "05d78e9fd0cdfb4545974a5aa14b1be95a86e9c9" },
   "lush.nvim": { "branch": "main", "commit": "6923ccef17c5276bc5d3cca907082e19ee165d55" },
