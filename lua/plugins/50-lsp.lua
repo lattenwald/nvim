@@ -118,7 +118,7 @@ return {
     },
     {
         'jose-elias-alvarez/null-ls.nvim',
-        enabled = false,
+        -- enabled = false,
         config = function()
             local null_ls = require'null-ls'
 
