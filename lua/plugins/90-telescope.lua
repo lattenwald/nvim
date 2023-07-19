@@ -58,10 +58,19 @@ return {
                 }
             end, {desc = 'Jump to buffers'})
 
+            local project_dir = function()
+                local git_dir = vim.fs.find('.git', {
+                    upward = true,
+                    stop = vim.loop.os_homedir(),
+                    path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
+                })[1]
+                return vim.fs.dirname(git_dir)
+            end
+
             vim.keymap.set('n', '<leader>f', builtin.git_files, {desc = 'Jump to file tracked by git'})
-            vim.keymap.set('n', '<leader> f', builtin.find_files, {desc = 'Jump to file'})
+            vim.keymap.set('n', '<leader> f', function() builtin.find_files{cwd = project_dir()} end, {desc = 'Jump to file'})
             vim.keymap.set('n', '<leader>c', builtin.git_commits, {desc = 'Jump to git commit'})
-            vim.keymap.set('n', '<leader>r', builtin.live_grep, {desc = 'Live grep with rg'})
+            vim.keymap.set('n', '<leader>r', function() builtin.live_grep{cwd = project_dir()} end, {desc = 'Live grep with rg'})
 
             vim.keymap.set('n', '<leader>u', "<cmd>Telescope undo<cr>", {desc = 'undo tree'})
         end
