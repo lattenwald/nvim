@@ -59,12 +59,19 @@ return {
             end, {desc = 'Jump to buffers'})
 
             local project_dir = function()
-                local git_dir = vim.fs.find('.git', {
+                local dir = vim.fs.find('.git', {
                     upward = true,
                     stop = vim.loop.os_homedir(),
                     path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
                 })[1]
-                return vim.fs.dirname(git_dir)
+                if not(dir) then
+                    dir = vim.fs.find('Cargo.toml', {
+                        upward = true,
+                        stop = vim.loop.os_homedir(),
+                        path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
+                    })[1]
+                end
+                return vim.fs.dirname(dir)
             end
 
             vim.keymap.set('n', '<leader>f', builtin.git_files, {desc = 'Jump to file tracked by git'})

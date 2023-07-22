@@ -6,6 +6,7 @@ return {
             'hrsh7th/cmp-nvim-lsp',
             'hrsh7th/vim-vsnip',
             'hrsh7th/cmp-buffer',
+            'hrsh7th/cmp-path',
         },
         config = function()
             local cmp = require'cmp'
@@ -20,6 +21,7 @@ return {
                     {name = 'nvim_lsp'},
                     {name = 'buffer'},
                     {name = 'vsnip'},
+                    {name = 'path'},
                 },
                 mapping = {
                     ['<up>'] = cmp.mapping.select_prev_item(),
