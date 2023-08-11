@@ -1,6 +1,7 @@
 return {
     {
         'stevearc/aerial.nvim',
+        enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "nvim-tree/nvim-web-devicons"
@@ -21,6 +22,10 @@ return {
     {
         'simrat39/symbols-outline.nvim',
         opts = {},
+        config = function()
+            require("symbols-outline").setup()
+            vim.keymap.set('n', '<leader>V', '<cmd>SymbolsOutline<cr>', {desc = "Toggle code outline"})
+        end
     },
     {
         'Bekaboo/dropbar.nvim',

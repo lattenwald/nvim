@@ -213,12 +213,16 @@ return {
         opts = {},
     },
     {
-        'glepnir/lspsaga.nvim',
+        'nvimdev/lspsaga.nvim',
+        version = nil,
         opts = {
             outline = {
                 keys = {
-                    expand_or_jump = "<cr>"
+                    toggle_or_jump = "<cr>"
                 }
+            },
+            lightbulb = {
+                enable = false,
             }
         },
     },
