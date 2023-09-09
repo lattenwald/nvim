@@ -94,7 +94,7 @@ return {
         dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim", "nvim-telescope/telescope-file-browser.nvim" },
         config = function()
             require'telescope'.load_extension'project'
-            vim.keymap.set('n', '<leader>p', require'telescope'.extensions.project.project, {desc = 'Projects'})
+            vim.keymap.set('n', '<leader>p', function() require'telescope'.extensions.project.project{display = 'full'} end, {desc = 'Projects'})
         end,
     }
 }
