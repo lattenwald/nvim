@@ -11,6 +11,8 @@ return {
             on_attach = function(bufnr)
                 local api = require'nvim-tree.api'
                 vim.keymap.set('n', '<c-cr>', api.node.open.tab_drop , {desc = 'Open node in new tab'})
+
+                api.config.mappings.default_on_attach(bufnr)
             end,
         },
         config = function(_, opts)
