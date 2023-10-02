@@ -16,9 +16,11 @@ return {
             end,
         },
         config = function(_, opts)
-            vim.g.loaded_netrw = 1
-            vim.g.loaded_netrwPlugin = 1
-            require'nvim-tree'.setup(opts)
+            local nvim_tree = require'nvim-tree'
+            nvim_tree.setup(opts)
+
+            nvim_tree.disable_netrw = false
+            nvim_tree.hijack_netrw  = true
 
             vim.keymap.set('n', '<C-f>', '<cmd>NvimTreeToggle<cr>', {desc = "NvimTree toggle"})
         end,
