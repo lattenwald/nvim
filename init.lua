@@ -67,10 +67,10 @@ vim.api.nvim_set_keymap('n', '<C-S-PageDown>', ':tabmove +1<cr>', {desc = "Move 
 vim.api.nvim_set_keymap('n', '<C-S-PageUp>', ':tabmove -1<cr>', {desc = "Move tab left"})
 
 -- move between windows
-vim.api.nvim_set_keymap('n', '<M-left>', '<C-w><left>', {desc = "Go to left window"})
-vim.api.nvim_set_keymap('n', '<M-right>', '<C-w><right>', {desc = "Go to right window"})
-vim.api.nvim_set_keymap('n', '<M-up>', '<C-w><up>', {desc = "Go to top window"})
-vim.api.nvim_set_keymap('n', '<M-down>', '<C-w><down>', {desc = "Go to bottom window"})
+vim.keymap.set({'n', 't'}, '<M-left>', '<Cmd>wincmd h<CR>', {desc = "Go to left window"})
+vim.keymap.set({'n', 't'}, '<M-rigth>', '<Cmd>wincmd l<CR>', {desc = "Go to right window"})
+vim.keymap.set({'n', 't'}, '<M-up>', '<Cmd>wincmd k<CR>', {desc = "Go to top window"})
+vim.keymap.set({'n', 't'}, '<M-down>', '<Cmd>wincmd j<CR>', {desc = "Go to bottom window"})
 
 -- lsp keybindings
 vim.keymap.set('n', ']g', vim.diagnostic.goto_next, {silent = true, desc = "Go to next diagnostic"})
