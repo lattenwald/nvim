@@ -68,7 +68,7 @@ vim.api.nvim_set_keymap('n', '<C-S-PageUp>', ':tabmove -1<cr>', {desc = "Move ta
 
 -- move between windows
 vim.keymap.set({'n', 't'}, '<M-left>', '<Cmd>wincmd h<CR>', {desc = "Go to left window"})
-vim.keymap.set({'n', 't'}, '<M-rigth>', '<Cmd>wincmd l<CR>', {desc = "Go to right window"})
+vim.keymap.set({'n', 't'}, '<M-right>', '<Cmd>wincmd l<CR>', {desc = "Go to right window"})
 vim.keymap.set({'n', 't'}, '<M-up>', '<Cmd>wincmd k<CR>', {desc = "Go to top window"})
 vim.keymap.set({'n', 't'}, '<M-down>', '<Cmd>wincmd j<CR>', {desc = "Go to bottom window"})
 
