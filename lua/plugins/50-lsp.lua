@@ -29,11 +29,17 @@ return {
             'WhoIsSethDaniel/mason-tool-installer.nvim',
         },
         config = function()
+            require("mason").setup()
+            require("mason-lspconfig").setup()
+
             local lspconfig = require'lspconfig'
             local cmp_capabilities = require'cmp_nvim_lsp'.default_capabilities()
 
             -- TODO incorporate current code location in statusline
             lspconfig.erlangls.setup{
+                capabilities = cmp_capabilities
+            }
+            lspconfig.elixirls.setup{
                 capabilities = cmp_capabilities
             }
             -- lspconfig.rust_analyzer.setup{
