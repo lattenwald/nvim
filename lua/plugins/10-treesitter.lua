@@ -6,6 +6,7 @@ return {
                 "rust",
                 "erlang",
                 "elixir",
+                "heex",
                 "perl",
                 "bash",
                 "lua",
@@ -19,6 +20,9 @@ return {
             },
             sync_install = false,
             auto_install = true,
+            highlight = {
+                enable = true,
+            },
         }
     }
 }
