@@ -78,6 +78,7 @@ return {
             vim.keymap.set('n', '<leader>f', function() builtin.find_files{cwd = project_dir()} end, {desc = 'Jump to file'})
             vim.keymap.set('n', '<leader>C', builtin.git_commits, {desc = 'Jump to git commit'})
             vim.keymap.set('n', '<leader>r', function() builtin.live_grep{cwd = project_dir()} end, {desc = 'Live grep with rg'})
+            vim.keymap.set('n', '<f3>', function() builtin.grep_string{glob_pattern = vim.fn.expand('%')} end, {desc = 'Find string under cursor in current file'})
 
             vim.keymap.set('n', '<leader>u', "<cmd>Telescope undo<cr>", {desc = 'undo tree'})
         end
