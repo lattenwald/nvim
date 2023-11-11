@@ -16,6 +16,7 @@ return {
                 'xmlformatter',
                 'erlang-ls', -- erlang ls/dap
                 'elixir-ls', -- elixir ls/dap
+                'phpactor', -- PHP LSP
             },
             auto_update = true,
             run_on_start = true,
@@ -49,6 +50,13 @@ return {
                 capabilities = cmp_capabilities
             }
 
+            lspconfig.phpactor.setup{
+                on_attach = on_attach,
+                init_options = {
+                    ["language_server_phpstan.enabled"] = false,
+                    ["language_server_psalm.enabled"] = false,
+                }
+            }
 
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('UserLspConfig', {}),
