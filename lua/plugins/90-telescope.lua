@@ -74,8 +74,8 @@ return {
                 return vim.fs.dirname(dir)
             end
 
-            vim.keymap.set('n', '<leader>f', builtin.git_files, {desc = 'Jump to file tracked by git'})
-            vim.keymap.set('n', '<leader> f', function() builtin.find_files{cwd = project_dir()} end, {desc = 'Jump to file'})
+            vim.keymap.set('n', '<leader> f', builtin.git_files, {desc = 'Jump to file tracked by git'})
+            vim.keymap.set('n', '<leader>f', function() builtin.find_files{cwd = project_dir()} end, {desc = 'Jump to file'})
             vim.keymap.set('n', '<leader>C', builtin.git_commits, {desc = 'Jump to git commit'})
             vim.keymap.set('n', '<leader>r', function() builtin.live_grep{cwd = project_dir()} end, {desc = 'Live grep with rg'})
 
