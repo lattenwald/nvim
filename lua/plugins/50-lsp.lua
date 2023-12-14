@@ -78,7 +78,7 @@ return {
 
                     vim.keymap.set('n', '<leader>n', function() return ':IncRename ' .. vim.fn.expand('<cword>') end, {buffer = buf, expr = true, desc = 'LSP rename symbol'})
 
-                    vim.keymap.set('n', '<leader>F', function()
+                    vim.keymap.set('n', '<leader>s', function()
                         vim.lsp.buf.format { async = true }
                     end, {buffer = buf, desc = 'Format buffer'})
 
