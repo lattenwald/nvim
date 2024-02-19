@@ -151,7 +151,13 @@ return {
         end,
     },
     {
+        'mrcjkb/rustaceanvim',
+        -- enabled = false,
+        -- ft = 'rust',
+    },
+    {
         'simrat39/rust-tools.nvim',
+        enabled = false,
         ft = 'rust',
         config = function()
             local rt = require'rust-tools'
