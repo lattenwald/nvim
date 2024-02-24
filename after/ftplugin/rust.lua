@@ -3,11 +3,26 @@ vim.keymap.set("n", "<leader>R", "<cmd>RustLsp reloadWorkspace<CR>", { silent = 
 vim.keymap.set("n", "<leader>a", "<cmd>RustLsp codeAction<CR>", { silent = true, buffer = bufnr, desc = "Code actions" })
 vim.keymap.set("n", "<leader>A", "<cmd>RustLsp hover actions<CR>", { silent = true, buffer = bufnr, desc = "Hover action" })
 
--- vim.g.rustaceanvim.server.on_attach = function(_, bufnr)
---     print("rust LS attached")
--- end
+vim.g.rustaceanvim = function()
+  -- Update this path
+  local extension_path = '/usr/lib/codelldb/'
+  local codelldb_path = extension_path .. 'adapter/codelldb'
+  local liblldb_path = extension_path .. 'lldb/lib/liblldb'
+  local this_os = vim.loop.os_uname().sysname;
 
--- vim.g.rustaceanvim.server.on_attach = function(_, bufnr)
---     print("rust LS attached")
---     vim.keymap.set("n", "<leader>A", function() vim.cmd.RustLsp('codeAction') end, { buffer = bufnr, description = "Code action" })
--- end
+  -- The path is different on Windows
+  if this_os:find "Windows" then
+    codelldb_path = extension_path .. "adapter\\codelldb.exe"
+    liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
+  else
+    -- The liblldb extension is .so for Linux and .dylib for MacOS
+    liblldb_path = liblldb_path .. (this_os == "Linux" and ".so" or ".dylib")
+  end
+
+  local cfg = require('rustaceanvim.config')
+  return {
+    dap = {
+      adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path),
+    },
+  }
+end
