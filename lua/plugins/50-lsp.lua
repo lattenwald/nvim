@@ -17,6 +17,7 @@ return {
                 'erlang-ls', -- erlang ls/dap
                 'elixir-ls', -- elixir ls/dap
                 'phpactor', -- PHP LSP
+                'texlab', -- LaTeX LSP
             },
             auto_update = true,
             run_on_start = true,
@@ -57,6 +58,8 @@ return {
                     ["language_server_psalm.enabled"] = false,
                 }
             }
+
+            lspconfig.texlab.setup{}
 
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('UserLspConfig', {}),
