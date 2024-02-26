@@ -26,7 +26,7 @@ return {
         },
         config = function(_, opts)
             require'noice'.setup(opts)
-            vim.api.nvim_set_keymap('n', '<leader>m', '<Cmd>Noice telescope<CR>', {desc = "Show notices history"})
+            vim.api.nvim_set_keymap('n', '<leader>m', '<Cmd>Noice telescope<CR><Esc>', {desc = "Show notices history"})
         end
     }
 }
