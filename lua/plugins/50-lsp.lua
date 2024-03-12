@@ -18,6 +18,7 @@ return {
                 'elixir-ls', -- elixir ls/dap
                 'phpactor', -- PHP LSP
                 'texlab', -- LaTeX LSP
+                'pyright', -- Python LSP
             },
             auto_update = true,
             run_on_start = true,
@@ -57,6 +58,10 @@ return {
                     ["language_server_phpstan.enabled"] = false,
                     ["language_server_psalm.enabled"] = false,
                 }
+            }
+
+            lspconfig.pyright.setup{
+                capabilities = cmp_capabilities
             }
 
             lspconfig.texlab.setup{}
