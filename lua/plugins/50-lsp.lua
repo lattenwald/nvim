@@ -102,6 +102,7 @@ return {
             'theHamsta/nvim-dap-virtual-text', 'rcarriga/nvim-dap-ui', 'nvim-telescope/telescope-dap.nvim',
             'mfussenegger/nvim-dap-python',
             'jbyuki/one-small-step-for-vimkind', -- LUA DAP adapter
+            'nvim-neotest/nvim-nio',
         },
         config = function()
             local dap = require'dap'
