@@ -13,6 +13,23 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.g.mapleader = ' '
 
+current_repo_name = function()
+    local dir = vim.fs.find('.git', {
+        upward = true,
+        stop = vim.loop.os_homedir(),
+        path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
+    })[1]
+    if not(dir) then
+        dir = vim.fs.find('Cargo.toml', {
+            upward = true,
+            stop = vim.loop.os_homedir(),
+            path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
+        })[1]
+    end
+    local repo_dir = vim.fs.dirname(dir)
+    return vim.fs.basename(repo_dir)
+end
+
 require'lazy'.setup('plugins', {
     defaults = {
         version = "*",
@@ -59,6 +76,15 @@ vim.api.nvim_set_keymap('i', '<C-P>', '<esc>:set list!<cr>i', {desc = "Toggle sh
 -- chdir
 vim.api.nvim_set_keymap('n', '<leader>cd', ':cd %:p:h<cr>:pwd<cr>', {desc = "Change dir to current file"})
 vim.api.nvim_create_autocmd('BufEnter', {command = [[silent! lcd %:p:h]]})
+vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {callback = function()
+    local r = current_repo_name()
+    if r then
+        vim.opt.title = true
+        vim.opt.titlestring = r .. " :: Neovide"
+    else
+        vim.opt.title = false
+    end
+end})
 
 vim.api.nvim_set_keymap('c', '<S-Insert>', '<C-R>+', {desc = "Insert from buffer in command mode"})
 

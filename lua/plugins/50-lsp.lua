@@ -66,6 +66,14 @@ return {
 
             lspconfig.texlab.setup{}
 
+            lspconfig.perlnavigator.setup{
+                settings = {
+                    perlnavigator = {
+                        includePaths = {"~/perl5/lib/perl5"}
+                    },
+                }
+            }
+
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('UserLspConfig', {}),
                 callback = function(ev)

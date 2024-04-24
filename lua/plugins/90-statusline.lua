@@ -12,27 +12,10 @@ return {
                 event = 'LspProgressUpdate',
             }
 
-            local repo = function()
-                local dir = vim.fs.find('.git', {
-                    upward = true,
-                    stop = vim.loop.os_homedir(),
-                    path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
-                })[1]
-                if not(dir) then
-                    dir = vim.fs.find('Cargo.toml', {
-                        upward = true,
-                        stop = vim.loop.os_homedir(),
-                        path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
-                    })[1]
-                end
-                local repo_dir = vim.fs.dirname(dir)
-                return vim.fs.basename(repo_dir)
-            end
-
             local opts = {
                 theme = 'auto',
                 sections = {
-                    lualine_b = {repo, 'branch', 'diff', 'diagnostics'},
+                    lualine_b = {current_repo_name, 'branch', 'diff', 'diagnostics'},
                     lualine_c = {'filename', lsp_progress.progress},
                 }
             }
