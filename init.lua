@@ -76,7 +76,7 @@ vim.api.nvim_set_keymap('i', '<C-P>', '<esc>:set list!<cr>i', {desc = "Toggle sh
 -- chdir
 vim.api.nvim_set_keymap('n', '<leader>cd', ':cd %:p:h<cr>:pwd<cr>', {desc = "Change dir to current file"})
 vim.api.nvim_create_autocmd('BufEnter', {command = [[silent! lcd %:p:h]]})
-vim.api.nvim_create_autocmd({'BufEnter', 'BufWinEnter'}, {callback = function()
+vim.api.nvim_create_autocmd('BufEnter', {callback = function()
     local r = current_repo_name()
     if r then
         vim.opt.title = true
