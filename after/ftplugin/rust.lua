@@ -1,5 +1,3 @@
-print("Rust!")
-
 vim.keymap.set("n", "<leader>R", function() vim.cmd.RustLsp('reloadWorkspace') end, { silent = true, buffer = true, desc = 'Reload workspace' })
 vim.keymap.set("n", "<leader>a", function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = true, desc = 'Rust code actions', remap = true })
 vim.keymap.set("n", "<leader>A", function() vim.cmd.RustLsp{'hover', 'actions'} end, { silent = true, buffer = true, desc = 'Rust hover action' })
