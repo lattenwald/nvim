@@ -1,7 +1,10 @@
-local bufnr = vim.api.nvim_get_current_buf()
-vim.keymap.set("n", "<leader>R", "<cmd>RustLsp reloadWorkspace<CR>", { silent = true, buffer = bufnr, desc = "Reload workspace" })
-vim.keymap.set("n", "<leader>a", "<cmd>RustLsp codeAction<CR>", { silent = true, buffer = bufnr, desc = "Code actions" })
-vim.keymap.set("n", "<leader>A", "<cmd>RustLsp hover actions<CR>", { silent = true, buffer = bufnr, desc = "Hover action" })
+print("Rust!")
+
+vim.keymap.set("n", "<leader>R", function() vim.cmd.RustLsp('reloadWorkspace') end, { silent = true, buffer = true, desc = 'Reload workspace' })
+vim.keymap.set("n", "<leader>a", function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = true, desc = 'Rust code actions', remap = true })
+vim.keymap.set("n", "<leader>A", function() vim.cmd.RustLsp{'hover', 'actions'} end, { silent = true, buffer = true, desc = 'Rust hover action' })
+vim.keymap.set('n', '<C-f5>',  function() vim.cmd.RustLsp('debug') end, {silent = true, buffer = true, desc = 'RustLsp debug'})
+vim.keymap.set('n', '<C-S-f5>',  function() vim.cmd.RustLsp{'debug', bang = true} end, {silent = true, buffer = true, desc = 'RustLsp debug!'})
 
 vim.g.rustaceanvim = function()
   -- Update this path

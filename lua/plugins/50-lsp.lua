@@ -53,7 +53,7 @@ return {
             }
 
             lspconfig.phpactor.setup{
-                on_attach = on_attach,
+                -- on_attach = on_attach,
                 init_options = {
                     ["language_server_phpstan.enabled"] = false,
                     ["language_server_psalm.enabled"] = false,
@@ -79,38 +79,43 @@ return {
                 callback = function(ev)
                     print("LS attached buf=" .. ev.buf .. " client=" .. vim.lsp.get_client_by_id(ev.data.client_id).name)
 
-                    local buf = ev.buf
-                    local opts = { buffer = buf }
+                    vim.keymap.set('n', 'gr', require'telescope.builtin'.lsp_references, {buffer = true, desc = 'Jump to reference'})
+                    vim.keymap.set('n', 'gd', function() require'telescope.builtin'.lsp_definitions{jump_type = "tab"} end, {buffer = true, desc = 'Jump to definition'})
+                    vim.keymap.set('n', 'gi', require'telescope.builtin'.lsp_implementations, {buffer = true, desc = 'Jump to implementation'})
 
-                    vim.keymap.set('n', 'gr', require'telescope.builtin'.lsp_references, {buffer = buf, desc = 'Jump to reference'})
-                    vim.keymap.set('n', 'gd', function() require'telescope.builtin'.lsp_definitions{jump_type = "tab"} end, {buffer = buf, desc = 'Jump to definition'})
-                    vim.keymap.set('n', 'gi', require'telescope.builtin'.lsp_implementations, {buffer = buf, desc = 'Jump to implementation'})
+                    vim.keymap.set('n', '<leader>d', '<cmd>Lspsaga hover_doc<cr>', {desc = "LSP hover doc", buffer = true})
+                    vim.keymap.set('n', 'gD', '<cmd>Lspsaga peek_definition<cr>', {desc = "LSP peek definition", buffer = true})
+                    vim.keymap.set('n', 'gT', '<cmd>Lspsaga peek_type_definition<cr>', {desc = "LSP peek type definition", buffer = true})
+                    vim.keymap.set('n', '<leader>v', '<cmd>Lspsaga outline<cr>', {desc = "LSP outline", buffer = true})
+                    vim.keymap.set('n', '<leader>Q', '<cmd>Lspsaga show_workspace_diagnostics<cr>', {desc = "LSP diagnostics", buffer = true})
 
-                    vim.keymap.set('n', '<leader>d', '<cmd>Lspsaga hover_doc<cr>', {desc = "LSP hover doc", buffer = buf})
-                    vim.keymap.set('n', 'gD', '<cmd>Lspsaga peek_definition<cr>', {desc = "LSP peek definition", buffer = buf})
-                    vim.keymap.set('n', 'gT', '<cmd>Lspsaga peek_type_definition<cr>', {desc = "LSP peek type definition", buffer = buf})
-                    vim.keymap.set('n', '<leader>v', '<cmd>Lspsaga outline<cr>', {desc = "LSP outline", buffer = buf})
-                    vim.keymap.set('n', '<leader>Q', '<cmd>Lspsaga show_workspace_diagnostics<cr>', {desc = "LSP diagnostics", buffer = buf})
-
-                    vim.keymap.set('n', '<leader>n', function() return ':IncRename ' .. vim.fn.expand('<cword>') end, {buffer = buf, expr = true, desc = 'LSP rename symbol'})
+                    vim.keymap.set('n', '<leader>n', function() return ':IncRename ' .. vim.fn.expand('<cword>') end, {buffer = true, expr = true, desc = 'LSP rename symbol'})
 
                     vim.keymap.set('n', '<leader>s', function()
                         vim.lsp.buf.format { async = true }
-                    end, {buffer = buf, desc = 'Format buffer'})
+                    end, {buffer = true, desc = 'Format buffer'})
 
-
-                    vim.keymap.set({'n', 'v'}, '<leader>a', require'code_action_menu'.open_code_action_menu, {desc = 'LSP code action', buffer = buf})
+                    -- FIXME this takes precedence over mapping in after/ftplugin/rust.lua, but shouldn't
+                    vim.keymap.set({'n', 'v'}, '<leader>a', require'code_action_menu'.open_code_action_menu, {desc = 'LSP code action', buffer = true, remap = false})
                 end,
             })
+        end
+    },
+    {
+        'mfussenegger/nvim-dap-python',
+        lazy = true,
+        ft = 'python',
+        config = function()
+            require('dap-python').setup('/usr/bin/python')
         end
     },
     {
         'mfussenegger/nvim-dap',
         dependencies = {
             'theHamsta/nvim-dap-virtual-text', 'rcarriga/nvim-dap-ui', 'nvim-telescope/telescope-dap.nvim',
-            'mfussenegger/nvim-dap-python',
             'jbyuki/one-small-step-for-vimkind', -- LUA DAP adapter
             'nvim-neotest/nvim-nio',
+            -- 'ldelossa/nvim-dap-projects',
         },
         config = function()
             local dap = require'dap'
@@ -148,19 +153,25 @@ return {
         end,
     },
     {
-        'jose-elias-alvarez/null-ls.nvim',
-        -- enabled = false,
+        'nvimtools/none-ls.nvim',
+        dependencies = {
+            'gbprod/none-ls-shellcheck.nvim',
+        },
         config = function()
             local null_ls = require'null-ls'
 
-            opts = {
+            local opts = {
                 sources = {
                     null_ls.builtins.formatting.stylua,
-                    null_ls.builtins.formatting.beautysh,
-                    null_ls.builtins.code_actions.shellcheck,
+                    -- null_ls.builtins.formatting.beautysh,
                     null_ls.builtins.formatting.prettierd,
+                    -- null_ls.builtins.formatting.xmlformat,
+
                     null_ls.builtins.diagnostics.ansiblelint,
-                    null_ls.builtins.formatting.xmlformat,
+                    null_ls.builtins.diagnostics.selene,
+
+                    require("none-ls-shellcheck.diagnostics"),
+                    require("none-ls-shellcheck.code_actions"),
                 }
             }
 
@@ -169,73 +180,12 @@ return {
     },
     {
         'mrcjkb/rustaceanvim',
-        -- enabled = false,
         -- ft = 'rust',
-    },
-    {
-        'simrat39/rust-tools.nvim',
-        enabled = false,
-        ft = 'rust',
-        config = function()
-            local rt = require'rust-tools'
-            local dap = require'dap'
-            local codelldb_root = require'mason-registry'.get_package("codelldb"):get_install_path() .. "/extension/"
-            local codelldb_path = codelldb_root .. "adapter/codelldb"
-            local liblldb_path = codelldb_root .. "lldb/lib/liblldb.so"
-
-            opts = {
-                hover_actions = {
-                    auto_focus = true,
-                },
-                server = {
-                    settings = {
-                        ["rust-analyzer"] = {
-                            checkOnSave = {
-                                command = "clippy"
-                            },
-                            procMacro = {
-                                enable = true,
-                            },
-                        },
-                    },
-                    on_attach = function(_, bufnr)
-                        print("rust LS attached")
-                        vim.keymap.set('n', '<leader>R', rt.workspace_refresh.reload_workspace, {desc = 'Reload workspace', buffer = bufnr})
-                        vim.keymap.set("n", "<leader>A", rt.hover_actions.hover_actions, {desc = 'Rust hover action', buffer = bufnr})
-                        vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, {desc = 'Rust code action', buffer = bufnr})
-                        vim.keymap.set("n", "<Leader>D", rt.debuggables.debuggables, {desc = 'Rust debuggables', buffer = bufnr})
-                        vim.keymap.set("n", "<Leader>R", rt.runnables.runnables, {desc = 'Rust runnables', buffer = bufnr})
-                    end,
-                },
-                dap = { adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path) },
-            }
-            rt.setup(opts)
-
-            dap.adapters.rust = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path)
-            dap.configurations.rust = {
-                {
-                    type = "rust",
-                    name = "Launch",
-                    request = "launch",
-                    cwd = '${workspaceFolder}',
-                    program = function()
-                        local _, cwd = next(vim.lsp.buf.list_workspace_folders())
-                        return vim.fn.input('Path to executable: ', cwd .. '/target/debug', 'file')
-                    end,
-                    stopOnEntry = false,
-                    args = function()
-                        local args_str = vim.fn.input('Program arguments: ')
-                        return vim.fn.split(args_str)
-                    end,
-                    runInTerminal = false,
-                },
-            }
-        end,
     },
     {
         'weilbith/nvim-code-action-menu',
         cmd = {'CodeActionMenu'},
-        keys = {'<leader>a'},
+        -- keys = {'<leader>a'},
     },
     {
         'kosayoda/nvim-lightbulb',

@@ -1,11 +1,9 @@
 -- https://blog.epheme.re/software/nvim-latex.html
 -- and some additions
 
-local bufnr = vim.api.nvim_get_current_buf()
-
 vim.g.vimtex_view_method = "zathura"
 
-vim.keymap.set('n', '<leader>ll', '<cmd>VimtexCompile<CR>', { silent = true, buffer = bufnr, desc = 'TeX compile' })
+vim.keymap.set('n', '<leader>ll', '<cmd>VimtexCompile<CR>', { silent = true, buffer = true, desc = 'TeX compile' })
 
 -- From: https://github.com/lervag/vimtex/blob/master/doc/vimtex.txt#L4671-L4713
 vim.o.foldmethod = "expr"
