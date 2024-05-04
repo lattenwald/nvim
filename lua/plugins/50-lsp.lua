@@ -45,9 +45,6 @@ return {
             lspconfig.elixirls.setup{
                 capabilities = cmp_capabilities
             }
-            -- lspconfig.rust_analyzer.setup{
-            --     capabilities = cmp_capabilities
-            -- }
             lspconfig.ansiblels.setup{
                 capabilities = cmp_capabilities
             }
