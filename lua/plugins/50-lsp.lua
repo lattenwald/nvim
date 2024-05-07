@@ -177,28 +177,14 @@ return {
     },
     {
         'mrcjkb/rustaceanvim',
-        -- ft = 'rust',
+        lazy = true,
+        ft = 'rust',
     },
     {
         'weilbith/nvim-code-action-menu',
+        lazy = true,
         cmd = {'CodeActionMenu'},
-        -- keys = {'<leader>a'},
-    },
-    {
-        'kosayoda/nvim-lightbulb',
-        enabled = false,
-        opts = {
-            autocmd = {enabled = true}
-        }
-    },
-    {
-        'j-hui/fidget.nvim',
-        enabled = false,
-        opts = {
-            text = {
-                spinner = 'clock'
-            }
-        },
+        keys = {'<leader>a'},
     },
     {
         'smjonas/inc-rename.nvim',
