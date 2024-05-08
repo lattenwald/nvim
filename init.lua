@@ -61,6 +61,7 @@ vim.o.tabstop=4
 vim.o.shiftwidth=4
 vim.o.visualbell = false
 vim.o.expandtab = true
+vim.o.scl = 'yes:1'
 
 vim.o.number = true
 vim.api.nvim_set_keymap('n', '<C-N>', ':set number!<cr>', {desc = "Toggle line numbers"})
