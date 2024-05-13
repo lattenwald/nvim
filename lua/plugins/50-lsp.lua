@@ -18,7 +18,7 @@ return {
                 'elixir-ls', -- elixir ls/dap
                 'phpactor', -- PHP LSP
                 'texlab', -- LaTeX LSP
-                'pyright', -- Python LSP
+                'pyright', 'ruff', 'ruff-lsp' -- Python stuff
             },
             auto_update = true,
             run_on_start = true,
@@ -58,6 +58,9 @@ return {
             }
 
             lspconfig.pyright.setup{
+                capabilities = cmp_capabilities
+            }
+            lspconfig.ruff_lsp.setup{
                 capabilities = cmp_capabilities
             }
 
