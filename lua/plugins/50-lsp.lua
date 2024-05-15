@@ -1,16 +1,16 @@
-local load_lsp = function()
-    vim.fn.filereadable(vim.fn.expand("~/.config/nvim/load-lsp"))
+function load_lsp ()
+    return vim.fn.filereadable(vim.fn.expand("~/.config/nvim/load-lsp")) == 1
 end
 
 return {
     {
         'williamboman/mason.nvim',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         opts = {},
     },
     {
         'WhoIsSethDaniel/mason-tool-installer.nvim',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         opts = {
             ensure_installed = {
                 'codelldb', -- rust dap
@@ -32,7 +32,7 @@ return {
     },
     {
         'neovim/nvim-lspconfig',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         dependencies = {
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
@@ -110,7 +110,7 @@ return {
     },
     {
         'mfussenegger/nvim-dap-python',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         lazy = true,
         ft = 'python',
         config = function()
@@ -119,7 +119,7 @@ return {
     },
     {
         'mfussenegger/nvim-dap',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         dependencies = {
             'theHamsta/nvim-dap-virtual-text', 'rcarriga/nvim-dap-ui', 'nvim-telescope/telescope-dap.nvim',
             'jbyuki/one-small-step-for-vimkind', -- LUA DAP adapter
@@ -163,7 +163,7 @@ return {
     },
     {
         'nvimtools/none-ls.nvim',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         dependencies = {
             'gbprod/none-ls-shellcheck.nvim',
         },
@@ -190,25 +190,25 @@ return {
     },
     {
         'mrcjkb/rustaceanvim',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         lazy = true,
         ft = 'rust',
     },
     {
         'weilbith/nvim-code-action-menu',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         lazy = true,
         cmd = {'CodeActionMenu'},
         keys = {'<leader>a'},
     },
     {
         'smjonas/inc-rename.nvim',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         opts = {},
     },
     {
         'nvimdev/lspsaga.nvim',
-        enabled = load_lsp(),
+        enabled = load_lsp,
         version = nil,
         opts = {
             outline = {
