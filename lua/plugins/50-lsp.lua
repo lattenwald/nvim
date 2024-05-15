@@ -24,7 +24,8 @@ return {
                 'elixir-ls', -- elixir ls/dap
                 'phpactor', -- PHP LSP
                 'texlab', -- LaTeX LSP
-                'pyright', 'ruff', 'ruff-lsp' -- Python stuff
+                'pyright', 'ruff', 'ruff-lsp', -- Python stuff
+                'stylelint', -- CSS
             },
             auto_update = true,
             run_on_start = true,
