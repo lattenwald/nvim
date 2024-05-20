@@ -20,6 +20,7 @@ vim.g.rustaceanvim = function()
       capabilities = require'cmp_nvim_lsp'.default_capabilities(),
       on_attach = function(_client, bufnr)
         print("rustaceanvim attached!")
+        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
         vim.keymap.set("n", "<leader>R", function() vim.cmd.RustLsp('reloadWorkspace') end, { silent = true, buffer = bufnr, desc = 'Reload workspace' })
         vim.keymap.set("n", "<leader>a", function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = bufnr, desc = 'Rust code actions', remap = true })
         vim.keymap.set("n", "<leader>A", function() vim.cmd.RustLsp{'hover', 'actions'} end, { silent = true, buffer = bufnr, desc = 'Rust hover action' })
