@@ -22,7 +22,7 @@ return {
             nvim_tree.disable_netrw = false
             nvim_tree.hijack_netrw  = true
 
-            vim.keymap.set('n', '<C-S-f>', '<cmd>NvimTreeToggle<cr>', {desc = "NvimTree toggle"})
+            vim.keymap.set('n', '<C-f>', '<cmd>NvimTreeToggle<cr>', {desc = "NvimTree toggle"})
         end,
     },
     {
@@ -33,7 +33,7 @@ return {
             'MunifTanjim/nui.nvim',
         },
         config = function()
-            vim.keymap.set('n', '<C-f>', '<cmd>Neotree reveal toggle<cr>', {desc = "Neotree current file"})
+            vim.keymap.set('n', '<C-S-f>', '<cmd>Neotree reveal toggle<cr>', {desc = "Neotree current file"})
             vim.keymap.set('n', '<C-b>', '<cmd>Neotree buffers float toggle<cr>', {desc = "Neotree buffers"})
         end,
     },
