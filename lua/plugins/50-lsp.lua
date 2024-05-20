@@ -15,6 +15,7 @@ return {
             ensure_installed = {
                 'codelldb', -- rust dap
                 'stylua', -- lua formatter
+                'selene', -- lua LSP
                 'beautysh', -- sh/zsh/bash/etc formatter
                 'shellcheck', -- bash linter
                 'prettierd', -- html/json/css/etc formatter
@@ -24,7 +25,7 @@ return {
                 'elixir-ls', -- elixir ls/dap
                 'phpactor', -- PHP LSP
                 'texlab', -- LaTeX LSP
-                'pyright', 'ruff', 'ruff-lsp', -- Python stuff
+                'basedpyright', 'ruff', 'ruff-lsp', -- Python stuff
                 'stylelint', -- CSS
             },
             auto_update = true,
@@ -33,6 +34,8 @@ return {
     },
     {
         'neovim/nvim-lspconfig',
+        branch = "master",
+        version = nil,
         enabled = load_lsp,
         dependencies = {
             'williamboman/mason.nvim',
@@ -65,14 +68,33 @@ return {
                 }
             }
 
-            lspconfig.pyright.setup{
-                capabilities = cmp_capabilities
+            lspconfig.basedpyright.setup{
+                capabilities = cmp_capabilities,
+                settings = {
+                    basedpyright = {
+                        typeCheckingMode = "standard",
+                    },
+                },
             }
             lspconfig.ruff_lsp.setup{
                 capabilities = cmp_capabilities
             }
+            lspconfig.pylsp.setup{
+                capabilities = cmp_capabilities,
+                settings = {
+                    pylsp = {
+                        plugins = {
+                            pycodestyle = {
+                                maxLineLength = 120,
+                            }
+                        }
+                    }
+                }
+            }
 
-            lspconfig.texlab.setup{}
+            lspconfig.texlab.setup{
+                capabilities = cmp_capabilities
+            }
 
             lspconfig.perlnavigator.setup{
                 settings = {
