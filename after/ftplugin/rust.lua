@@ -22,6 +22,17 @@ vim.g.rustaceanvim = function()
 
   local cfg = require('rustaceanvim.config')
   return {
+    server = {
+      capabilities = require'cmp_nvim_lsp'.default_capabilities(),
+      on_attach = function(_client, bufnr)
+        print("rustaceanvim attached!")
+        vim.keymap.set("n", "<leader>R", function() vim.cmd.RustLsp('reloadWorkspace') end, { silent = true, buffer = bufnr, desc = 'Reload workspace' })
+        vim.keymap.set("n", "<leader>a", function() vim.cmd.RustLsp('codeAction') end, { silent = true, buffer = bufnr, desc = 'Rust code actions', remap = true })
+        vim.keymap.set("n", "<leader>A", function() vim.cmd.RustLsp{'hover', 'actions'} end, { silent = true, buffer = bufnr, desc = 'Rust hover action' })
+        vim.keymap.set('n', '<C-f5>',  function() vim.cmd.RustLsp('debug') end, {silent = true, buffer = bufnr, desc = 'RustLsp debug'})
+        vim.keymap.set('n', '<C-S-f5>',  function() vim.cmd.RustLsp{'debug', bang = true} end, {silent = true, buffer = bufnr, desc = 'RustLsp debug!'})
+      end,
+    },
     dap = {
       adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path),
     },
