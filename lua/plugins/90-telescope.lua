@@ -8,6 +8,9 @@ return {
         },
         config = function()
             local telescope = require'telescope';
+            local open_with_trouble = require("trouble.sources.telescope").open
+            local add_to_trouble = require("trouble.sources.telescope").add
+
             telescope.setup({
                     extensions = {
                         undo = {}
@@ -17,11 +20,15 @@ return {
                             i = {
                                 ["<c-cr>"] = "select_tab",
                                 ["<c-c>"] = "close",
+                                ["<c-t>"] = open_with_trouble,
+                                ["<c-s-t>"] = add_to_trouble,
                             },
                             n = {
                                 ["<c-cr>"] = "select_tab",
                                 ["<esc>"] = "close",
                                 ["q"] = "close",
+                                ["<c-t>"] = open_with_trouble,
+                                ["<c-s-t>"] = add_to_trouble,
                             },
                         },
                     },

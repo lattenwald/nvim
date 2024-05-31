@@ -21,6 +21,7 @@ return {
     },
     {
         'simrat39/symbols-outline.nvim',
+        enabled = false,
         opts = {},
         config = function()
             require("symbols-outline").setup()
