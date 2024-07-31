@@ -24,32 +24,25 @@ return {
     },
     {
         "mhartington/oceanic-next",
-        lazy = true,
     },
     {
         "folke/tokyonight.nvim",
-        lazy = true,
     },
     {
         "nvimdev/zephyr-nvim",
-        lazy = true,
     },
     {
         'vim-scripts/wombat256.vim',
-        lazy = true,
     },
     {
         'ViViDboarder/wombat.nvim',
-        lazy = true,
         dependencies = {'rktjmp/lush.nvim'},
     },
     {
         'sainnhe/everforest',
-        lazy = true
     },
     {
         'sainnhe/edge',
-        lazy = true,
     },
 
 }
