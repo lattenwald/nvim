@@ -27,6 +27,7 @@ return {
                 'texlab', -- LaTeX LSP
                 'basedpyright', 'ruff', 'ruff-lsp', -- Python stuff
                 'stylelint', -- CSS
+                'gopls', -- go
             },
             auto_update = true,
             run_on_start = true,
@@ -57,6 +58,9 @@ return {
                 capabilities = cmp_capabilities
             }
             lspconfig.ansiblels.setup{
+                capabilities = cmp_capabilities
+            }
+            lspconfig.gopls.setup{
                 capabilities = cmp_capabilities
             }
 

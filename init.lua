@@ -140,3 +140,8 @@ vim.filetype.add{
 vim.o.guifont = 'Hack:h10'
 
 vim.g.neovide_scroll_animation_length = 0.1
+
+vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' },
+    { pattern = {"*.go", "*/go.mod"},
+      command = [[set noet ts=4 sw=4]]
+})
