@@ -50,4 +50,7 @@ return {
             vim.keymap.set('n', '<C-b>', '<cmd>Neotree buffers float toggle<cr>', {desc = "Neotree buffers"})
         end,
     },
+    {
+        "sindrets/diffview.nvim",
+    }
 }
