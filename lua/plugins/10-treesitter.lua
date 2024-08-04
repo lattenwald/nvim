@@ -16,7 +16,8 @@ return {
                 "json5",
                 "html",
                 "markdown",
-                "markdown_inline"
+                "markdown_inline",
+                "regex",
             },
             sync_install = false,
             auto_install = true,
