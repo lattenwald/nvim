@@ -32,7 +32,19 @@ return {
             'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
             'MunifTanjim/nui.nvim',
         },
-        config = function()
+        opts = {
+            window = {
+                mappings = {
+                    ["<C-Enter>"] = "open_tabnew",
+                },
+            },
+            follow_current_file = {
+                enabled = true,
+            },
+        },
+        config = function(_, opts)
+            require'neo-tree'.setup(opts)
+
             vim.keymap.set('n', '<C-S-f>', '<cmd>Neotree reveal toggle<cr>', {desc = "Neotree current file"})
             vim.keymap.set('n', '<C-b>', '<cmd>Neotree buffers float toggle<cr>', {desc = "Neotree buffers"})
         end,
