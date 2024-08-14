@@ -38,14 +38,6 @@ return {
         },
     },
     {
-        'stevearc/oil.nvim',
-        enabled = false,
-        opts = {},
-        -- Optional dependencies
-        -- dependencies = { { "echasnovski/mini.icons", opts = {} } },
-        dependencies = { "nvim-tree/nvim-web-devicons" }, -- use if prefer nvim-web-devicons
-    },
-    {
         "nvim-tree/nvim-tree.lua",
         dependencies = {"nvim-tree/nvim-web-devicons"},
         opts = {
@@ -69,32 +61,6 @@ return {
             nvim_tree.hijack_netrw  = true
 
             vim.keymap.set('n', '<C-f>', '<cmd>NvimTreeToggle<cr>', {desc = "NvimTree toggle"})
-        end,
-    },
-    {
-        'nvim-neo-tree/neo-tree.nvim',
-        enabled = false,
-        dependencies = {
-            'nvim-lua/plenary.nvim',
-            'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
-            'MunifTanjim/nui.nvim',
-        },
-        opts = {
-            window = {
-                mappings = {
-                    ["<C-Enter>"] = "open_tabnew",
-                },
-            },
-            follow_current_file = {
-                enabled = true,
-            },
-            use_libuv_file_watcher = true,
-        },
-        config = function(_, opts)
-            require'neo-tree'.setup(opts)
-
-            vim.keymap.set('n', '<C-f>', '<cmd>Neotree reveal toggle<cr>', {desc = "Neotree current file"})
-            vim.keymap.set('n', '<C-b>', '<cmd>Neotree buffers float toggle<cr>', {desc = "Neotree buffers"})
         end,
     },
     {
