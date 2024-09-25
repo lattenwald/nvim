@@ -21,10 +21,19 @@ return {
     },
     {
         'epwalsh/obsidian.nvim',
-        lazy = true,
-        event = { "BufReadPre ~/cloud/obsidian/**.md" },
+        -- lazy = true,
+        -- event = { "BufReadPre ~/cloud/obsidian/**.md" },
         opts = {
-            dir = "~/cloud/obsidian/vault",
+            workspaces = {
+                {
+                    name = "Personal",
+                    path = "~/cloud/obsidian/Personal",
+                },
+                {
+                    name = "Kribrum",
+                    path = "~/cloud/obsidian/Kribrum",
+                },
+            },
             follow_url_func = function(url)
                 -- Open the URL in the default web browser.
                 vim.fn.jobstart({"xdg-open", url})  -- linux
