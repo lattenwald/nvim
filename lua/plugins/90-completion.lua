@@ -19,6 +19,7 @@ return {
                 },
                 sources = require'cmp'.config.sources{
                     {name = 'nvim_lsp'},
+                    {name = 'cmp_r'},
                     {name = 'buffer'},
                     {name = 'vsnip'},
                     {name = 'path'},
@@ -26,7 +27,7 @@ return {
                 mapping = {
                     ['<up>'] = cmp.mapping.select_prev_item(),
                     ['<down>'] = cmp.mapping.select_next_item(),
-                    ['<esc>'] = cmp.mapping.close(),
+                    -- ['<esc>'] = cmp.mapping.close(),
                     ['<tab>'] = cmp.mapping.confirm{select = true},
                     ['<cr>'] = cmp.mapping.confirm(),
                     ['<esc>'] = function()
