@@ -23,7 +23,6 @@ return {
                 'xmlformatter',
                 'erlang-ls', -- erlang ls/dap
                 'elixir-ls', -- elixir ls/dap
-                'phpactor', -- PHP LSP
                 'texlab', -- LaTeX LSP
                 'basedpyright', 'ruff', 'ruff-lsp', -- Python stuff
                 'stylelint', -- CSS
