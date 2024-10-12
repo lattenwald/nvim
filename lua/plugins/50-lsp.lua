@@ -27,6 +27,7 @@ return {
                 'basedpyright', 'ruff', 'ruff-lsp', -- Python stuff
                 'stylelint', -- CSS
                 'gopls', -- go
+                'clangd', -- C++
             },
             auto_update = true,
             run_on_start = true,
@@ -75,14 +76,6 @@ return {
                 -- end,
             }
 
-            lspconfig.phpactor.setup{
-                -- on_attach = on_attach,
-                init_options = {
-                    ["language_server_phpstan.enabled"] = false,
-                    ["language_server_psalm.enabled"] = false,
-                }
-            }
-
             lspconfig.basedpyright.setup{
                 capabilities = cmp_capabilities,
                 settings = {
@@ -117,6 +110,9 @@ return {
                         includePaths = {"~/perl5/lib/perl5"}
                     },
                 }
+            }
+            lspconfig.clangd.setup{
+                capabilities = cmp_capabilities,
             }
 
             vim.api.nvim_create_autocmd('LspAttach', {
