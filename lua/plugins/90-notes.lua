@@ -1,5 +1,13 @@
 return {
     {
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+            latex = { enabled = false },
+            -- file_types = { "markdown", "Avante" },
+        },
+        -- ft = { "markdown", "Avante" },
+    },
+    {
         "vimwiki/vimwiki",
         init = function ()
             vim.g.vimwiki_list = { {
@@ -24,6 +32,7 @@ return {
         -- lazy = true,
         -- event = { "BufReadPre ~/cloud/obsidian/**.md" },
         opts = {
+            ui = { enable = false },
             workspaces = {
                 {
                     name = "Personal",
@@ -51,5 +60,5 @@ return {
                 end
             end, { noremap = false, expr = true })
         end,
-    }
+    },
 }
