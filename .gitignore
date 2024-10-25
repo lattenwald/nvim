@@ -11,3 +11,4 @@
 /lua/.luarc.json
 /telescope-projects.txt
 /telescope-workspaces.txt
+/tree-sitter-*
