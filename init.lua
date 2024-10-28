@@ -13,7 +13,7 @@ vim.opt.rtp:prepend(lazypath)
 
 vim.g.mapleader = ' '
 
-current_repo_name = function()
+function current_repo_name()
     local dir = vim.fs.find('.git', {
         upward = true,
         stop = vim.loop.os_homedir(),
@@ -102,9 +102,8 @@ vim.keymap.set({'n', 't'}, '<M-down>', '<Cmd>wincmd j<CR>', {desc = "Go to botto
 -- lsp keybindings
 vim.keymap.set('n', ']g', vim.diagnostic.goto_next, {silent = true, desc = "Go to next diagnostic"})
 vim.keymap.set('n', '[g', vim.diagnostic.goto_prev, {silent = true, desc = "Go to previous diagnostic"})
--- vim.keymap.set('n', '<leader>d', vim.lsp.buf.hover, {silent = true, desc = "LSP: hover"})
 
-util = require'util';
+local util = require'util';
 vim.keymap.set('n', '<esc>', function()
     util.close_floats()
     vim.cmd('noh')
@@ -140,8 +139,3 @@ vim.filetype.add{
 vim.o.guifont = 'Hack:h10'
 
 vim.g.neovide_scroll_animation_length = 0.1
-
-vim.api.nvim_create_autocmd({ 'BufRead', 'BufEnter', 'BufWinEnter' },
-    { pattern = {"*.go", "*/go.mod"},
-      command = [[set noet ts=4 sw=4]]
-})
