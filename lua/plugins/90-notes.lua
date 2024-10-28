@@ -29,10 +29,10 @@ return {
     },
     {
         'epwalsh/obsidian.nvim',
-        -- lazy = true,
-        -- event = { "BufReadPre ~/cloud/obsidian/**.md" },
+        lazy = true,
+        event = { "BufReadPre ~/cloud/obsidian/**.md" },
         opts = {
-            ui = { enable = false },
+            ui = { enable = true },
             workspaces = {
                 {
                     name = "Personal",
@@ -42,6 +42,14 @@ return {
                     name = "Kribrum",
                     path = "~/cloud/obsidian/Kribrum",
                 },
+            },
+            log_level = vim.log.levels.DEBUG,
+            -- Optional, completion of wiki links, local markdown links, and tags using nvim-cmp.
+            completion = {
+                -- Set to false to disable completion.
+                nvim_cmp = true,
+                -- Trigger completion at 2 chars.
+                min_chars = 2,
             },
             follow_url_func = function(url)
                 -- Open the URL in the default web browser.
