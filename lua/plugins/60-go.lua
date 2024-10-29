@@ -2,6 +2,9 @@ return {
     {
         "ray-x/go.nvim",
         lazy = true,
+        enabled = function()
+            vim.fn.executable("go")
+        end,
         dependencies = {  -- optional packages
             "ray-x/guihua.lua",
             "neovim/nvim-lspconfig",
