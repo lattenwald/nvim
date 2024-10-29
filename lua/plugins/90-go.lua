@@ -3,7 +3,7 @@ return {
         "ray-x/go.nvim",
         lazy = true,
         enabled = function()
-            vim.fn.executable("go")
+            return vim.fn.executable("go") == 1
         end,
         dependencies = {  -- optional packages
             "ray-x/guihua.lua",
