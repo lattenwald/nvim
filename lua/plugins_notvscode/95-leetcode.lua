@@ -16,7 +16,8 @@ return {
             -- configuration goes here
             plugins = {
                 non_standalone = true,
-            }
+            },
+            lang = "rust",
         },
     },
 }
