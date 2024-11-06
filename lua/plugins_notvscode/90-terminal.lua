@@ -1,5 +1,8 @@
 return {
     {
+        'psliwka/termcolors.nvim'
+    },
+    {
         'akinsho/toggleterm.nvim',
         opts = {
             open_mapping = [[<c-`>]],

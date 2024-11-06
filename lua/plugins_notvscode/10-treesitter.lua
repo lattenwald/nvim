@@ -1,6 +1,6 @@
 return {
     {
-        'nvim-treesitter/nvim-treesitter',
+        "nvim-treesitter/nvim-treesitter",
         opts = {
             ensure_installed = {
                 "rust",
@@ -14,10 +14,13 @@ return {
                 "gitignore",
                 "vim",
                 "json5",
-                "html", "yaml",
-                "markdown", "markdown_inline",
+                "html",
+                "yaml",
+                "markdown",
+                "markdown_inline",
                 "regex",
-                "r", "rnoweb",
+                "r",
+                "rnoweb",
             },
             sync_install = false,
             auto_install = true,
@@ -29,7 +32,17 @@ return {
             },
         },
         config = function(_, opts)
-            require'nvim-treesitter.configs'.setup(opts)
+            require("nvim-treesitter.configs").setup(opts)
         end,
-    }
+    },
+    {
+        "windwp/nvim-ts-autotag",
+        config = function()
+            require("nvim-treesitter.configs").setup({
+                autotag = {
+                    enable = true,
+                },
+            })
+        end,
+    },
 }
