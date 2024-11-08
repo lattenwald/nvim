@@ -161,3 +161,5 @@ vim.filetype.add({
 vim.o.guifont = "Hack:h10"
 
 vim.g.neovide_scroll_animation_length = 0.1
+
+vim.o.mouse = "a"
