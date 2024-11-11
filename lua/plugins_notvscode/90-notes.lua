@@ -69,4 +69,11 @@ return {
             end, { noremap = false, expr = true })
         end,
     },
+    {
+        '3rd/image.nvim',
+        enabled = false,
+        opts = {
+            backend = 'ueberzug',
+        }
+    }
 }
