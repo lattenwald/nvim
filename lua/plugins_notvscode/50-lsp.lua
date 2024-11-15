@@ -13,7 +13,7 @@ return {
         enabled = load_lsp,
         opts = {
             ensure_installed = {
-                "codelldb", -- rust dap
+                -- "codelldb", -- rust dap
                 "stylua", -- lua formatter
                 "selene", -- lua LSP
                 "beautysh", -- sh/zsh/bash/etc formatter
