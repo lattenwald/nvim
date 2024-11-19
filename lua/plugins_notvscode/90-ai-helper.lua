@@ -1,12 +1,27 @@
 return {
     {
-        'Exafunction/codeium.vim',
-        config = function ()
+        "Exafunction/codeium.vim",
+        config = function()
+            vim.g.codeium_no_map_tab = false
             -- Change '<C-g>' here to any keycode you like.
-            vim.keymap.set('i', '<C-g>', function () return vim.fn['codeium#Accept']() end, { expr = true, silent = true })
-            vim.keymap.set('i', '<c-;>', function() return vim.fn['codeium#CycleCompletions'](1) end, { expr = true, silent = true })
-            vim.keymap.set('i', '<c-,>', function() return vim.fn['codeium#CycleCompletions'](-1) end, { expr = true, silent = true })
-            vim.keymap.set('i', '<c-x>', function() return vim.fn['codeium#Clear']() end, { expr = true, silent = true })
+            vim.keymap.set("i", "<c-g>", function()
+                return vim.fn["codeium#Accept"]()
+            end, { expr = true, silent = true })
+            vim.keymap.set("i", "<c-tab>", function()
+                return vim.fn["codeium#Accept"]()
+            end, { expr = true, silent = true })
+            vim.keymap.set("i", "<c-return>", function()
+                return vim.fn["codeium#Accept"]()
+            end, { expr = true, silent = true })
+            vim.keymap.set("i", "<c-;>", function()
+                return vim.fn["codeium#CycleCompletions"](1)
+            end, { expr = true, silent = true })
+            vim.keymap.set("i", "<c-,>", function()
+                return vim.fn["codeium#CycleCompletions"](-1)
+            end, { expr = true, silent = true })
+            vim.keymap.set("i", "<c-x>", function()
+                return vim.fn["codeium#Clear"]()
+            end, { expr = true, silent = true })
         end,
     },
     {
@@ -48,12 +63,12 @@ return {
             },
             {
                 -- Make sure to set this up properly if you have lazy=true
-                'MeanderingProgrammer/render-markdown.nvim',
+                "MeanderingProgrammer/render-markdown.nvim",
                 opts = {
                     file_types = { "markdown", "Avante" },
                 },
                 ft = { "markdown", "Avante" },
             },
         },
-    }
+    },
 }
