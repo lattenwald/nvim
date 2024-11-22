@@ -307,6 +307,10 @@ return {
         "nvimdev/lspsaga.nvim",
         enabled = load_lsp,
         version = nil,
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-tree/nvim-web-devicons",
+        },
         opts = {
             outline = {
                 keys = {
