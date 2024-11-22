@@ -1,14 +1,14 @@
 return {
     {
-        'psliwka/termcolors.nvim'
+        "psliwka/termcolors.nvim",
     },
     {
-        'akinsho/toggleterm.nvim',
+        "akinsho/toggleterm.nvim",
         opts = {
             open_mapping = [[<c-`>]],
             insert_mappings = true,
             start_in_insert = true,
-            autochdir = true,
+            autochdir = false,
         },
-    }
+    },
 }
