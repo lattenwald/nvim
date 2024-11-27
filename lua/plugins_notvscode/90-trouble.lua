@@ -1,19 +1,19 @@
 return {
     {
-        'folke/trouble.nvim',
+        "folke/trouble.nvim",
         opts = {},
-        cmd = 'Trouble',
+        cmd = "Trouble",
         keys = {
             {
-                '<leader>q',
-                '<cmd>Trouble diagnostics<cr>',
-                desc = 'Diagnostics (Trouble)',
+                "<leader>q",
+                "<cmd>Trouble diagnostics<cr>",
+                desc = "Diagnostics (Trouble)",
             },
             {
-                '<leader>V',
-                '<cmd>Trouble symbols toggle<cr>',
-                desc = 'Symbols (Trouble)',
+                "<leader>V",
+                "<cmd>Trouble symbols toggle<cr>",
+                desc = "Symbols (Trouble)",
             },
-        }
-    }
+        },
+    },
 }

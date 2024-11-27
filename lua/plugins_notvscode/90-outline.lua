@@ -1,36 +1,36 @@
 return {
     {
-        'stevearc/aerial.nvim',
+        "stevearc/aerial.nvim",
         enabled = false,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
-            "nvim-tree/nvim-web-devicons"
+            "nvim-tree/nvim-web-devicons",
         },
         config = function()
-            require'aerial'.setup({
+            require("aerial").setup({
                 layout = {
-                    default_direction = 'prefer_right',
+                    default_direction = "prefer_right",
                 },
                 backends = {
-                    ['_']  = {"lsp", "treesitter", "markdown", "man"},
+                    ["_"] = { "lsp", "treesitter", "markdown", "man" },
                     -- vimwiki = {"markdown"},
                 },
             })
-            vim.keymap.set('n', '<leader>V', '<cmd>AerialToggle<cr>', {desc = "Toggle code outline"})
-        end
+            vim.keymap.set("n", "<leader>V", "<cmd>AerialToggle<cr>", { desc = "Toggle code outline" })
+        end,
     },
     {
-        'simrat39/symbols-outline.nvim',
+        "simrat39/symbols-outline.nvim",
         enabled = false,
         opts = {},
         config = function()
             require("symbols-outline").setup()
-            vim.keymap.set('n', '<leader>V', '<cmd>SymbolsOutline<cr>', {desc = "Toggle code outline"})
-        end
+            vim.keymap.set("n", "<leader>V", "<cmd>SymbolsOutline<cr>", { desc = "Toggle code outline" })
+        end,
     },
     {
-        'Bekaboo/dropbar.nvim',
+        "Bekaboo/dropbar.nvim",
         enabled = false,
         opts = {},
-    }
+    },
 }

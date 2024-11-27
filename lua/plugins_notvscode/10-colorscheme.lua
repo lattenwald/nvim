@@ -1,26 +1,26 @@
 return {
     {
-        'sainnhe/sonokai',
+        "sainnhe/sonokai",
         lazy = false,
         config = function()
             vim.g.sonokai_disable_italic_comment = 1
-            vim.g.sonokai_style = 'default'
-            vim.cmd'colorscheme sonokai'
-        end
+            vim.g.sonokai_style = "default"
+            vim.cmd("colorscheme sonokai")
+        end,
     },
     {
         "marko-cerovac/material.nvim",
         lazy = true,
         config = function()
-            require'material.functions'.change_style("darker")
+            require("material.functions").change_style("darker")
 
-            ColorschemeMaterialWithStyle = function()
-                vim.cmd'colorscheme material'
-                require'material.functions'.find_style()
+            function ColorschemeMaterialWithStyle()
+                vim.cmd("colorscheme material")
+                require("material.functions").find_style()
             end
 
-            vim.api.nvim_create_user_command('MaterialWithStyle', ColorschemeMaterialWithStyle, {})
-        end
+            vim.api.nvim_create_user_command("MaterialWithStyle", ColorschemeMaterialWithStyle, {})
+        end,
     },
     {
         "mhartington/oceanic-next",
@@ -32,17 +32,16 @@ return {
         "nvimdev/zephyr-nvim",
     },
     {
-        'vim-scripts/wombat256.vim',
+        "vim-scripts/wombat256.vim",
     },
     {
-        'ViViDboarder/wombat.nvim',
-        dependencies = {'rktjmp/lush.nvim'},
+        "ViViDboarder/wombat.nvim",
+        dependencies = { "rktjmp/lush.nvim" },
     },
     {
-        'sainnhe/everforest',
+        "sainnhe/everforest",
     },
     {
-        'sainnhe/edge',
+        "sainnhe/edge",
     },
-
 }
