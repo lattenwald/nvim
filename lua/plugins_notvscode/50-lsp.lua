@@ -1,7 +1,3 @@
-function load_lsp()
-    return vim.fn.filereadable(vim.fn.expand("~/.config/nvim/load-lsp")) == 1
-end
-
 return {
     {
         "williamboman/mason.nvim",
@@ -284,12 +280,6 @@ return {
 
             null_ls.setup(opts)
         end,
-    },
-    {
-        "mrcjkb/rustaceanvim",
-        enabled = load_lsp,
-        lazy = true,
-        ft = "rust",
     },
     {
         "weilbith/nvim-code-action-menu",
