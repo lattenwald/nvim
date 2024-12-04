@@ -10,22 +10,23 @@ return {
         opts = {
             ensure_installed = {
                 -- "codelldb", -- rust dap
-                "stylua", -- lua formatter
-                "selene", -- lua LSP
-                "beautysh", -- sh/zsh/bash/etc formatter
-                "shellcheck", -- bash linter
-                "prettierd", -- html/json/css/etc formatter
                 "ansible-language-server",
                 "ansible-lint",
-                "xmlformatter",
-                "erlang-ls", -- erlang ls/dap
-                "elixir-ls", -- elixir ls/dap
-                "texlab", -- LaTeX LSP
                 "basedpyright",
-                "ruff",
-                "stylelint", -- CSS
-                "gopls", -- go
+                "beautysh", -- sh/zsh/bash/etc formatter
                 "clangd", -- C++
+                "elixir-ls", -- elixir ls/dap
+                "erlang-ls", -- erlang ls/dap
+                "gopls", -- go
+                "prettierd", -- html/json/css/etc formatter
+                "ruff",
+                "selene", -- lua LSP
+                "shellcheck", -- bash linter
+                "stylelint", -- CSS
+                "stylua", -- lua formatter
+                "texlab", -- LaTeX LSP
+                "typescript-language-server", -- typescript, javascript
+                "xmlformatter",
             },
             auto_update = true,
             run_on_start = true,
@@ -49,31 +50,6 @@ return {
             local cmp_capabilities = require("cmp_nvim_lsp").default_capabilities()
 
             -- TODO incorporate current code location in statusline
-            lspconfig.erlangls.setup({
-                capabilities = cmp_capabilities,
-            })
-            lspconfig.elixirls.setup({
-                capabilities = cmp_capabilities,
-            })
-            lspconfig.ansiblels.setup({
-                capabilities = cmp_capabilities,
-            })
-
-            lspconfig.gopls.setup({
-                capabilities = cmp_capabilities,
-                -- root_dir = function(fname)
-                --     -- see: https://github.com/neovim/nvim-lspconfig/issues/804
-                --     local mod_cache = vim.trim(vim.fn.system 'go env GOMODCACHE')
-                --     if fname:sub(1, #mod_cache) == mod_cache then
-                --         local clients = vim.lsp.get_active_clients { name = 'gopls' }
-                --         if #clients > 0 then
-                --             return clients[#clients].config.root_dir
-                --         end
-                --     end
-                --     return require'lspconfig.util'.root_pattern 'go.work'(fname) or util.root_pattern('go.mod', '.git')(fname)
-                -- end,
-            })
-
             lspconfig.basedpyright.setup({
                 capabilities = cmp_capabilities,
                 settings = {
@@ -82,9 +58,7 @@ return {
                     },
                 },
             })
-            lspconfig.ruff.setup({
-                capabilities = cmp_capabilities,
-            })
+
             lspconfig.pylsp.setup({
                 capabilities = cmp_capabilities,
                 settings = {
@@ -98,10 +72,6 @@ return {
                 },
             })
 
-            lspconfig.texlab.setup({
-                capabilities = cmp_capabilities,
-            })
-
             lspconfig.perlnavigator.setup({
                 settings = {
                     perlnavigator = {
@@ -109,9 +79,7 @@ return {
                     },
                 },
             })
-            lspconfig.clangd.setup({
-                capabilities = cmp_capabilities,
-            })
+
             lspconfig.markdown_oxide.setup({
                 -- Ensure that dynamicRegistration is enabled! This allows the LS to take into account actions like the
                 -- Create Unresolved File code action, resolving completions for unindexed code blocks, ...
@@ -123,6 +91,14 @@ return {
                     },
                 }),
             })
+
+            local servers = { "erlangls", "elixirls", "ansiblels", "gopls", "ruff", "texlab", "clangd", "ts_ls" }
+            for _, lsp in pairs(servers) do
+                lspconfig[lsp].setup({
+                    -- on_attach = on_attach,
+                    capabilites = cmp_capabilities,
+                })
+            end
 
             vim.api.nvim_create_autocmd("LspAttach", {
                 group = vim.api.nvim_create_augroup("UserLspConfig", {}),
