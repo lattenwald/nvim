@@ -10,7 +10,7 @@ return {
             autochdir = false,
         },
         config = function(_, opts)
-            require'toggleterm'.setup(opts)
+            require("toggleterm").setup(opts)
             local Terminal = require("toggleterm.terminal").Terminal
             local term = Terminal:new({
                 dir = "git_dir",
