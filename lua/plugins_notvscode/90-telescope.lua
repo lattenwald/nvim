@@ -22,6 +22,8 @@ return {
                             ["<c-c>"] = "close",
                             ["<c-t>"] = open_with_trouble,
                             ["<c-s-t>"] = add_to_trouble,
+                            ["<s-up>"] = "preview_scrolling_up",
+                            ["<s-down>"] = "preview_scrolling_down",
                         },
                         n = {
                             ["<c-cr>"] = "select_tab",
@@ -29,6 +31,8 @@ return {
                             ["q"] = "close",
                             ["<c-t>"] = open_with_trouble,
                             ["<c-s-t>"] = add_to_trouble,
+                            ["<s-up>"] = "preview_scrolling_up",
+                            ["<s-down>"] = "preview_scrolling_down",
                         },
                     },
                 },
