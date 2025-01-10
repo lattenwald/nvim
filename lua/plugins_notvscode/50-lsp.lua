@@ -258,11 +258,16 @@ return {
         end,
     },
     {
-        "weilbith/nvim-code-action-menu",
+        "aznhe21/actions-preview.nvim",
         enabled = load_lsp,
-        lazy = true,
-        cmd = { "CodeActionMenu" },
-        keys = { "<leader>a" },
+        config = function()
+            vim.keymap.set(
+                { "v", "n" },
+                "<leader>a",
+                require("actions-preview").code_actions,
+                { desc = "LSP code actions" }
+            )
+        end,
     },
     {
         "smjonas/inc-rename.nvim",
