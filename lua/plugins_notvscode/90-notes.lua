@@ -39,7 +39,7 @@ return {
         lazy = true,
         event = { "BufReadPre ~/cloud/obsidian/**.md" },
         opts = {
-            ui = { enable = true },
+            ui = { enable = false },
             workspaces = {
                 {
                     name = "Personal",
