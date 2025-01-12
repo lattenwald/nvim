@@ -39,6 +39,13 @@ return {
                             end, { silent = true, buffer = bufnr, desc = "RustLsp debug!" })
                         end,
                     },
+                    dap = {
+                        -- autoload_configurations = true,
+                        adapter = require("rustaceanvim.config").get_codelldb_adapter(
+                            "/usr/lib/codelldb/adapter/codelldb",
+                            "/usr/lib/codelldb/lldb/lib/liblldb.so"
+                        ),
+                    },
                 }
             end
         end,

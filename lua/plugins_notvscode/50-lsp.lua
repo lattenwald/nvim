@@ -14,6 +14,7 @@ return {
                 "basedpyright",
                 "beautysh", -- sh/zsh/bash/etc formatter
                 "clangd", -- C++
+                "codelldb",
                 "cpptools",
                 "elixir-ls", -- elixir ls/dap
                 "erlang-ls", -- erlang ls/dap
