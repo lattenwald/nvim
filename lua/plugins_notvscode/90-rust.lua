@@ -16,14 +16,6 @@ return {
                             vim.keymap.set("n", "<leader>R", function()
                                 vim.cmd.RustLsp("reloadWorkspace")
                             end, { silent = true, buffer = bufnr, desc = "Reload workspace" })
-                            vim.keymap.set("n", "<leader>a", function()
-                                vim.cmd.RustLsp("codeAction")
-                            end, {
-                                silent = true,
-                                buffer = bufnr,
-                                desc = "Rust code actions",
-                                remap = true,
-                            })
                             vim.keymap.set("n", "<leader>A", function()
                                 vim.cmd.RustLsp({ "hover", "actions" })
                             end, {
