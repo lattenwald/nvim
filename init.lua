@@ -47,7 +47,7 @@ require("lazy").setup({
     --     event = "VeryLazy",
     -- },
     {
-        import = "plugins_notvscode",
+        import = "plugins",
         cond = function()
             return not vim.g.vscode
         end,
