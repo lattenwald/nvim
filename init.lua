@@ -42,10 +42,10 @@ end
 -- })
 
 require("lazy").setup({
-    -- defaults = {
-    --     version = "*",
-    --     event = "VeryLazy",
-    -- },
+    defaults = {
+        version = "*",
+        event = "VeryLazy",
+    },
     {
         import = "plugins",
         cond = function()
@@ -53,12 +53,12 @@ require("lazy").setup({
         end,
     },
     { import = "plugins_always", cond = true },
-    -- {
-    --     import = "plugins_vscode",
-    --     cond = function()
-    --         return vim.g.vscode
-    --     end,
-    -- },
+    {
+        import = "plugins_vscode",
+        cond = function()
+            return vim.g.vscode
+        end,
+    },
 })
 
 -- vim.g.vimwiki_list = {{path = '~/vimwiki/', syntax = 'markdown', ext = '.md'}}
