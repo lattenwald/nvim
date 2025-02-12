@@ -36,6 +36,10 @@ return {
     },
     {
         "stevearc/dressing.nvim",
-        opts = {},
+        opts = {
+            input = {
+                enabled = false,
+            },
+        },
     },
 }
