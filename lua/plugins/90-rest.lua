@@ -16,6 +16,10 @@ return {
                     next = "<S-Right>",
                 },
             },
+            cookies = {
+                enable = true,
+                path = vim.fn.expand("$HOME/REST/rest-nvim.cookies"),
+            },
         },
     },
 }
