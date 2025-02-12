@@ -7,6 +7,7 @@ return {
                 "erlang",
                 "elixir",
                 "heex",
+                "http",
                 "perl",
                 "bash",
                 "lua",
