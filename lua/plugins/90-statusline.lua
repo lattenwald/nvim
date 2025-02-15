@@ -17,6 +17,7 @@ return {
                 sections = {
                     lualine_b = { current_repo_name, "branch", "diff", "diagnostics" },
                     lualine_c = { "filename", lsp_progress.progress },
+                    lualine_x = { "rest" },
                 },
             }
 
