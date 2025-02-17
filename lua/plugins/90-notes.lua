@@ -14,14 +14,19 @@ return {
                 name = "vimwiki",
                 path = vim.fn.expand("~/vimwiki"),
             },
-            -- {
-            --     name = "personal",
-            --     path = vim.fn.expand("~/wiki/personal"),
-            -- },
+            {
+                name = "personal",
+                path = vim.fn.expand("~/wiki/personal"),
+            },
         },
         keys = {
-            { "<leader>ww", ':lua require("kiwi").open_wiki_index()<cr>', desc = "Open Wiki index" },
+            { "<leader>wi", ':lua require("kiwi").open_wiki_index()<cr>', desc = "Open Wiki index" },
             { "<leader>x", ':lua require("kiwi").todo.toggle()<cr>', desc = "Toggle checkbox" },
+            {
+                "<leader>ww",
+                ':lua require("kiwi").open_wiki_index("vimwiki")<cr>',
+                desc = "Open index of vimwiki",
+            },
             {
                 "<leader>wp",
                 ':lua require("kiwi").open_wiki_index("personal")<cr>',
