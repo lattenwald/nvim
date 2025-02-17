@@ -4,6 +4,7 @@ return {
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "nvim-telescope/telescope.nvim",
+            "j-hui/fidget.nvim",
         },
         config = function(_, opts)
             require("telescope").load_extension("rest")
