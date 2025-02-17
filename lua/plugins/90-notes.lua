@@ -8,31 +8,28 @@ return {
         -- ft = { "markdown", "Avante" },
     },
     {
-        "vimwiki/vimwiki",
-        init = function()
-            vim.g.vimwiki_list = {
-                {
-                    path = "/home/qalex/vimwiki/",
-                    syntax = "markdown",
-                    ext = ".md",
-                },
-            }
-            vim.g.vimwiki_global_ext = 0
-            vim.g.vimwiki_folding = "list"
-            vim.g.vimwiki_key_mappings = { table_mappings = 0 }
-            vim.keymap.set(
-                "n",
-                "<leader><space>",
-                "<Plug>VimwikiToggleListItem",
-                { desc = "VimWiki: toggle list item" }
-            )
-        end,
-    },
-    {
-        "dkarter/bullets.vim",
-    },
-    {
-        "michal-h21/vimwiki-sync",
+        "serenevoid/kiwi.nvim",
+        opts = {
+            {
+                name = "vimwiki",
+                path = vim.fn.expand("~/vimwiki"),
+            },
+            -- {
+            --     name = "personal",
+            --     path = vim.fn.expand("~/wiki/personal"),
+            -- },
+        },
+        keys = {
+            { "<leader>ww", ':lua require("kiwi").open_wiki_index()<cr>', desc = "Open Wiki index" },
+            { "<leader>x", ':lua require("kiwi").todo.toggle()<cr>', desc = "Toggle checkbox" },
+            {
+                "<leader>wp",
+                ':lua require("kiwi").open_wiki_index("personal")<cr>',
+                desc = "Open index of personal wiki",
+            },
+            { "T", ':lua require("kiwi").todo.toggle()<cr>', desc = "Toggle Markdown Task" },
+        },
+        lazy = true,
     },
     {
         "epwalsh/obsidian.nvim",
