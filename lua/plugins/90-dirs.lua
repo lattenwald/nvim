@@ -39,6 +39,7 @@ return {
 
             keymaps = {
                 show_help = "<f1>",
+                open_file_in_vertical_split = "<s-enter>",
                 open_file_in_tab = "<c-enter>",
             },
         },
