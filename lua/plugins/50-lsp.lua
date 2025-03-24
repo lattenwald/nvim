@@ -116,6 +116,12 @@ return {
                         { buffer = true, desc = "Jump to reference" }
                     )
                     vim.keymap.set("n", "gd", function()
+                        require("telescope.builtin").lsp_definitions()
+                    end, { buffer = true, desc = "Jump to definition" })
+                    vim.keymap.set("n", "sgd", function()
+                        require("telescope.builtin").lsp_definitions({ jump_type = "vsplit" })
+                    end, { buffer = true, desc = "Jump to definition" })
+                    vim.keymap.set("n", "tgd", function()
                         require("telescope.builtin").lsp_definitions({ jump_type = "tab" })
                     end, { buffer = true, desc = "Jump to definition" })
                     vim.keymap.set(
