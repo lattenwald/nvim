@@ -16,6 +16,7 @@ return {
                     undo = {},
                 },
                 defaults = {
+                    path_display = { shorten = { len = 1, exclude = { -1, -2 } } },
                     mappings = {
                         i = {
                             ["<c-cr>"] = "select_tab",
