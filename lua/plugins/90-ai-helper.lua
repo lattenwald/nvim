@@ -1,6 +1,20 @@
 return {
     {
+        "zbirenbaum/copilot.lua",
+        lazy = true,
+        cmd = "Copilot",
+        opts = {
+            -- suggestion = { enabled = false },
+            -- panel = { enabled = false },
+        },
+    },
+    {
+        "zbirenbaum/copilot-cmp",
+        opts = {},
+    },
+    {
         "Exafunction/codeium.vim",
+        enabled = false,
         config = function()
             vim.g.codeium_no_map_tab = false
             -- Change '<C-g>' here to any keycode you like.
