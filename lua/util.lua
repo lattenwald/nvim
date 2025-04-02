@@ -1,7 +1,7 @@
 local util = {}
 
 util.lsp_active = function()
-    for _, client in pairs(vim.lsp.get_active_clients()) do
+    for _, client in pairs(vim.lsp.get_clients()) do
         if client.server_capabilities then
             return true
         end
