@@ -1,12 +1,10 @@
 return {
     {
         "williamboman/mason.nvim",
-        enabled = load_lsp,
         opts = {},
     },
     {
         "WhoIsSethDaniel/mason-tool-installer.nvim",
-        enabled = load_lsp,
         opts = {
             ensure_installed = {
                 "ansible-language-server",
@@ -38,7 +36,6 @@ return {
         "neovim/nvim-lspconfig",
         branch = "master",
         version = nil,
-        enabled = load_lsp,
         dependencies = {
             "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
@@ -61,18 +58,18 @@ return {
                 },
             })
 
-            lspconfig.pylsp.setup({
-                capabilities = cmp_capabilities,
-                settings = {
-                    pylsp = {
-                        plugins = {
-                            pycodestyle = {
-                                maxLineLength = 120,
-                            },
-                        },
-                    },
-                },
-            })
+            -- lspconfig.pylsp.setup({
+            --     capabilities = cmp_capabilities,
+            --     settings = {
+            --         pylsp = {
+            --             plugins = {
+            --                 pycodestyle = {
+            --                     maxLineLength = 120,
+            --                 },
+            --             },
+            --         },
+            --     },
+            -- })
 
             lspconfig.perlnavigator.setup({
                 settings = {
@@ -115,13 +112,13 @@ return {
                         require("telescope.builtin").lsp_references,
                         { buffer = true, desc = "Jump to reference" }
                     )
-                    vim.keymap.set("n", "gd", function()
+                    vim.keymap.set("n", "bgd", function()
                         require("telescope.builtin").lsp_definitions()
                     end, { buffer = true, desc = "Jump to definition" })
                     vim.keymap.set("n", "sgd", function()
                         require("telescope.builtin").lsp_definitions({ jump_type = "vsplit" })
                     end, { buffer = true, desc = "Jump to definition" })
-                    vim.keymap.set("n", "tgd", function()
+                    vim.keymap.set("n", "gd", function()
                         require("telescope.builtin").lsp_definitions({ jump_type = "tab" })
                     end, { buffer = true, desc = "Jump to definition" })
                     vim.keymap.set(
@@ -175,7 +172,6 @@ return {
     },
     {
         "mfussenegger/nvim-dap-python",
-        enabled = load_lsp,
         lazy = true,
         ft = "python",
         config = function()
@@ -184,7 +180,6 @@ return {
     },
     {
         "nvimtools/none-ls.nvim",
-        enabled = load_lsp,
         dependencies = {
             "gbprod/none-ls-shellcheck.nvim",
         },
@@ -211,7 +206,6 @@ return {
     },
     {
         "aznhe21/actions-preview.nvim",
-        enabled = load_lsp,
         config = function()
             vim.keymap.set(
                 { "v", "n" },
@@ -223,12 +217,56 @@ return {
     },
     {
         "smjonas/inc-rename.nvim",
-        enabled = load_lsp,
         opts = {},
     },
     {
+        "lewis6991/hover.nvim",
+        -- enabled = false,
+        config = function()
+            require("hover").setup({
+                init = function()
+                    -- Require providers
+                    require("hover.providers.lsp")
+                    -- require('hover.providers.gh')
+                    -- require('hover.providers.gh_user')
+                    -- require('hover.providers.jira')
+                    -- require('hover.providers.dap')
+                    -- require('hover.providers.fold_preview')
+                    -- require('hover.providers.diagnostic')
+                    -- require('hover.providers.man')
+                    -- require('hover.providers.dictionary')
+                end,
+                preview_opts = {
+                    border = "single",
+                },
+                -- Whether the contents of a currently open hover window should be moved
+                -- to a :h preview-window when pressing the hover keymap.
+                preview_window = false,
+                title = true,
+                mouse_providers = {
+                    "LSP",
+                },
+                mouse_delay = 1000,
+            })
+
+            -- Setup keymaps
+            vim.keymap.set("n", "K", require("hover").hover, { desc = "hover.nvim" })
+            vim.keymap.set("n", "gK", require("hover").hover_select, { desc = "hover.nvim (select)" })
+            vim.keymap.set("n", "<C-p>", function()
+                require("hover").hover_switch("previous")
+            end, { desc = "hover.nvim (previous source)" })
+            vim.keymap.set("n", "<C-n>", function()
+                require("hover").hover_switch("next")
+            end, { desc = "hover.nvim (next source)" })
+
+            -- Mouse support
+            vim.keymap.set("n", "<MouseMove>", require("hover").hover_mouse, { desc = "hover.nvim (mouse)" })
+            vim.o.mousemoveevent = true
+        end,
+    },
+    {
         "nvimdev/lspsaga.nvim",
-        enabled = load_lsp,
+        -- enabled = false,
         version = nil,
         dependencies = {
             "nvim-treesitter/nvim-treesitter",

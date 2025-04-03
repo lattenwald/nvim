@@ -4,17 +4,25 @@ return {
         lazy = true,
         cmd = "Copilot",
         opts = {
+            suggestion = {
+                auto_trigger = true,
+                keymap = {
+                    accept = "<c-return>",
+                },
+            },
             -- suggestion = { enabled = false },
             -- panel = { enabled = false },
         },
     },
     {
         "zbirenbaum/copilot-cmp",
+        disabled = true,
         opts = {},
     },
     {
         "Exafunction/codeium.vim",
-        enabled = false,
+        lazy = true,
+        cmd = "Codeium",
         config = function()
             vim.g.codeium_no_map_tab = false
             -- Change '<C-g>' here to any keycode you like.

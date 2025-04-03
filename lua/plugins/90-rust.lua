@@ -1,7 +1,6 @@
 return {
     {
         "mrcjkb/rustaceanvim",
-        enabled = load_lsp,
         lazy = true,
         ft = "rust",
         config = function()

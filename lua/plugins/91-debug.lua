@@ -1,7 +1,6 @@
 return {
     {
         "mfussenegger/nvim-dap",
-        enabled = load_lsp,
         dependencies = {
             "theHamsta/nvim-dap-virtual-text",
             "rcarriga/nvim-dap-ui",

@@ -1,7 +1,6 @@
 return {
     {
         "nvim-neotest/neotest",
-        enabled = load_lsp,
         dependencies = {
             "nvim-neotest/nvim-nio",
             "nvim-lua/plenary.nvim",
