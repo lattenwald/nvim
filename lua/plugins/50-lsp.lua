@@ -7,30 +7,42 @@ return {
         "WhoIsSethDaniel/mason-tool-installer.nvim",
         opts = {
             ensure_installed = {
-                "ansible-language-server",
-                "ansible-lint",
-                "basedpyright",
                 "beautysh", -- sh/zsh/bash/etc formatter
-                "clangd", -- C++
-                "codelldb",
-                "cpptools",
-                "elixir-ls", -- elixir ls/dap
-                "erlang-ls", -- erlang ls/dap
-                "gopls", -- go
                 "markdown-oxide",
                 "prettierd", -- html/json/css/etc formatter
-                "ruff",
                 "selene", -- lua LSP
                 "shellcheck", -- bash linter
                 "stylelint", -- CSS
                 "stylua", -- lua formatter
-                "texlab", -- LaTeX LSP
-                "typescript-language-server", -- typescript, javascript
                 "xmlformatter",
             },
             auto_update = true,
             run_on_start = true,
         },
+        config = function(_, opts)
+            local deps = {
+                ansible = { "ansible-language-server", "ansible-lint" },
+                python = { "basedpyright", "ruff" },
+                gcc = { "clangd", "codelldb", "cpptools" },
+                elixir = { "elixir-ls" },
+                erlang = { "erlang-ls" },
+                go = { "gopls" },
+                latex = { "texlab" },
+                node = { "typescript-language-server" },
+                perl = { "perlnavigator" },
+            }
+            local ensure_installed = opts.ensure_installed
+            for prereq, dependencies in pairs(deps) do
+                if vim.fn.executable(prereq) == 1 then
+                    for _, dep in ipairs(dependencies) do
+                        if not vim.tbl_contains(ensure_installed, dep) then
+                            table.insert(ensure_installed, dep)
+                        end
+                    end
+                end
+            end
+            require("mason-tool-installer").setup(opts)
+        end,
     },
     {
         "neovim/nvim-lspconfig",
@@ -58,19 +70,6 @@ return {
                 },
             })
 
-            -- lspconfig.pylsp.setup({
-            --     capabilities = cmp_capabilities,
-            --     settings = {
-            --         pylsp = {
-            --             plugins = {
-            --                 pycodestyle = {
-            --                     maxLineLength = 120,
-            --                 },
-            --             },
-            --         },
-            --     },
-            -- })
-
             lspconfig.perlnavigator.setup({
                 settings = {
                     perlnavigator = {
@@ -91,8 +90,9 @@ return {
                 }),
             })
 
-            local servers = { "erlangls", "elixirls", "ansiblels", "gopls", "ruff", "texlab", "clangd", "ts_ls" }
-            for _, lsp in pairs(servers) do
+            local servers =
+                { "erlangls", "elixirls", "ansiblels", "gopls", "ruff", "texlab", "clangd", "ts_ls", "selene" }
+            for _, lsp in ipairs(servers) do
                 lspconfig[lsp].setup({
                     -- on_attach = on_attach,
                     capabilites = cmp_capabilities,
@@ -189,9 +189,7 @@ return {
             local opts = {
                 sources = {
                     null_ls.builtins.formatting.stylua,
-                    -- null_ls.builtins.formatting.beautysh,
                     null_ls.builtins.formatting.prettierd,
-                    -- null_ls.builtins.formatting.xmlformat,
 
                     null_ls.builtins.diagnostics.ansiblelint,
                     null_ls.builtins.diagnostics.selene,
