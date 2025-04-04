@@ -34,13 +34,6 @@ function load_lsp()
     return vim.fn.filereadable(vim.fn.expand("~/.config/nvim/load-lsp")) == 1
 end
 
--- require("lazy").setup("plugins", {
---     defaults = {
---         version = "*",
---         event = "VeryLazy",
---     },
--- })
-
 require("lazy").setup({
     defaults = {
         version = "*",
@@ -60,8 +53,6 @@ require("lazy").setup({
         end,
     },
 })
-
--- vim.g.vimwiki_list = {{path = '~/vimwiki/', syntax = 'markdown', ext = '.md'}}
 
 -- command-line completion
 vim.opt.wildmenu = true
