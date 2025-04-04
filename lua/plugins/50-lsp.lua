@@ -90,8 +90,7 @@ return {
                 }),
             })
 
-            local servers =
-                { "erlangls", "elixirls", "ansiblels", "gopls", "ruff", "texlab", "clangd", "ts_ls", "selene" }
+            local servers = { "erlangls", "elixirls", "ansiblels", "gopls", "ruff", "texlab", "clangd", "ts_ls" }
             for _, lsp in ipairs(servers) do
                 lspconfig[lsp].setup({
                     -- on_attach = on_attach,
