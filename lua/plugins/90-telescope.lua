@@ -20,6 +20,7 @@ return {
                     mappings = {
                         i = {
                             ["<c-cr>"] = "select_tab",
+                            ["<s-cr>"] = "select_vertical",
                             ["<c-c>"] = "close",
                             ["<c-t>"] = open_with_trouble,
                             ["<c-s-t>"] = add_to_trouble,
@@ -28,6 +29,7 @@ return {
                         },
                         n = {
                             ["<c-cr>"] = "select_tab",
+                            ["<s-cr>"] = "select_vertical",
                             ["<esc>"] = "close",
                             ["q"] = "close",
                             ["<c-t>"] = open_with_trouble,
