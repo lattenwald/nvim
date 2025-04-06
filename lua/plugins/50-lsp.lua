@@ -7,14 +7,27 @@ return {
         "WhoIsSethDaniel/mason-tool-installer.nvim",
         opts = {
             ensure_installed = {
-                "beautysh", -- sh/zsh/bash/etc formatter
+                -- shell
+                "beautysh",
+                "shellcheck",
+
+                -- markdown
                 "markdown-oxide",
-                "prettierd", -- html/json/css/etc formatter
-                "selene", -- lua LSP
-                "shellcheck", -- bash linter
-                "stylelint", -- CSS
-                "stylua", -- lua formatter
+
+                -- html/css
+                "prettierd",
+                "stylelint",
+
+                -- lua
+                "selene",
+                "stylua",
+
+                -- XML
                 "xmlformatter",
+
+                -- SQL
+                "sqls",
+                "sql-formatter",
             },
             auto_update = true,
             run_on_start = true,
@@ -43,6 +56,9 @@ return {
             end
             require("mason-tool-installer").setup(opts)
         end,
+    },
+    {
+        "nanotee/sqls.nvim",
     },
     {
         "neovim/nvim-lspconfig",
@@ -88,6 +104,13 @@ return {
                         },
                     },
                 }),
+            })
+
+            lspconfig.sqls.setup({
+                on_attach = function(client, bufnr)
+                    client.server_capabilities.documentFormattingProvider = false
+                    require("sqls").on_attach(client, bufnr)
+                end,
             })
 
             local servers = { "erlangls", "elixirls", "ansiblels", "gopls", "ruff", "texlab", "clangd", "ts_ls" }
@@ -189,6 +212,7 @@ return {
                 sources = {
                     null_ls.builtins.formatting.stylua,
                     null_ls.builtins.formatting.prettierd,
+                    null_ls.builtins.formatting.sql_formatter,
 
                     null_ls.builtins.diagnostics.ansiblelint,
                     null_ls.builtins.diagnostics.selene,
