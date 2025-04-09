@@ -17,7 +17,17 @@ return {
     {
         "zbirenbaum/copilot-cmp",
         disabled = true,
-        opts = {},
+        opts = {
+            filetypes = {
+                yaml = true,
+                markdown = true,
+            },
+            workspace_folder = {
+                "/home/qalex/projects/",
+                "/home/qalex/kribrum/",
+                "/home/qalex/krapiva/",
+            },
+        },
     },
     {
         "Exafunction/codeium.vim",
