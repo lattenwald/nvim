@@ -107,8 +107,8 @@ vim.api.nvim_create_autocmd("BufEnter", {
 vim.api.nvim_set_keymap("c", "<S-Insert>", "<C-R>+", { desc = "Insert from buffer in command mode" })
 
 -- move tabs
-vim.api.nvim_set_keymap("n", "<C-S-PageDown>", ":tabmove +1<cr>", { desc = "Move tab right" })
-vim.api.nvim_set_keymap("n", "<C-S-PageUp>", ":tabmove -1<cr>", { desc = "Move tab left" })
+-- vim.api.nvim_set_keymap("n", "<C-S-PageDown>", ":tabmove +1<cr>", { desc = "Move tab right" })
+-- vim.api.nvim_set_keymap("n", "<C-S-PageUp>", ":tabmove -1<cr>", { desc = "Move tab left" })
 
 -- move between windows
 vim.keymap.set({ "n", "t" }, "<M-left>", "<Cmd>wincmd h<CR>", { desc = "Go to left window" })
