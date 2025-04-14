@@ -10,8 +10,6 @@ return {
                     accept = "<c-return>",
                 },
             },
-            -- suggestion = { enabled = false },
-            -- panel = { enabled = false },
         },
     },
     {
@@ -58,12 +56,11 @@ return {
     },
     {
         "yetone/avante.nvim",
-        enabled = false,
-        event = "VeryLazy",
-        lazy = false,
-        version = false, -- set this if you want to always pull the latest change
+        lazy = true,
+        cmd = "AvanteToggle",
+        version = false, -- Never set this value to "*"! Never!
         opts = {
-            -- add any opts here
+            provider = "copilot",
         },
         -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
         build = "make",
@@ -74,8 +71,12 @@ return {
             "nvim-lua/plenary.nvim",
             "MunifTanjim/nui.nvim",
             --- The below dependencies are optional,
+            -- "echasnovski/mini.pick", -- for file_selector provider mini.pick
+            "nvim-telescope/telescope.nvim", -- for file_selector provider telescope
+            "hrsh7th/nvim-cmp", -- autocompletion for avante commands and mentions
+            -- "ibhagwan/fzf-lua", -- for file_selector provider fzf
             "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-            -- "zbirenbaum/copilot.lua", -- for providers='copilot'
+            "zbirenbaum/copilot.lua", -- for providers='copilot'
             {
                 -- support for image pasting
                 "HakonHarnes/img-clip.nvim",
