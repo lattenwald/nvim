@@ -38,7 +38,7 @@ return {
             use_yazi_client_id_flag = true,
 
             keymaps = {
-                show_help = "<f1>",
+                show_help = "g?",
                 open_file_in_vertical_split = "<s-enter>",
                 open_file_in_tab = "<c-enter>",
             },
