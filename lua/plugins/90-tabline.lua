@@ -1,5 +1,24 @@
 return {
     {
+        "nanozuki/tabby.nvim",
+        -- event = 'VimEnter',
+        dependencies = "nvim-tree/nvim-web-devicons",
+        opts = {
+            preset = "tab_only",
+            option = {
+                buf_name = {
+                    mode = "relative",
+                },
+            },
+        },
+        config = function(_, opts)
+            require("tabby").setup(opts)
+            -- move tabs
+            vim.api.nvim_set_keymap("n", "<C-S-PageDown>", ":tabmove +1<cr>", { desc = "Move tab right" })
+            vim.api.nvim_set_keymap("n", "<C-S-PageUp>", ":tabmove -1<cr>", { desc = "Move tab left" })
+        end,
+    },
+    {
         "akinsho/bufferline.nvim",
         enabled = false,
         version = "*",
@@ -7,7 +26,7 @@ return {
     },
     {
         "romgrk/barbar.nvim",
-        -- enabled = false,
+        enabled = false,
         dependencies = {
             "lewis6991/gitsigns.nvim", -- OPTIONAL: for git status
             "nvim-tree/nvim-web-devicons", -- OPTIONAL: for file icons
@@ -15,7 +34,17 @@ return {
         init = function()
             vim.g.barbar_auto_setup = false
         end,
-        opts = {},
+        opts = {
+            animation = false,
+            icons = {
+                diagnostics = {
+                    [vim.diagnostic.severity.ERROR] = { enabled = true },
+                    [vim.diagnostic.severity.WARN] = { enabled = true },
+                    [vim.diagnostic.severity.INFO] = { enabled = true },
+                    [vim.diagnostic.severity.HINT] = { enabled = true },
+                },
+            },
+        },
         config = function(_, opts)
             require("barbar").setup(opts)
             vim.keymap.set("n", "<C-PageDown>", "<Cmd>BufferNext<CR>", { desc = "Next tab" })
