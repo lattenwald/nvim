@@ -37,20 +37,15 @@ end
 require("lazy").setup({
     defaults = {
         version = "*",
-        event = "VeryLazy",
+        -- event = "VeryLazy",
     },
     {
         import = "plugins",
-        cond = function()
-            return not vim.g.vscode
-        end,
+        cond = true,
     },
-    { import = "plugins_always", cond = true },
     {
-        import = "plugins_vscode",
-        cond = function()
-            return vim.g.vscode
-        end,
+        import = "plugins_lsp",
+        cond = vim.fn.filereadable(vim.fn.stdpath("config") .. "/load-lsp") == 1,
     },
 })
 
