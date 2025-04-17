@@ -39,14 +39,17 @@ require("lazy").setup({
         version = "*",
         -- event = "VeryLazy",
     },
-    {
-        import = "plugins",
-        cond = true,
+    spec = {
+        {
+            import = "plugins",
+            cond = true,
+        },
+        {
+            import = "plugins_lsp",
+            cond = vim.fn.filereadable(vim.fn.stdpath("config") .. "/load-lsp") == 1,
+        },
     },
-    {
-        import = "plugins_lsp",
-        cond = vim.fn.filereadable(vim.fn.stdpath("config") .. "/load-lsp") == 1,
-    },
+    checker = { enabled = true },
 })
 
 -- command-line completion
