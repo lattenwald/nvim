@@ -41,70 +41,106 @@ return {
     },
     {
         "nanozuki/tabby.nvim",
-        -- enabled = false,
-        -- event = 'VimEnter',
         dependencies = "nvim-tree/nvim-web-devicons",
-        opts = {
-            preset = "active_wins_at_tail",
-            option = {
-                tab_name = {
-                    name_fallback = function(tabid)
-                        return tabid
-                    end,
-                },
-                buf_name = {
-                    mode = "relative",
-                },
-            },
-        },
         config = function(_, opts)
             require("tabby").setup(opts)
             -- move tabs
             vim.api.nvim_set_keymap("n", "<C-S-PageDown>", ":tabmove +1<cr>", { desc = "Move tab right" })
             vim.api.nvim_set_keymap("n", "<C-S-PageUp>", ":tabmove -1<cr>", { desc = "Move tab left" })
-        end,
-    },
-    {
-        "akinsho/bufferline.nvim",
-        enabled = false,
-        version = "*",
-        dependencies = "nvim-tree/nvim-web-devicons",
-        opts = {
-            options = {
-                mode = "tabs",
-            },
-        },
-    },
-    {
-        "romgrk/barbar.nvim",
-        enabled = false,
-        dependencies = {
-            "lewis6991/gitsigns.nvim", -- OPTIONAL: for git status
-            "nvim-tree/nvim-web-devicons", -- OPTIONAL: for file icons
-        },
-        init = function()
-            vim.g.barbar_auto_setup = false
-        end,
-        opts = {
-            animation = false,
-            icons = {
-                diagnostics = {
-                    [vim.diagnostic.severity.ERROR] = { enabled = true },
-                    [vim.diagnostic.severity.WARN] = { enabled = true },
-                    [vim.diagnostic.severity.INFO] = { enabled = true },
-                    [vim.diagnostic.severity.HINT] = { enabled = true },
-                },
-            },
-        },
-        config = function(_, opts)
-            require("barbar").setup(opts)
-            vim.keymap.set("n", "<C-PageDown>", "<Cmd>BufferNext<CR>", { desc = "Next tab" })
-            vim.keymap.set("n", "<C-PageUp>", "<Cmd>BufferPrev<CR>", { desc = "Previous tab" })
 
-            vim.keymap.set("n", "<C-S-PageDown>", "<Cmd>BufferMoveNext<CR>", { desc = "Move tab to the right" })
-            vim.keymap.set("n", "<C-S-PageUp>", "<Cmd>BufferMovePrev<CR>", { desc = "Move tab to the left" })
+            local function get_diagnostic_counts(bufnr)
+                local diagnostics = vim.diagnostic.get(bufnr)
+                local counts = {
+                    info = 0,
+                    warning = 0,
+                    error = 0,
+                }
+                for _, diag in ipairs(diagnostics) do
+                    if diag.severity == vim.diagnostic.severity.INFO then
+                        counts.info = counts.info + 1
+                    elseif diag.severity == vim.diagnostic.severity.WARN then
+                        counts.warning = counts.warning + 1
+                    elseif diag.severity == vim.diagnostic.severity.ERROR then
+                        counts.error = counts.error + 1
+                    end
+                end
+                return counts
+            end
 
-            vim.keymap.set("n", "<leader>X", "<Cmd>BufferClose<CR>", { desc = "Close tab" })
+            local theme = {
+                fill = "TabLineFill",
+                head = "TabLine",
+                -- current = "MiniTablineCurrent",
+                current = "lualine_a_insert",
+                tab = "TabLine",
+                tail = "TabLine",
+            }
+            require("tabby").setup({
+                line = function(line)
+                    return {
+                        {
+                            { "  ", hl = theme.head },
+                            line.sep("", theme.head, theme.fill),
+                        },
+                        line.tabs().foreach(function(tab)
+                            local hl = tab.is_current() and theme.current or theme.tab
+                            return {
+                                line.sep("", hl, theme.fill),
+                                tab.is_current() and "" or "󰆣",
+                                tab.number(),
+                                line.sep("", hl, theme.fill),
+                                hl = hl,
+                                margin = " ",
+                            }
+                        end),
+                        line.spacer(),
+                        line.wins_in_tab(line.api.get_current_tab()).foreach(function(win)
+                            local diag = get_diagnostic_counts(win.buf().id)
+                            local hl = theme.tab
+                            if win.is_current() then
+                                if diag.error > 0 then
+                                    hl = "@comment.error"
+                                elseif diag.warning > 0 then
+                                    hl = "@comment.warning"
+                                elseif diag.info > 0 then
+                                    hl = "@comment.todo"
+                                else
+                                    hl = theme.current
+                                end
+                            else
+                                if diag.error > 0 then
+                                    hl = "lualine_b_diagnostics_error_normal"
+                                elseif diag.warning > 0 then
+                                    hl = "lualine_b_diagnostics_warn_normal"
+                                elseif diag.info > 0 then
+                                    hl = "lualine_b_diagnostics_info_normal"
+                                else
+                                    hl = theme.tab
+                                end
+                            end
+                            return {
+                                line.sep("", hl, theme.fill),
+                                win.is_current() and "" or "",
+                                win.buf().id,
+                                win.buf_name(),
+                                diag.error > 0 and "" or "",
+                                diag.warning > 0 and "" or "",
+                                diag.info > 0 and "" or "",
+                                win.buf().is_changed() and "+" or "",
+                                line.sep("", hl, theme.fill),
+                                hl = hl,
+                                margin = " ",
+                            }
+                        end),
+                        {
+                            line.sep("", theme.tail, theme.fill),
+                            { "  ", hl = theme.tail },
+                        },
+                        hl = theme.fill,
+                    }
+                end,
+                -- option = {}, -- setup modules' option,
+            })
         end,
     },
 }
