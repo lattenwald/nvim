@@ -30,10 +30,6 @@ function current_repo_name()
     return vim.fs.basename(repo_dir)
 end
 
-function load_lsp()
-    return vim.fn.filereadable(vim.fn.expand("~/.config/nvim/load-lsp")) == 1
-end
-
 require("lazy").setup({
     defaults = {
         version = "*",
