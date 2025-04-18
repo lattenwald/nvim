@@ -99,11 +99,11 @@ return {
                             local hl = theme.tab
                             if win.is_current() then
                                 if diag.error > 0 then
-                                    hl = "@comment.error"
+                                    hl = "TodoBgXXX"
                                 elseif diag.warning > 0 then
-                                    hl = "@comment.warning"
+                                    hl = "TodoBgWarn"
                                 elseif diag.info > 0 then
-                                    hl = "@comment.todo"
+                                    hl = "TodoBgTODO"
                                 else
                                     hl = theme.current
                                 end
