@@ -1,5 +1,9 @@
 My [Neovim](https://neovim.io/) configuration based on [lazy.nvim](https://lazy.folke.io/)
 
+Basic idea is LSP servers are installed on demand, and only those explicitly configured in `after/ftplugin/*.lua` are installed.
+
+Notable exception is Rust, which has `lua/plugnis/90-rust.lua` configuration in addition to ftplugin one.
+
 ## Progress
 
 * [x] tools
