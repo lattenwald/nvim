@@ -24,7 +24,7 @@ In Neovim:
 	* [x] Autopairs
 	* [x] comment hotkeys `<leader>c<space>`
     * [x] REST.nvim
- [x] projects (via snacks)
+    * [x] projects (via snacks)
 * lsp servers
 	* [x] Rust
 	* [x] Lua
