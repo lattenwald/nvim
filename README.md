@@ -4,7 +4,15 @@ Basic idea is LSP servers are installed on demand, and only those explicitly con
 
 Notable exception is Rust, which has `lua/plugnis/90-rust.lua` configuration in addition to ftplugin one.
 
-## Progress
+# Keymap
+
+In Neovim:
+
+  * `<space>sk` — show all key bindings in Snacks picker
+  * `<space>?` — show all key bindings in WhichKey window
+  * `<space>/` — show buffer-local key bindings in WhichKey window
+
+# Progress
 
 * [x] tools
 	* [x] which-key
