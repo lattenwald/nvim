@@ -1,2 +1,2 @@
 require("lspconfig").jsonls.setup({})
-vim.cmd("TSInstall json5")
+require("config.utils").ts_install("json5")

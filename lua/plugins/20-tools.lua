@@ -10,21 +10,7 @@ return {
     {
         "nvim-treesitter/nvim-treesitter",
         opts = {
-            -- TODO decide if keep this
             ensure_installed = {
-                "rust",
-                "erlang",
-                "elixir",
-                "http",
-                "perl",
-                "bash",
-                "lua",
-                "dockerfile",
-                "gitignore",
-                "vim",
-                "json5",
-                "html",
-                "yaml",
                 "markdown",
                 "markdown_inline",
             },
