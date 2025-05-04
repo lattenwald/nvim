@@ -1,4 +1,4 @@
-require("lspconfig").basedpyright.setup({
+require("config.utils").lsp_setup("basedpyright", {
     settings = {
         basedpyright = {
             typeCheckingMode = "standard",
@@ -6,4 +6,4 @@ require("lspconfig").basedpyright.setup({
     },
     position_encoding = "utf-16",
 })
-require("lspconfig").ruff.setup({})
+require("config.utils").lsp_setup("ruff")

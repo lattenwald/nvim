@@ -1,2 +1,2 @@
-require("lspconfig").ts_ls.setup({})
-require("lspconfig").eslint.setup({})
+require("config.utils").lsp_setup("ts_ls")
+require("config.utils").lsp_setup("eslint")

@@ -1,1 +1,1 @@
-require("lspconfig").markdown_oxide.setup({})
+require("config.utils").lsp_setup("markdown_oxide")

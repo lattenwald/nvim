@@ -1,1 +1,1 @@
-require("lspconfig").html.setup({})
+require("config.utils").lsp_setup("html")

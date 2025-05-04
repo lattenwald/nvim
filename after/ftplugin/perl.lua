@@ -1,1 +1,1 @@
-require("lspconfig").perlnavigator.setup({})
+require("config.utils").lsp_setup("perlnavigator")

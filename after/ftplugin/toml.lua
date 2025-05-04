@@ -1,1 +1,1 @@
-require("lspconfig").taplo.setup({})
+require("config.utils").lsp_setup("taplo")

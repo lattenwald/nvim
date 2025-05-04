@@ -1,1 +1,1 @@
-require("lspconfig").erlangls.setup({})
+require("config.utils").lsp_setup("erlangls")

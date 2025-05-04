@@ -1,1 +1,1 @@
-require("lspconfig").lemminx.setup({})
+require("config.utils").lsp_setup("lemminx")

@@ -21,4 +21,14 @@ function M.ts_install(parsername)
     end
 end
 
+function M.lsp_setup(servername, opts)
+    if opts == nil then
+        opts = {}
+    end
+    local lspconfig = require("lspconfig")
+    if not lspconfig[servername].manager then
+        lspconfig[servername].setup(opts)
+    end
+end
+
 return M

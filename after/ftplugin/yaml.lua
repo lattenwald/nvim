@@ -1,1 +1,1 @@
-require("lspconfig").yamlls.setup({})
+require("config.utils").lsp_setup("yamlls")

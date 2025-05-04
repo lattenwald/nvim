@@ -1,1 +1,1 @@
-require("lspconfig").gopls.setup({})
+require("config.utils").lsp_setup("gopls")

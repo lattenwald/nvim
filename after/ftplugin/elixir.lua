@@ -1,1 +1,1 @@
-require("lspconfig").elixirls.setup({})
+require("config.utils").lsp_setup("elixirls")
