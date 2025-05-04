@@ -56,6 +56,6 @@
   "which-key.nvim": { "branch": "main", "commit": "370ec46f710e058c9c1646273e6b225acf47cbed" },
   "wombat.nvim": { "branch": "main", "commit": "d450f6bc61aeafc1c4792c96c888701e9a6a196b" },
   "wombat256.vim": { "branch": "master", "commit": "8734ba45dcf5e38c4d2686b35c94f9fcb30427e2" },
-  "yazi.nvim": { "branch": "main", "commit": "af51242f9a51c4da1104b8017c67551c87c662ae" },
+  "yazi.nvim": { "branch": "main", "commit": "8dbc4121898dfec7982d95e85e60785ea7af4202" },
   "zephyr-nvim": { "branch": "main", "commit": "7fd86b7164442d3b5ec2c81b2694d040e716b5cf" }
 }
