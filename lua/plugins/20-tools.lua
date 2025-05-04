@@ -228,7 +228,6 @@ return {
                 },
             })
             vim.keymap.set("n", "<leader>t", "<cmd>TodoTrouble<enter>", { silent = true, desc = "Show TODOs in Trouble list" })
-            vim.keymap.set("n", "<leader>T", "<cmd>TodoTelescope<enter>", { silent = true, desc = "Show TODOs in Telescope picker" })
         end,
     },
     {
@@ -279,6 +278,10 @@ return {
     },
     {
         "AckslD/messages.nvim",
+        opts = {},
+    },
+    {
+        "tzachar/local-highlight.nvim",
         opts = {},
     },
 }

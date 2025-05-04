@@ -8,20 +8,6 @@ vim.keymap.set({ "n", "t" }, "<M-right>", "<Cmd>wincmd l<enter>", { desc = "Go t
 vim.keymap.set({ "n", "t" }, "<M-up>", "<Cmd>wincmd k<enter>", { desc = "Go to top window" })
 vim.keymap.set({ "n", "t" }, "<M-down>", "<Cmd>wincmd j<enter>", { desc = "Go to bottom window" })
 
--- lsp keybindings
-vim.keymap.set("n", "]g", function()
-    vim.diagnostic.goto_next()
-end, { silent = true, desc = "Go to next diagnostic" })
-vim.keymap.set("n", "[g", function()
-    vim.diagnostic.goto_prev()
-end, { silent = true, desc = "Go to previous diagnostic" })
-vim.keymap.set("n", "<leader>d", function()
-    vim.lsp.buf.hover()
-end, { desc = "LSP Hover" })
-vim.keymap.set("n", "<leader>a", function()
-    vim.lsp.buf.code_action()
-end, { desc = "LSP Code Action" })
-
 -- wildmenu (cmdline)
 vim.opt.wildmenu = true
 vim.opt.wildmode = "longest:full,full"

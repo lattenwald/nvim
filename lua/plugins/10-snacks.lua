@@ -20,6 +20,10 @@ return {
                         keys = {
                             ["<s-enter>"] = { "edit_vsplit", mode = { "i", "n" } },
                             ["<c-enter>"] = { "edit_tab", mode = { "i", "n" } },
+                            ["<S-PageDown>"] = { "preview_scroll_down", mode = { "i", "n" } },
+                            ["<S-PageUp>"] = { "preview_scroll_up", mode = { "i", "n" } },
+                            ["<PageDown>"] = { "list_scroll_down", mode = { "i", "n" } },
+                            ["<PageUp>"] = { "list_scroll_up", mode = { "i", "n" } },
                         },
                     },
                     list = {

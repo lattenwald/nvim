@@ -27,6 +27,18 @@ return {
                     vim.keymap.set("n", "<leader>n", function()
                         return ":IncRename " .. vim.fn.expand("<cword>")
                     end, { buffer = true, expr = true, desc = "LSP rename symbol" })
+                    vim.keymap.set("n", "]g", function()
+                        vim.diagnostic.goto_next()
+                    end, { silent = true, desc = "Go to next diagnostic" })
+                    vim.keymap.set("n", "[g", function()
+                        vim.diagnostic.goto_prev()
+                    end, { silent = true, desc = "Go to previous diagnostic" })
+                    vim.keymap.set("n", "<leader>d", function()
+                        vim.lsp.buf.hover()
+                    end, { desc = "LSP Hover" })
+                    vim.keymap.set("n", "<leader>a", function()
+                        vim.lsp.buf.code_action()
+                    end, { desc = "LSP Code Action" })
                 end,
             })
         end,
