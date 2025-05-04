@@ -236,19 +236,19 @@ return {
     },
     {
         "lewis6991/gitsigns.nvim",
-        opts = {},
-        config = function(_, opts)
-            require("gitsigns").setup(opts)
-
-            -- Setup keymaps
-            vim.keymap.set("n", "hs", '<cmd>lua require"gitsigns".stage_hunk()<enter>', { desc = "Stage hunk" })
-            vim.keymap.set("n", "<leader>hp", '<cmd>lua require"gitsigns".preview_hunk()<enter>', { desc = "Preview hunk" })
-            vim.keymap.set("n", "<leader>hr", '<cmd>lua require"gitsigns".reset_hunk()<enter>', { desc = "Reset hunk" })
-            vim.keymap.set("n", "<leader>hS", '<cmd>lua require"gitsigns".stagefer()<enter>', { desc = "Stage buffer" })
-            vim.keymap.set("n", "<leader>hu", '<cmd>lua require"gitsigns".undo_stage_hunk()<enter>', { desc = "Undo stage hunk" })
-            vim.keymap.set("n", "]c", '<cmd>lua require"gitsigns".next_hunk()<enter>', { desc = "Next hunk" })
-            vim.keymap.set("n", "[c", '<cmd>lua require"gitsigns".prev_hunk()<enter>', { desc = "Next hunk" })
-        end,
+        opts = {
+            -- stylua: ignore
+            on_attach = function(bufnr)
+                local gitsigns = require("gitsigns")
+                vim.keymap.set("n", "hs",         function() gitsigns.stage_hunk() end, { desc = "Stage hunk", buffer = bufnr })
+                vim.keymap.set("n", "<leader>hp", function() gitsigns.preview_hunk() end, { desc = "Preview hunk", buffer = bufnr })
+                vim.keymap.set("n", "<leader>hr", function() gitsigns.reset_hunk() end, { desc = "Reset hunk", buffer = bufnr })
+                vim.keymap.set("n", "<leader>hS", function() gitsigns.stagefer() end, { desc = "Stage buffer", buffer = bufnr })
+                vim.keymap.set("n", "<leader>hu", function() gitsigns.undo_stage_hunk() end, { desc = "Undo stage hunk", buffer = bufnr })
+                vim.keymap.set("n", "]c",         function() gitsigns.next_hunk() end, { desc = "Next hunk", buffer = bufnr })
+                vim.keymap.set("n", "[c",         function() gitsigns.prev_hunk() end, { desc = "Next hunk", buffer = bufnr })
+            end,
+        },
     },
     {
         "kevinhwang91/nvim-ufo",
