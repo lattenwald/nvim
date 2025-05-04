@@ -20,7 +20,6 @@ return {
                 ["<down>"] = { 'select_next', 'fallback'  },
                 ["<tab>"] = { 'select_and_accept', 'fallback'  },
                 ["<c-enter>"] = { 'select_and_accept', 'fallback'  },
-                ["<enter>"] = { 'accept', 'fallback' },
                 ["<s-space>"] = { 'show_and_insert', 'fallback'  },
                 -- ["<esc>"] = { 'hide', 'fallback' },
                 ["<esc>"] = {
