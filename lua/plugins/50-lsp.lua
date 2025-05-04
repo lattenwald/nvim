@@ -21,24 +21,24 @@ return {
         "neovim/nvim-lspconfig",
         config = function()
             vim.api.nvim_create_autocmd("LspAttach", {
-                group = vim.api.nvim_create_augroup("UserLspConfig", {}),
                 callback = function(ev)
-                    print("LS attached buf=" .. ev.buf .. " client=" .. vim.lsp.get_client_by_id(ev.data.client_id).name)
+                    bufnr = ev.buf
+                    print("LS attached buf=" .. bufnr .. " client=" .. vim.lsp.get_client_by_id(ev.data.client_id).name)
                     vim.keymap.set("n", "<leader>n", function()
                         return ":IncRename " .. vim.fn.expand("<cword>")
-                    end, { buffer = true, expr = true, desc = "LSP rename symbol" })
+                    end, { buffer = bufnr, expr = true, desc = "LSP rename symbol" })
                     vim.keymap.set("n", "]g", function()
                         vim.diagnostic.goto_next()
-                    end, { silent = true, desc = "Go to next diagnostic" })
+                    end, { buffer = bufnr, silent = true, desc = "Go to next diagnostic" })
                     vim.keymap.set("n", "[g", function()
                         vim.diagnostic.goto_prev()
-                    end, { silent = true, desc = "Go to previous diagnostic" })
+                    end, { buffer = bufnr, silent = true, desc = "Go to previous diagnostic" })
                     vim.keymap.set("n", "<leader>d", function()
                         vim.lsp.buf.hover()
-                    end, { desc = "LSP Hover" })
+                    end, { buffer = bufnr, desc = "LSP Hover" })
                     vim.keymap.set("n", "<leader>a", function()
                         vim.lsp.buf.code_action()
-                    end, { desc = "LSP Code Action" })
+                    end, { buffer = bufnr, desc = "LSP Code Action" })
                 end,
             })
         end,
