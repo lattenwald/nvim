@@ -15,7 +15,8 @@ Notable exception is Rust, which has `lua/plugnis/90-rust.lua` configuration in 
 	* [x] Surround
 	* [x] Autopairs
 	* [x] comment hotkeys `<leader>c<space>`
-* [x] projects
+    * [x] REST.nvim
+ [x] projects (via snacks)
 * lsp servers
 	* [x] Rust
 	* [x] Lua
