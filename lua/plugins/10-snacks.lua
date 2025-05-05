@@ -48,14 +48,6 @@ return {
 
             { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
 
-            { "<leader>p", function() Snacks.picker.projects({
-                dev = {
-                    "~/krapiva", "~/kribrum", "~/projects", "~/git",
-                },
-                patterns = {
-                    ".git", "package.json", "pyproject.toml", "Cargo.toml", "rebar.config",
-                },
-            }) end, desc = "Projects" },
             { "<leader>F", function() Snacks.picker.files() end, desc = "Find Files" },
             { "<leader>f", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
 
