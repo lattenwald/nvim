@@ -21,7 +21,7 @@ return {
                 },
                 sections = {
                     lualine_a = { "mode" },
-                    lualine_b = { current_repo_name, "branch", "diff", "diagnostics" },
+                    lualine_b = { require("config.utils").current_repo_name, "branch", "diff", "diagnostics" },
                     lualine_c = { "filename", lsp_progress.progress },
                     lualine_x = { "copilot", "encoding", "fileformat", "filetype" },
                     lualine_y = { "progress" },
