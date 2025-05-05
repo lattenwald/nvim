@@ -19,9 +19,3 @@ vim.o.expandtab = true
 vim.o.scl = "yes:1"
 
 vim.o.number = true
-
--- remove trailing whitespaces on save
-vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-    pattern = { "*" },
-    command = [[%s/\s\+$//e]],
-})

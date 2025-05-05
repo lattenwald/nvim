@@ -99,6 +99,19 @@ return {
             { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
         },
         init = function()
+            local trim_trailing_ws = true
+
+            local function trim_whitespace()
+                if trim_trailing_ws then
+                    vim.cmd([[%s/\s\+$//e]])
+                end
+            end
+
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                pattern = "*",
+                callback = trim_whitespace,
+            })
+
             vim.api.nvim_create_autocmd("User", {
                 pattern = "VeryLazy",
                 callback = function()
@@ -125,6 +138,20 @@ return {
                     Snacks.toggle.indent():map("<leader>ug")
                     Snacks.toggle.dim():map("<leader>uD")
                     Snacks.toggle.option("list", { name = "Whitespaces" }):map("<leader>uS")
+                    Snacks.toggle
+                        .new({
+                            id = "trim_trailing_ws",
+                            name = "Trim Trailing Whitespace on Save",
+                            get = function()
+                                return trim_trailing_ws
+                            end,
+                            set = function(state)
+                                trim_trailing_ws = state
+                            end,
+                            icon = { enabled = "󰛗", disabled = "󰛖" }, -- optional, pick icons you like
+                            color = { enabled = "green", disabled = "yellow" }, -- optional
+                        })
+                        :map("<leader>uW")
                 end,
             })
         end,
