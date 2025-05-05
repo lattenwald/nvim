@@ -14,13 +14,13 @@ return {
             -- do whatever you like by hooks
             hooks = {
                 -- Run before cd to project, add a bookmark here, then can use `CdProjectBack` to switch back
-                {
-                    trigger_point = "BEFORE_CD",
-                    callback = function(_)
-                        vim.print("before cd project")
-                        require("bookmarks").api.mark({ name = "before cd project" })
-                    end,
-                },
+                -- {
+                --     trigger_point = "BEFORE_CD",
+                --     callback = function(_)
+                --         vim.print("before cd project")
+                --         require("bookmarks").api.mark({ name = "before cd project" })
+                --     end,
+                -- },
                 -- Run after cd to project, find and open a file in the target project by smart-open
                 {
                     callback = function(_)
