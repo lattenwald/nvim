@@ -93,6 +93,76 @@ function M.add_project()
     vim.notify("Project added: " .. project_name, vim.log.levels.INFO)
 end
 
+-- Function to remove a project
+local function remove_project(project_path)
+    local projects = {}
+    if uv.fs_stat(projects_file) then
+        local file = io.open(projects_file, "r")
+        if file then
+            local content = file:read("*a")
+            if content ~= "" then
+                local success, result = pcall(yaml.load, content)
+                if success and result then
+                    -- Ensure we have an array of projects
+                    if type(result) == "table" then
+                        if #result > 0 then
+                            projects = result
+                        else
+                            -- If it's an empty table, it might be a single project
+                            if result.name and result.path then
+                                projects = { result }
+                            end
+                        end
+                    end
+                else
+                    vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
+                    return false
+                end
+            end
+            file:close()
+        end
+    end
+
+    -- Find and remove the project
+    local found = false
+    for i, project in ipairs(projects) do
+        if project.path == project_path then
+            table.remove(projects, i)
+            found = true
+            break
+        end
+    end
+
+    if not found then
+        vim.notify("Project not found", vim.log.levels.WARN)
+        return false
+    end
+
+    -- Save the updated projects
+    local file = io.open(projects_file, "w")
+    if file then
+        local success, err = pcall(function()
+            -- Ensure we write an array of projects
+            file:write("---\n")
+            for _, project in ipairs(projects) do
+                file:write("- name: " .. project.name .. "\n")
+                file:write("  path: " .. project.path .. "\n")
+            end
+        end)
+        if not success then
+            vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
+            file:close()
+            return false
+        end
+        file:close()
+        vim.notify("Project removed successfully", vim.log.levels.INFO)
+        return true
+    else
+        vim.notify("Failed to open projects file for writing", vim.log.levels.ERROR)
+        return false
+    end
+end
+
 -- Function to list projects and allow selection
 function M.list_projects()
     local projects = {}
@@ -103,7 +173,17 @@ function M.list_projects()
             if content ~= "" then
                 local success, result = pcall(yaml.load, content)
                 if success and result then
-                    projects = result -- The YAML file contains a direct array of projects
+                    -- Ensure we have an array of projects
+                    if type(result) == "table" then
+                        if #result > 0 then
+                            projects = result
+                        else
+                            -- If it's an empty table, it might be a single project
+                            if result.name and result.path then
+                                projects = { result }
+                            end
+                        end
+                    end
                 else
                     vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
                     return
@@ -136,17 +216,34 @@ function M.list_projects()
                 local item = picker:current()
                 if item then
                     vim.cmd("cd " .. vim.fn.fnameescape(item.path))
-                    vim.defer_fn(function()
-                        Snacks.picker.smart()
-                    end, 50)
+                    Snacks.picker.smart()
                 end
             end,
-        },
-        keymaps = {
-            ["<C-d>"] = function(item)
-                -- TODO: Implement project deletion
-                vim.notify("Project deletion not implemented yet", vim.log.levels.INFO)
+            delete_project = function(picker)
+                local item = picker:current()
+                if item then
+                    if remove_project(item.path) then
+                        -- Close the picker and reopen it to refresh the list
+                        picker:close()
+                        M.list_projects()
+                    end
+                end
             end,
+            add_current_project = function(picker)
+                picker:close()
+                M.add_project()
+                M.list_projects()
+            end,
+        },
+        win = {
+            input = {
+                keys = {
+                    ["<C-d>"] = { "delete_project", mode = { "n", "i" } },
+                    ["<C-a>"] = { "add_current_project", mode = { "n", "i" } },
+                    ["a"] = { "add_current_project", mode = { "n" } },
+                    ["<Delete>"] = { "delete_project", mode = { "n" } },
+                },
+            },
         },
     })
 end
