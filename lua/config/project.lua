@@ -34,6 +34,60 @@ local function find_project_root()
     return nil
 end
 
+-- Function to read projects from YAML file
+local function read_projects()
+    local projects = {}
+    if uv.fs_stat(projects_file) then
+        local file = io.open(projects_file, "r")
+        if file then
+            local content = file:read("*a")
+            if content ~= "" then
+                local success, result = pcall(yaml.load, content)
+                if success and result then
+                    if type(result) == "table" then
+                        if #result > 0 then
+                            projects = result
+                        else
+                            if result.name and result.path then
+                                projects = { result }
+                            end
+                        end
+                    end
+                else
+                    vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
+                    return nil
+                end
+            end
+            file:close()
+        end
+    end
+    return projects
+end
+
+-- Function to write projects to YAML file
+local function write_projects(projects)
+    local file = io.open(projects_file, "w")
+    if file then
+        local success, err = pcall(function()
+            file:write("---\n")
+            for _, project in ipairs(projects) do
+                file:write("- name: " .. project.name .. "\n")
+                file:write("  path: " .. project.path .. "\n")
+            end
+        end)
+        if not success then
+            vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
+            file:close()
+            return false
+        end
+        file:close()
+        return true
+    else
+        vim.notify("Failed to open projects file for writing", vim.log.levels.ERROR)
+        return false
+    end
+end
+
 -- Function to add the current project
 function M.add_project()
     local project_root = find_project_root()
@@ -43,20 +97,7 @@ function M.add_project()
     end
 
     local project_name = project_root:match(".*/(.*)")
-
-    local projects = {}
-    if uv.fs_stat(projects_file) then
-        local file = io.open(projects_file, "r")
-        if file then
-            local content = file:read("*a")
-            if content == "" then
-                projects = {}
-            else
-                projects = yaml.load(content) or {}
-            end
-            file:close()
-        end
-    end
+    local projects = read_projects() or {}
 
     for _, project in ipairs(projects) do
         if project.path == project_root then
@@ -65,62 +106,17 @@ function M.add_project()
         end
     end
 
-    local project_exists = false
-    for _, project in ipairs(projects) do
-        if project.path == project_root then
-            project_exists = true
-            break
-        end
+    table.insert(projects, { name = project_name, path = project_root })
+    if write_projects(projects) then
+        vim.notify("Project added: " .. project_name, vim.log.levels.INFO)
     end
-
-    if not project_exists then
-        table.insert(projects, { name = project_name, path = project_root })
-    end
-
-    local file = io.open(projects_file, "w")
-    if file then
-        local success, err = pcall(function()
-            file:write(yaml.dump({ projects }))
-        end)
-        if not success then
-            vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
-        end
-        file:close()
-    else
-        vim.notify("Failed to open projects file for writing.", vim.log.levels.ERROR)
-    end
-
-    vim.notify("Project added: " .. project_name, vim.log.levels.INFO)
 end
 
 -- Function to remove a project
 local function remove_project(project_path)
-    local projects = {}
-    if uv.fs_stat(projects_file) then
-        local file = io.open(projects_file, "r")
-        if file then
-            local content = file:read("*a")
-            if content ~= "" then
-                local success, result = pcall(yaml.load, content)
-                if success and result then
-                    -- Ensure we have an array of projects
-                    if type(result) == "table" then
-                        if #result > 0 then
-                            projects = result
-                        else
-                            -- If it's an empty table, it might be a single project
-                            if result.name and result.path then
-                                projects = { result }
-                            end
-                        end
-                    end
-                else
-                    vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
-                    return false
-                end
-            end
-            file:close()
-        end
+    local projects = read_projects()
+    if not projects then
+        return false
     end
 
     -- Find and remove the project
@@ -138,59 +134,18 @@ local function remove_project(project_path)
         return false
     end
 
-    -- Save the updated projects
-    local file = io.open(projects_file, "w")
-    if file then
-        local success, err = pcall(function()
-            -- Ensure we write an array of projects
-            file:write("---\n")
-            for _, project in ipairs(projects) do
-                file:write("- name: " .. project.name .. "\n")
-                file:write("  path: " .. project.path .. "\n")
-            end
-        end)
-        if not success then
-            vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
-            file:close()
-            return false
-        end
-        file:close()
+    if write_projects(projects) then
         vim.notify("Project removed successfully", vim.log.levels.INFO)
         return true
-    else
-        vim.notify("Failed to open projects file for writing", vim.log.levels.ERROR)
-        return false
     end
+    return false
 end
 
 -- Function to list projects and allow selection
 function M.list_projects()
-    local projects = {}
-    if uv.fs_stat(projects_file) then
-        local file = io.open(projects_file, "r")
-        if file then
-            local content = file:read("*a")
-            if content ~= "" then
-                local success, result = pcall(yaml.load, content)
-                if success and result then
-                    -- Ensure we have an array of projects
-                    if type(result) == "table" then
-                        if #result > 0 then
-                            projects = result
-                        else
-                            -- If it's an empty table, it might be a single project
-                            if result.name and result.path then
-                                projects = { result }
-                            end
-                        end
-                    end
-                else
-                    vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
-                    return
-                end
-            end
-            file:close()
-        end
+    local projects = read_projects()
+    if not projects then
+        return
     end
 
     if #projects == 0 then
@@ -236,8 +191,8 @@ function M.list_projects()
             end,
         },
         win = {
-            input = {
-                keys = {
+            keys = {
+                input = {
                     ["<C-d>"] = { "delete_project", mode = { "n", "i" } },
                     ["<C-a>"] = { "add_current_project", mode = { "n", "i" } },
                     ["a"] = { "add_current_project", mode = { "n" } },
