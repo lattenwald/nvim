@@ -191,11 +191,12 @@ function M.list_projects()
             end,
         },
         win = {
-            keys = {
-                input = {
+            input = {
+                keys = {
                     ["<C-d>"] = { "delete_project", mode = { "n", "i" } },
                     ["<C-a>"] = { "add_current_project", mode = { "n", "i" } },
                     ["a"] = { "add_current_project", mode = { "n" } },
+                    ["d"] = { "delete_project", mode = { "n" } },
                     ["<Delete>"] = { "delete_project", mode = { "n" } },
                 },
             },
