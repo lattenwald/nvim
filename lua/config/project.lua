@@ -16,6 +16,9 @@ local M = {}
 local uv = vim.loop
 local yaml = require("lyaml")
 
+-- Path to the projects file
+local projects_file = vim.fn.stdpath("data") .. "/projects.yaml"
+
 -- Function to find the project root
 local function find_project_root()
     local markers = { ".git", "Cargo.toml", "pyproject.toml" }
@@ -40,7 +43,6 @@ function M.add_project()
     end
 
     local project_name = project_root:match(".*/(.*)")
-    local projects_file = vim.fn.stdpath("data") .. "/projects.yaml"
 
     local projects = {}
     if uv.fs_stat(projects_file) then
@@ -91,8 +93,70 @@ function M.add_project()
     vim.notify("Project added: " .. project_name, vim.log.levels.INFO)
 end
 
+-- Function to list projects and allow selection
+function M.list_projects()
+    local projects = {}
+    if uv.fs_stat(projects_file) then
+        local file = io.open(projects_file, "r")
+        if file then
+            local content = file:read("*a")
+            if content ~= "" then
+                local success, result = pcall(yaml.load, content)
+                if success and result then
+                    projects = result -- The YAML file contains a direct array of projects
+                else
+                    vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
+                    return
+                end
+            end
+            file:close()
+        end
+    end
+
+    if #projects == 0 then
+        vim.notify("No projects found.", vim.log.levels.WARN)
+        return
+    end
+
+    local items = {}
+    for _, project in ipairs(projects) do
+        table.insert(items, {
+            text = project.name,
+            description = project.path,
+            path = project.path,
+            file = project.path,
+        })
+    end
+
+    Snacks.picker({
+        items = items,
+        layout = "select",
+        actions = {
+            confirm = function(picker)
+                local item = picker:current()
+                if item then
+                    vim.cmd("cd " .. vim.fn.fnameescape(item.path))
+                    vim.defer_fn(function()
+                        Snacks.picker.smart()
+                    end, 50)
+                end
+            end,
+        },
+        keymaps = {
+            ["<C-d>"] = function(item)
+                -- TODO: Implement project deletion
+                vim.notify("Project deletion not implemented yet", vim.log.levels.INFO)
+            end,
+        },
+    })
+end
+
 vim.api.nvim_create_user_command("ProjectAdd", function()
     require("config.project").add_project()
 end, { desc = "Add the current project" })
+
+vim.api.nvim_create_user_command("ProjectList", function()
+    require("config.project").list_projects()
+end, { desc = "List all projects" })
 
 return M
