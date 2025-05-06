@@ -177,14 +177,20 @@ function M.list_projects()
             delete_project = function(picker)
                 local item = picker:current()
                 if item then
-                    local confirm = vim.fn.confirm("Delete project '" .. item.text .. "'?", "&Yes\n&No", 2)
-                    if confirm == 1 then
-                        if remove_project(item.path) then
-                            -- Close the picker and reopen it to refresh the list
-                            picker:close()
-                            M.list_projects()
+                    vim.ui.select({ "No", "Yes" }, {
+                        prompt = "Delete project '" .. item.text .. "'?",
+                        format_item = function(choice)
+                            return choice
+                        end,
+                    }, function(choice)
+                        if choice == "Yes" then
+                            if remove_project(item.path) then
+                                -- Close the picker and reopen it to refresh the list
+                                picker:close()
+                                M.list_projects()
+                            end
                         end
-                    end
+                    end)
                 end
             end,
             add_current_project = function(picker)
