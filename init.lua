@@ -7,9 +7,8 @@ vim.filetype.add({
 })
 
 require("config.opts")
-require("config.keys")
 require("config.lazy")
-
 require("config.project")
+require("config.keys")
 
 vim.cmd("colorscheme tokyonight-night")
