@@ -21,17 +21,14 @@ local projects_file = vim.fn.stdpath("data") .. "/projects.yaml"
 
 -- Function to find the project root
 local function find_project_root()
-    local markers = { ".git", "Cargo.toml", "pyproject.toml" }
-    local cwd = uv.cwd()
-    while cwd do
-        for _, marker in ipairs(markers) do
-            if uv.fs_stat(cwd .. "/" .. marker) then
-                return cwd
-            end
-        end
-        cwd = cwd:match('(.*)/[^"]+')
-    end
-    return nil
+    local markers = { ".git", "Cargo.toml", "pyproject.toml", "rebar.config" }
+    local cwd = vim.fs.find(markers, {
+        upward = true,
+        stop = vim.loop.os_homedir(),
+        path = uv.cwd(),
+    })[1]
+    local project_root = vim.fs.dirname(cwd)
+    return project_root
 end
 
 -- Function to read projects from YAML file
