@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("yamlls")
+require("config.utils").mason_install("yaml-language-server")

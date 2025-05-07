@@ -1,9 +1,6 @@
-require("config.utils").lsp_setup("basedpyright", {
-    settings = {
-        basedpyright = {
-            typeCheckingMode = "standard",
-        },
-    },
-    position_encoding = "utf-16",
-})
-require("config.utils").lsp_setup("ruff")
+require("config.utils").mason_install("basedpyright")
+require("config.utils").mason_install("ruff")
+if vim.lsp.config["basedpyright"] then
+    vim.lsp.config.basedpyright["settings"]["basedpyright"]["typeCheckingMode"] = "standard"
+    vim.lsp.config.basedpyright["position_encoding"] = "utf-16"
+end

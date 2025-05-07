@@ -1,2 +1,2 @@
-require("config.utils").lsp_setup("ts_ls")
-require("config.utils").lsp_setup("eslint")
+require("config.utils").mason_install("typescript-language-server")
+require("config.utils").mason_install("eslint-lsp")

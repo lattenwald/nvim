@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("lemminx")
+require("config.utils").mason_install("lemminx")

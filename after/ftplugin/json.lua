@@ -1,2 +1,2 @@
-require("config.utils").lsp_setup("jsonls")
+require("config.utils").mason_install("json-lsp")
 require("config.utils").ts_install("json5")

@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("elixirls")
+require("config.utils").mason_install("elixir-ls")

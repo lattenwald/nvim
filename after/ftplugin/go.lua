@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("gopls")
+require("config.utils").mason_install("gopls")

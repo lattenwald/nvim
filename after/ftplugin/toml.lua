@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("taplo")
+require("config.utils").mason_install("taplo")

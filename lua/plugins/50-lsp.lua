@@ -1,21 +1,11 @@
 return {
     {
-        "williamboman/mason.nvim",
+        "mason-org/mason.nvim",
         opts = {},
     },
     {
-        "williamboman/mason-lspconfig.nvim",
-        opts = {
-            automatic_installation = true,
-        },
-        config = function(_, opts)
-            require("mason-lspconfig").setup(opts)
-            require("mason-lspconfig").setup_handlers({
-                function(server_name) -- default handler (optional)
-                    require("lspconfig")[server_name].setup({})
-                end,
-            })
-        end,
+        "mason-org/mason-lspconfig.nvim",
+        opts = {},
     },
     {
         "neovim/nvim-lspconfig",

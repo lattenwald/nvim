@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("perlnavigator")
+require("config.utils").mason_install("perlnavigator")

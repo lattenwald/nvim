@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("html")
+require("config.utils").mason_install("html-lsp")

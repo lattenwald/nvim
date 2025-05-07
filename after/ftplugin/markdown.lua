@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("markdown_oxide")
+require("config.utils").mason_install("markdown-oxide")

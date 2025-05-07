@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("ansiblels")
+require("config.utils").mason_install("ansible-language-server")

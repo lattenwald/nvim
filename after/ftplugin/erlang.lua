@@ -1,1 +1,1 @@
-require("config.utils").lsp_setup("erlangls")
+require("config.utils").mason_install("erlang-ls")
