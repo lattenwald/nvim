@@ -73,7 +73,7 @@ return {
                 -- Make sure to set this up properly if you have lazy=true
                 "MeanderingProgrammer/render-markdown.nvim",
                 opts = {
-                    file_types = { "markdown", "Avante" },
+                    file_types = { "markdown", "Avante", "codecompanion" },
                 },
                 ft = { "markdown", "Avante" },
             },
@@ -81,5 +81,15 @@ return {
         config = function(_, opts)
             require("avante").setup(opts)
         end,
+    },
+    {
+        "olimorris/codecompanion.nvim",
+        lazy = true,
+        cmd = "CodeCompanionActions",
+        opts = {},
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+        },
     },
 }
