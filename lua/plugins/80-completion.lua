@@ -21,13 +21,7 @@ return {
                 ["<tab>"] = { 'select_and_accept', 'fallback'  },
                 ["<c-enter>"] = { 'select_and_accept', 'fallback'  },
                 ["<s-space>"] = { 'show_and_insert', 'fallback'  },
-                -- ["<esc>"] = { 'hide', 'fallback' },
-                ["<esc>"] = {
-                    function(cmp)
-                        cmp.cancel()  -- Close the completion menu
-                        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Esc>', true, false, true), 'n', true)
-                    end
-                },
+                ["<esc>"] = { 'hide', 'fallback' },
                 ["<leader>cD"] = { 'show_documentation' },
             },
 
@@ -47,7 +41,10 @@ return {
                 nerd_font_variant = "mono",
             },
 
-            completion = { documentation = { auto_show = false } },
+            completion = {
+                documentation = { auto_show = true, auto_show_delay_ms = 500 },
+                ghost_text = { enabled = true },
+            },
 
             sources = {
                 default = { "avante", "copilot", "lsp", "path", "snippets", "buffer" },
