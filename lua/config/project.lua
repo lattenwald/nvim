@@ -61,16 +61,14 @@ local function read_projects()
     return projects
 end
 
--- Function to write projects to YAML file
+-- Function to write projects to YAML file using lyaml
 local function write_projects(projects)
     local file = io.open(projects_file, "w")
     if file then
         local success, err = pcall(function()
-            file:write("---\n")
-            for _, project in ipairs(projects) do
-                file:write("- name: " .. project.name .. "\n")
-                file:write("  path: " .. project.path .. "\n")
-            end
+            -- Use lyaml to dump the projects table into YAML format
+            local yaml_content = yaml.dump({ projects })
+            file:write(yaml_content)
         end)
         if not success then
             vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
