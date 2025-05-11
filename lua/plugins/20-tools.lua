@@ -283,4 +283,13 @@ return {
         "tzachar/local-highlight.nvim",
         opts = {},
     },
+    {
+        "echasnovski/mini.diff", -- TODO do I need it?
+    },
+    {
+        "denialofsandwich/sudo.nvim",
+        opts = {},
+        lazy = true,
+        cmd = { "SudoRead", "SudoWrite" },
+    },
 }
