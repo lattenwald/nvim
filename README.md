@@ -4,6 +4,12 @@ Basic idea is LSP servers are installed on demand, and only those explicitly con
 
 Notable exception is Rust, which has `lua/plugnis/90-rust.lua` configuration in addition to ftplugin one.
 
+# Configuration
+
+`avante_opts.yaml.example` contains example configuration for copilot [avante.nvim](https://github.com/yetone/avante.nvim) provider. [copilot.lua](zbirenbaum/copilot.lua) fetches copilot configuration from this file as well. Both avante and copilot plugins merge parsed configuration into their respective options.
+
+To use it, copy `avante_opts.yaml.example` to `avante_opts.yaml` and edit it.
+
 # Keymap
 
 In Neovim:
