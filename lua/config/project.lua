@@ -34,29 +34,20 @@ end
 -- Function to read projects from YAML file
 local function read_projects()
     local projects = {}
-    if uv.fs_stat(projects_file) then
-        local file = io.open(projects_file, "r")
-        if file then
-            local content = file:read("*a")
-            if content ~= "" then
-                local success, result = pcall(yaml.load, content)
-                if success and result then
-                    if type(result) == "table" then
-                        if #result > 0 then
-                            projects = result
-                        else
-                            if result.name and result.path then
-                                projects = { result }
-                            end
-                        end
-                    end
-                else
-                    vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
-                    return nil
+    local result = require("config.utils").load_yaml(projects_file)
+    if result then
+        if type(result) == "table" then
+            if #result > 0 then
+                projects = result
+            else
+                if result.path then
+                    projects = { result }
                 end
             end
-            file:close()
         end
+    else
+        vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
+        return nil
     end
     return projects
 end

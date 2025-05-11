@@ -38,4 +38,24 @@ function M.current_repo_name()
     return vim.fs.basename(repo_dir)
 end
 
+function M.load_yaml(path)
+    local yaml = require("lyaml")
+    local file = io.open(path, "r")
+    if not file then
+        vim.notify("Failed to open YAML file: " .. path, vim.log.levels.ERROR)
+        return nil
+    end
+    local content = file:read("*a")
+    file:close()
+    if content == "" then
+        return nil
+    end
+    local success, result = pcall(yaml.load, content)
+    if not success or not result then
+        vim.notify("Failed to parse YAML file", vim.log.levels.ERROR)
+        return nil
+    end
+    return result
+end
+
 return M
