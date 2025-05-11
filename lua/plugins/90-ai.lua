@@ -14,12 +14,15 @@ return {
             panel = {
                 auto_refresh = true,
             },
-            workspace_folders = {
-                "/home/qalex/projects/",
-                "/home/qalex/kribrum/",
-                "/home/qalex/krapiva/",
-            },
         },
+        config = function(_, opts)
+            local avante_opts_file = vim.fn.stdpath("data") .. "/avante_opts.yaml"
+            local yaml_opts = require("config.utils").load_yaml(avante_opts_file)
+            if yaml_opts and yaml_opts["copilot"] then
+                opts = vim.tbl_deep_extend("force", opts or {}, yaml_opts.copilot or {})
+            end
+            require("copilot").setup(opts)
+        end,
     },
     {
         "yetone/avante.nvim",
@@ -79,6 +82,11 @@ return {
             },
         },
         config = function(_, opts)
+            local avante_opts_file = vim.fn.stdpath("data") .. "/avante_opts.yaml"
+            local yaml_opts = require("config.utils").load_yaml(avante_opts_file)
+            if yaml_opts then
+                opts = vim.tbl_deep_extend("force", opts or {}, yaml_opts or {})
+            end
             require("avante").setup(opts)
         end,
     },
