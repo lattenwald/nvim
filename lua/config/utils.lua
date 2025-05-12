@@ -58,4 +58,14 @@ function M.load_yaml(path)
     return result
 end
 
+function M.is_plugin_installed(name)
+    local plugins = require("lazy").plugins() -- Get all configured plugins
+    for _, plugin in ipairs(plugins) do
+        if plugin.name == name then
+            return plugin.enabled ~= false -- Check if enabled (defaults to true)
+        end
+    end
+    return false
+end
+
 return M
