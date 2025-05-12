@@ -17,61 +17,45 @@ local uv = vim.loop
 local yaml = require("lyaml")
 
 -- Path to the projects file
-local projects_file = vim.fn.stdpath("data") .. "/projects.yaml"
+local projects_file = vim.fn.stdpath("data") .. "/projects.yaml" -- Path to store project data
 
 -- Function to find the project root
 local function find_project_root()
-    local markers = { ".git", "Cargo.toml", "pyproject.toml", "rebar.config" }
+    local markers = M.config.project_markers or { ".git", "Cargo.toml", "pyproject.toml", "rebar.config" }
     local cwd = vim.fs.find(markers, {
         upward = true,
         stop = vim.loop.os_homedir(),
         path = uv.cwd(),
     })[1]
-    local project_root = vim.fs.dirname(cwd)
-    return project_root
+    if not cwd then
+        return nil
+    end
+    return vim.fs.dirname(cwd)
 end
 
 -- Function to read projects from YAML file
 local function read_projects()
-    local projects = {}
-    local result = require("config.utils").load_yaml(projects_file)
-    if result then
-        if type(result) == "table" then
-            if #result > 0 then
-                projects = result
-            else
-                if result.path then
-                    projects = { result }
-                end
-            end
-        end
-    else
-        vim.notify("Failed to parse projects file", vim.log.levels.ERROR)
-        return nil
+    local ok, result = pcall(require("config.utils").load_yaml, projects_file)
+    if not ok or type(result) ~= "table" then
+        vim.notify("Failed to parse projects file: " .. (result or "unknown error"), vim.log.levels.ERROR)
+        return {}
     end
-    return projects
+    return result
 end
 
 -- Function to write projects to YAML file using lyaml
 local function write_projects(projects)
-    local file = io.open(projects_file, "w")
-    if file then
-        local success, err = pcall(function()
-            -- Use lyaml to dump the projects table into YAML format
-            local yaml_content = yaml.dump({ projects })
-            file:write(yaml_content)
-        end)
-        if not success then
-            vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
-            file:close()
-            return false
-        end
+    local ok, err = pcall(function()
+        local yaml_content = yaml.dump({ projects })
+        local file = assert(io.open(projects_file, "w"))
+        file:write(yaml_content)
         file:close()
-        return true
-    else
-        vim.notify("Failed to open projects file for writing", vim.log.levels.ERROR)
+    end)
+    if not ok then
+        vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
         return false
     end
+    return true
 end
 
 -- Function to add the current project
@@ -199,12 +183,18 @@ function M.list_projects()
     })
 end
 
-vim.api.nvim_create_user_command("ProjectAdd", function()
-    require("config.project").add_project()
-end, { desc = "Add the current project" })
+function M.setup(config)
+    M.config = vim.tbl_deep_extend("force", {
+        project_markers = { ".git", "Cargo.toml", "pyproject.toml", "rebar.config" },
+    }, config or {})
 
-vim.api.nvim_create_user_command("ProjectList", function()
-    require("config.project").list_projects()
-end, { desc = "List all projects" })
+    vim.api.nvim_create_user_command("ProjectAdd", function()
+        require("config.project").add_project()
+    end, { desc = "Add the current project" })
+
+    vim.api.nvim_create_user_command("ProjectList", function()
+        require("config.project").list_projects()
+    end, { desc = "List all projects" })
+end
 
 return M
