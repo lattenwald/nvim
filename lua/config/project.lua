@@ -192,7 +192,7 @@ function M.list_projects()
                     ["<C-a>"] = { "add_current_project", mode = { "n", "i" } },
                     ["a"] = { "add_current_project", mode = { "n" } },
                     ["d"] = { "delete_project", mode = { "n" } },
-                    ["<Delete>"] = { "delete_project", mode = { "n" } },
+                    ["<Del>"] = { "delete_project", mode = { "n" } },
                 },
             },
         },
