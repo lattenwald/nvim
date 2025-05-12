@@ -1,12 +1,28 @@
 return {
     {
         "saghen/blink.cmp",
-        enabled = false,
         dependencies = {
             "rafamadriz/friendly-snippets",
             "Kaiser-Yang/blink-cmp-avante",
             "fang2hou/blink-copilot",
         },
+
+        init = function()
+            CmpEngine = {
+                BLINK = 1,
+                NVIM_CMP = 2,
+            }
+            vim.g.cmp_engine = CmpEngine.BLINK
+            vim.api.nvim_create_user_command("ToggleCmpEngine", function()
+                if vim.g.cmp_engine == CmpEngine.BLINK then
+                    vim.g.cmp_engine = CmpEngine.NVIM_CMP
+                    vim.notify("Completion engine is now nvim-cmp")
+                else
+                    vim.g.cmp_engine = CmpEngine.BLINK
+                    vim.notify("Completion engine is now blink.cmp")
+                end
+            end, { desc = "Switch completion engine" })
+        end,
 
         -- use a release tag to download pre-built binaries
         version = "*",
@@ -14,6 +30,9 @@ return {
         ---@module 'blink.cmp'
         ---@type blink.cmp.Config
         opts = {
+            enabled = function()
+                return not require("config.utils").is_plugin_installed("nvim.cmp") or vim.g.cmp_engine == CmpEngine.BLINK
+            end,
             -- stylua: ignore
             keymap = {
                 preset = "none",
@@ -27,6 +46,7 @@ return {
             },
 
             cmdline = {
+                enabled = false,
                 completion = { menu = { auto_show = true } },
                 keymap = {
                     preset = "none",
@@ -85,11 +105,21 @@ return {
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
+            "hrsh7th/cmp-cmdline",
         },
         config = function()
+            local lspconfig = require("lspconfig")
+            local lsp_defaults = lspconfig.util.default_config
+
+            -- Merge default capabilities with nvim-cmp enhancements
+            lsp_defaults.capabilities = vim.tbl_deep_extend("force", lsp_defaults.capabilities, require("cmp_nvim_lsp").default_capabilities())
+
             local cmp = require("cmp")
 
             cmp.setup({
+                enabled = function()
+                    return not require("config.utils").is_plugin_installed("blink-cmp") or vim.g.cmp_engine == CmpEngine.NVIM_CMP
+                end,
                 snippet = {
                     expand = function(args)
                         require("luasnip").lsp_expand(args.body)
