@@ -58,3 +58,7 @@ vim.keymap.set("n", "<esc>", function()
         end
     end
 end, { desc = "close floats, clear highligths, etc." })
+
+vim.keymap.set("t", "<S-Insert>", function()
+    vim.api.nvim_paste(vim.fn.getreg("0"), true, -1)
+end, { desc = "Paste" })

@@ -14,13 +14,46 @@ return {
             notifier = { enabled = false },
             toggle = { enabled = true },
             input = { enabled = true },
-            terminal = { enabled = true },
+            terminal = {
+                enabled = true,
+                keys = {
+                    q = "hide",
+                    gf = function(self)
+                        local f = vim.fn.findfile(vim.fn.expand("<cfile>"), "**")
+                        if f == "" then
+                            Snacks.notify.warn("No file under cursor")
+                        else
+                            self:hide()
+                            vim.schedule(function()
+                                vim.cmd("e " .. f)
+                            end)
+                        end
+                    end,
+                    term_normal = {
+                        "<esc>",
+                        function(self)
+                            self.esc_timer = self.esc_timer or (vim.uv or vim.loop).new_timer()
+                            if self.esc_timer:is_active() then
+                                self.esc_timer:stop()
+                                vim.cmd("stopinsert")
+                            else
+                                self.esc_timer:start(300, 0, function() end)
+                                return "<C-\\><C-n>"
+                            end
+                        end,
+                        mode = "t",
+                        expr = true,
+                        desc = "Double escape to normal mode",
+                    },
+                },
+            },
             picker = {
                 enabled = true,
                 win = {
                     input = {
                         keys = {
                             ["<s-enter>"] = { "edit_vsplit", mode = { "i", "n" } },
+                            ["<c-s-enter>"] = { "edit_split", mode = { "i", "n" } },
                             ["<c-enter>"] = { "edit_tab", mode = { "i", "n" } },
                             ["<S-PageDown>"] = { "preview_scroll_down", mode = { "i", "n" } },
                             ["<S-PageUp>"] = { "preview_scroll_up", mode = { "i", "n" } },
