@@ -46,7 +46,7 @@ return {
             },
 
             cmdline = {
-                enabled = false,
+                enabled = true,
                 completion = { menu = { auto_show = true } },
                 keymap = {
                     preset = "none",
