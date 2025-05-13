@@ -135,7 +135,6 @@ function M.list_projects()
 
     Snacks.picker({
         items = items,
-        layout = "select",
         actions = {
             confirm = function(picker)
                 local item = picker:current()
