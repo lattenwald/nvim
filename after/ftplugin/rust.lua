@@ -1,3 +1,5 @@
+require("config.utils").mason_install("codelldb")
+
 local bufnr = vim.api.nvim_get_current_buf()
 vim.keymap.set("n", "<leader>A", function()
     vim.cmd.RustLsp("codeAction")
