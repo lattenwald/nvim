@@ -2,7 +2,7 @@ My [Neovim](https://neovim.io/) configuration based on [lazy.nvim](https://lazy.
 
 Basic idea is LSP servers are installed on demand, and only those explicitly configured in `after/ftplugin/*.lua` are installed.
 
-Notable exception is Rust, which has `lua/plugnis/90-rust.lua` configuration in addition to ftplugin one.
+Languages-specific Neovim extensions are installed in `90-<lang>.lua`.
 
 # Configuration
 
@@ -60,3 +60,12 @@ In Neovim:
 * [x] ai assistant
 	* [x] copilot
 	* [x] avante
+* [ ] debugging
+	* [x] rust
+	* [x] go
+	* [x] python
+	* [ ] erlang
+	* [ ] elixir?
+	* [ ] bash?
+	* [ ] lua?
+	* [ ] perl?
