@@ -5,6 +5,11 @@ vim.filetype.add({
     },
     group = { "yaml" },
 })
+vim.filetype.add({
+    filename = {
+        ["rebar.config"] = "erlang",
+    },
+})
 
 require("config.opts")
 require("config.lazy")
