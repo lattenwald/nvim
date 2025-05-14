@@ -33,9 +33,6 @@ return {
             -- Keymaps only when DAP is active
             -- stylua: ignore
             local keymaps = {
-                -- {"<C-F5>", "n", function() require("dapui").toggle() end, {desc = "Debug: Show UI"}},
-                -- {"<F5>", "n", function() dap.continue() end, {desc = "Debug: Continue"}},
-                -- {"<F8>", "n", function() dap.toggle_breakpoint() end, {desc = "Debug: Toggle breakpoint"}},
                 {"<F10>", "n", function() dap.step_over() end, {desc = "Debug: Step over"}},
                 {"<F11>", "n", function() dap.step_into() end, {desc = "Debug: Step into"}},
                 {"<F12>", "n", function() dap.step_out() end, {desc = "Debug: Step out"}},
