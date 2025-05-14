@@ -51,7 +51,7 @@ return {
             -- Set keymaps when DAP is initialized
             dap.listeners.after.event_initialized["custom.dap.keys"] = function()
                 for _, map in ipairs(keymaps) do
-                    local key, modes, func, opts = table.unpack(map)
+                    local key, modes, func, opts = unpack(map)
                     vim.keymap.set(modes, key, func, opts)
                 end
             end
@@ -59,7 +59,7 @@ return {
             -- Remove keymaps when DAP is terminated or disconnected
             local reset_keys = function()
                 for _, map in ipairs(keymaps) do
-                    local key, modes, func, opts = table.unpack(map)
+                    local key, modes = unpack(map)
                     pcall(vim.keymap.del, modes, key)
                 end
             end
