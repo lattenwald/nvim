@@ -13,6 +13,7 @@ return {
                 NVIM_CMP = 2,
             }
             vim.g.cmp_engine = CmpEngine.BLINK
+            vim.g.cmp_engine = CmpEngine.NVIM_CMP
             vim.api.nvim_create_user_command("ToggleCmpEngine", function()
                 if vim.g.cmp_engine == CmpEngine.BLINK then
                     vim.g.cmp_engine = CmpEngine.NVIM_CMP
@@ -101,6 +102,12 @@ return {
                 build = "make install_jsregexp",
                 dependencies = { "rafamadriz/friendly-snippets" },
             },
+            {
+                "zbirenbaum/copilot-cmp",
+                config = function()
+                    require("copilot_cmp").setup()
+                end,
+            },
             "saadparwaiz1/cmp_luasnip",
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-buffer",
@@ -108,6 +115,12 @@ return {
             "hrsh7th/cmp-cmdline",
         },
         config = function()
+            if require("config.utils").is_plugin_installed("nvim-autopairs") then
+                local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+                local cmp = require("cmp")
+                cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+            end
+
             local lspconfig = require("lspconfig")
             local lsp_defaults = lspconfig.util.default_config
 
