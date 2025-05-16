@@ -13,7 +13,6 @@ return {
                 NVIM_CMP = 2,
             }
             vim.g.cmp_engine = CmpEngine.BLINK
-            vim.g.cmp_engine = CmpEngine.NVIM_CMP
             vim.api.nvim_create_user_command("ToggleCmpEngine", function()
                 if vim.g.cmp_engine == CmpEngine.BLINK then
                     vim.g.cmp_engine = CmpEngine.NVIM_CMP
@@ -37,11 +36,11 @@ return {
             -- stylua: ignore
             keymap = {
                 preset = "none",
-                ["<up>"] = { 'select_prev', 'fallback' },
-                ["<down>"] = { 'select_next', 'fallback'  },
-                ["<tab>"] = { 'select_and_accept', 'fallback'  },
-                ["<c-enter>"] = { 'select_and_accept', 'fallback'  },
-                ["<s-space>"] = { 'show_and_insert', 'fallback'  },
+                ["<up>"] = { 'select_prev' },
+                ["<down>"] = { 'select_next' },
+                ["<tab>"] = { 'accept', 'fallback' },
+                ["<c-enter>"] = { 'select_and_accept', 'fallback' },
+                ["<s-space>"] = { 'show_and_insert', 'fallback' },
                 ["<esc>"] = { 'hide', 'fallback' },
                 ["<leader>cD"] = { 'show_documentation' },
             },
@@ -156,6 +155,14 @@ return {
                         cmp.abort()
                         vim.cmd("stopinsert")
                     end,
+                },
+            })
+
+            -- `/` cmdline setup.
+            cmp.setup.cmdline("/", {
+                mapping = cmp.mapping.preset.cmdline(),
+                sources = {
+                    { name = "buffer" },
                 },
             })
 
