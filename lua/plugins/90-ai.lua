@@ -6,12 +6,9 @@ return {
         opts = {
             suggestion = {
                 enabled = false,
-                auto_trigger = true,
-                keymap = {
-                    accept = "<c-enter>",
-                },
             },
             panel = {
+                enabled = false,
                 auto_refresh = true,
             },
         },
