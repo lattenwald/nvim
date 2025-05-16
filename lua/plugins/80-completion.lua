@@ -36,12 +36,10 @@ return {
             -- stylua: ignore
             keymap = {
                 preset = "none",
-                ["<up>"] = { 'select_prev' },
-                ["<down>"] = { 'select_next' },
+                ["<up>"] = { 'select_prev', 'fallback' },
+                ["<down>"] = { 'select_next', 'fallback' },
                 ["<tab>"] = { 'accept', 'fallback' },
                 ["<c-enter>"] = { 'select_and_accept', 'fallback' },
-                ["<s-space>"] = { 'show_and_insert', 'fallback' },
-                ["<esc>"] = { 'hide', 'fallback' },
                 ["<leader>cD"] = { 'show_documentation' },
             },
 
@@ -53,7 +51,6 @@ return {
                     ["<up>"] = { "select_prev" },
                     ["<down>"] = { "select_next" },
                     ["<tab>"] = { "show", "select_and_accept" },
-                    ["<s-space>"] = { "show_and_insert" },
                     ["<esc>"] = { "hide", "fallback" },
                 },
             },
@@ -89,9 +86,14 @@ return {
             fuzzy = { implementation = "prefer_rust_with_warning" },
         },
         opts_extend = { "sources.default" },
+        config = function(_, opts)
+            require("blink.cmp").setup(opts)
+            vim.api.nvim_set_keymap("i", "<Esc>", 'pumvisible() ? "<C-e><Esc>" : "<Esc>"', { expr = true })
+        end,
     },
     {
         "hrsh7th/nvim-cmp",
+        enabled = false,
         version = nil,
         event = "InsertEnter",
         lazy = false,
@@ -165,6 +167,29 @@ return {
                     { name = "buffer" },
                 },
             })
+
+            -- `:` cmdline setup.
+            -- cmp.setup.cmdline(":", {
+            --     mapping = {
+            --         ["<up>"] = cmp.mapping.select_prev_item(),
+            --         ["<down>"] = cmp.mapping.select_next_item(),
+            --         ["<tab>"] = cmp.mapping.confirm({select = true}),
+            --         ["<c-enter>"] = cmp.mapping.confirm({ select = true }),
+            --         -- ["<s-space>"] = cmp.mapping.preset,
+            --         ["<esc>"] = cmp.abort(),
+            --     },
+            --     sources = cmp.config.sources({
+            --         { name = "path" },
+            --         { name = "cmdline" },
+            --     }, {
+            --         {
+            --             name = "cmdline",
+            --             option = {
+            --                 ignore_cmds = { "Man", "!" },
+            --             },
+            --         },
+            --     }),
+            -- })
 
             vim.api.nvim_create_autocmd({ "CursorHoldI", "TextChangedI" }, {
                 callback = cmp.complete,
