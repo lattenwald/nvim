@@ -1,8 +1,12 @@
 return {
     {
+
+        "L3MON4D3/LuaSnip",
+        dependencies = { "rafamadriz/friendly-snippets" },
+    },
+    {
         "saghen/blink.cmp",
         dependencies = {
-            "rafamadriz/friendly-snippets",
             "Kaiser-Yang/blink-cmp-avante",
             "fang2hou/blink-copilot",
         },
@@ -33,6 +37,7 @@ return {
             enabled = function()
                 return not require("config.utils").is_plugin_installed("nvim.cmp") or vim.g.cmp_engine == CmpEngine.BLINK
             end,
+            snippets = { preset = "luasnip" },
             -- stylua: ignore
             keymap = {
                 preset = "none",
