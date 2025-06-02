@@ -20,7 +20,16 @@ return {
                     globalstatus = true,
                 },
                 sections = {
-                    lualine_a = { "mode" },
+                    lualine_a = {
+                        function()
+                            local reg = vim.fn.reg_recording()
+                            if reg ~= "" then
+                                return "Recording @" .. reg
+                            end
+                            return ""
+                        end,
+                        "mode",
+                    },
                     lualine_b = { require("config.utils").current_repo_name, "branch", "diff", "diagnostics" },
                     lualine_c = { "filename", lsp_progress.progress },
                     lualine_x = { "copilot", "encoding", "fileformat", "filetype" },

@@ -1,8 +1,8 @@
 require("config.utils").mason_install("sqls")
-require("config.utils").mason_install("sqruff")
+require("config.utils").mason_install("sql-formatter")
 require("conform").setup({
     formatters_by_ft = {
-        sql = { "sqruff" },
+        sql = { "sql_formatter" },
     },
 })
 
