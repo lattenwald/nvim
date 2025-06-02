@@ -26,6 +26,7 @@ return {
         lazy = true,
         cmd = "AvanteToggle",
         version = false, -- Never set this value to "*"! Never!
+        build = "make",
         opts = {
             provider = "copilot",
             file_selector = {
