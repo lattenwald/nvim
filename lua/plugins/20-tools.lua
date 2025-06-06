@@ -171,7 +171,7 @@ return {
     {
         "albenisolmos/autochdir.nvim",
         opts = {
-            keep_dir = false,
+            keep_dir = true,
             flags = {
                 ["rs"] = { "Cargo.toml" },
                 ["c"] = { "Makefile", "CMake" },

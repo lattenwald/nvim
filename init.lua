@@ -16,4 +16,8 @@ require("config.lazy")
 require("config.project").setup({})
 require("config.keys")
 
+if vim.g.neovide then
+    require("config.neovide")
+end
+
 vim.cmd("colorscheme tokyonight-night")
