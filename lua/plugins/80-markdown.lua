@@ -3,8 +3,8 @@ return {
         "MeanderingProgrammer/render-markdown.nvim",
         opts = {
             latex = { enabled = false },
-            file_types = { "markdown", "Avante" },
+            file_types = { "markdown", "Avante", "codecompanion" },
         },
-        ft = { "markdown", "Avante" },
+        ft = { "markdown", "Avante", "codecompanion" },
     },
 }
