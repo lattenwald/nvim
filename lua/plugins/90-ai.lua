@@ -126,13 +126,70 @@ return {
     },
     {
         "olimorris/codecompanion.nvim",
-        enabled = false,
         lazy = true,
         cmd = "CodeCompanionActions",
-        opts = {},
+        opts = {
+            srategies = {
+                chat = {
+                    adapter = "copilot",
+                },
+            },
+            extensions = {
+                mcphub = {
+                    callback = "mcphub.extensions.codecompanion",
+                    opts = {
+                        make_vars = true,
+                        make_slash_commands = true,
+                        show_result_in_chat = true,
+                    },
+                },
+            },
+            keymaps = {
+                clear_chat = "xx",
+            },
+            display = {
+                chat = {
+                    window = {
+                        position = "right",
+                        width = 0.4,
+                    },
+                },
+            },
+        },
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
+            {
+                "ravitemer/mcphub.nvim",
+                dependencies = {
+                    "nvim-lua/plenary.nvim",
+                },
+                build = "npm install -g mcp-hub@latest", -- Installs `mcp-hub` node binary globally
+                opts = {
+                    auto_approve = true, -- Automatically approve MCP server prompts
+                },
+            },
+            {
+                "echasnovski/mini.diff",
+                config = function()
+                    local diff = require("mini.diff")
+                    diff.setup({
+                        source = diff.gen_source.none(),
+                    })
+                end,
+            },
+            {
+                "HakonHarnes/img-clip.nvim",
+                opts = {
+                    filetypes = {
+                        codecompanion = {
+                            prompt_for_file_name = false,
+                            template = "[Image]($FILE_PATH)",
+                            use_absolute_path = true,
+                        },
+                    },
+                },
+            },
         },
     },
 }
