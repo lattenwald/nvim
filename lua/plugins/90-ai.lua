@@ -23,6 +23,7 @@ return {
     },
     {
         "yetone/avante.nvim",
+        enabled = false,
         lazy = true,
         cmd = "AvanteToggle",
         version = false, -- Never set this value to "*"! Never!
