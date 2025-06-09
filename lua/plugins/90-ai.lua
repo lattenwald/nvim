@@ -1,4 +1,14 @@
 return {
+
+    {
+        "ravitemer/mcphub.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        build = "npm install -g mcp-hub@latest",
+        opts = {
+            config = vim.fn.expand("~/.config/nvim/mcpservers.json"),
+            auto_approve = true,
+        },
+    },
     {
         "zbirenbaum/copilot.lua",
         lazy = true,
@@ -23,7 +33,6 @@ return {
     },
     {
         "yetone/avante.nvim",
-        enabled = false,
         lazy = true,
         cmd = "AvanteToggle",
         version = false, -- Never set this value to "*"! Never!
@@ -104,22 +113,15 @@ return {
                 },
                 ft = { "markdown", "Avante" },
             },
-            {
-                "ravitemer/mcphub.nvim",
-                dependencies = {
-                    "nvim-lua/plenary.nvim",
-                },
-                build = "npm install -g mcp-hub@latest", -- Installs `mcp-hub` node binary globally
-                opts = {
-                    auto_approve = true, -- Automatically approve MCP server prompts
-                },
-            },
         },
         config = function(_, opts)
             local avante_opts_file = vim.fn.stdpath("data") .. "/avante_opts.yaml"
             local yaml_opts = require("config.utils").load_yaml(avante_opts_file)
             if yaml_opts then
-                opts = vim.tbl_deep_extend("force", opts.providers, yaml_opts or {})
+                if not opts.providers then
+                    opts.providers = {}
+                end
+                opts.providers = vim.tbl_deep_extend("force", opts.providers, yaml_opts or {})
             end
             require("avante").setup(opts)
         end,
@@ -159,16 +161,6 @@ return {
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
-            {
-                "ravitemer/mcphub.nvim",
-                dependencies = {
-                    "nvim-lua/plenary.nvim",
-                },
-                build = "npm install -g mcp-hub@latest", -- Installs `mcp-hub` node binary globally
-                opts = {
-                    auto_approve = true, -- Automatically approve MCP server prompts
-                },
-            },
             {
                 "echasnovski/mini.diff",
                 config = function()

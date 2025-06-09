@@ -32,7 +32,7 @@ return {
                     },
                     lualine_b = { require("config.utils").current_repo_name, "branch", "diff", "diagnostics" },
                     lualine_c = { "filename", lsp_progress.progress },
-                    lualine_x = { "copilot", "encoding", "fileformat", "filetype" },
+                    lualine_x = { "copilot", require("mcphub.extensions.lualine"), "encoding", "fileformat", "filetype" },
                     lualine_y = { "progress" },
                     lualine_z = { "location" },
                 },

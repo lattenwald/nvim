@@ -1,0 +1,35 @@
+{
+  "nativeMCPServers": [
+    
+  ],
+  "mcpServers": {
+    "github.com/upstash/context7-mcp": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "command": "npx"
+    },
+    "github.com/modelcontextprotocol/servers/tree/main/src/filesystem": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/aleksandr-kiusev"
+      ],
+      "command": "npx"
+    },
+    "github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking": {
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "command": "npx"
+    },
+    "github.com/Flux159/mcp-server-kubernetes": {
+      "args": [
+        "mcp-server-kubernetes"
+      ],
+      "command": "npx"
+    }
+  }
+}
