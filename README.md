@@ -60,6 +60,10 @@ In Neovim:
 * [x] ai assistant
 	* [x] copilot
 	* [x] avante
+    * [x] codecompaion
+    * [ ] codecompanion: load opts from `avante_opts.yaml`
+    * [ ] rename `avante_opts.yaml`
+    * [ ] mcphub settings
 * [ ] debugging
 	* [x] rust
 	* [x] go
