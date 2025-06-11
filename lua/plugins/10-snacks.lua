@@ -93,7 +93,24 @@ return {
             { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
 
             { "<leader>F", function() Snacks.picker.files() end, desc = "Find Files" },
-            { "<leader>f", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
+
+            { "<leader>f", function()
+                local current_dir = vim.fn.expand("%:p:h")
+                local git_root = vim.fs.find(".git", {
+                    path = current_dir,
+                    upward = true,
+                })[1]
+
+                if git_root then
+                    local cwd = vim.fn.fnamemodify(git_root, ":h")
+                    local ok = pcall(Snacks.picker.git_files, { cwd = cwd })
+                    if not ok then
+                        Snacks.picker.files({ cwd = cwd })
+                    end
+                else
+                    Snacks.picker.files({ cwd = current_dir })
+                end
+            end, desc = "Find Files (Git/Regular)" },
 
             -- LSP
             { "gd", function() Snacks.picker.lsp_definitions({auto_confirm = false}) end, desc = "Goto Definition" },

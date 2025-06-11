@@ -139,8 +139,22 @@ function M.list_projects()
             confirm = function(picker)
                 local item = picker:current()
                 if item then
-                    vim.cmd("cd " .. vim.fn.fnameescape(item.path))
-                    Snacks.picker.smart()
+                    local project_dir = vim.fn.fnameescape(item.path)
+                    vim.cmd("cd " .. project_dir)
+                    local git_root = vim.fs.find(".git", {
+                        path = project_dir,
+                        upward = true,
+                    })[1]
+
+                    if git_root then
+                        local cwd = vim.fn.fnamemodify(git_root, ":h")
+                        local ok = pcall(Snacks.picker.git_files, { cwd = cwd })
+                        if not ok then
+                            Snacks.picker.files({ cwd = cwd })
+                        end
+                    else
+                        Snacks.picker.files({ cwd = project_dir })
+                    end
                 end
             end,
             delete_project = function(picker)
