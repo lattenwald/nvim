@@ -61,9 +61,9 @@ In Neovim:
 	* [x] copilot
 	* [x] avante
     * [x] codecompaion
+    * [X] mcphub settings
     * [ ] codecompanion: load opts from `avante_opts.yaml`
     * [ ] rename `avante_opts.yaml`
-    * [ ] mcphub settings
 * [ ] debugging
 	* [x] rust
 	* [x] go
