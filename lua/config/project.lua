@@ -71,7 +71,7 @@ function M.add_project()
 
     for _, project in ipairs(projects) do
         if project.path == project_root then
-            vim.notify("Project already exists.", vim.log.levels.INFO)
+            vim.notify(string.format("%s - project already exists.", project_root), vim.log.levels.INFO)
             return
         end
     end
