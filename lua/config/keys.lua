@@ -21,9 +21,6 @@ end
 vim.api.nvim_set_keymap("c", "<Down>", 'v:lua.get_wildmenu_key("<Right>", "<Down>")', { expr = true, noremap = true })
 vim.api.nvim_set_keymap("c", "<Up>", 'v:lua.get_wildmenu_key("<Left>", "<Up>")', { expr = true, noremap = true })
 
-vim.keymap.set("n", "<leader>c<space>", "gcc", { remap = true, desc = "Toggle comment (line)" })
-vim.keymap.set("x", "<leader>c<space>", "gc", { remap = true, desc = "Toggle comment (visual)" })
-
 vim.keymap.set({ "n", "v" }, "<leader>p", function()
     require("config.project").list_projects()
 end, { desc = "Projects" })

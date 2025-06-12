@@ -78,12 +78,6 @@ return {
                 desc = "Open yazi at the current file",
             },
             {
-                -- Open in the current working directory
-                "<leader>cw",
-                "<cmd>Yazi cwd<enter>",
-                desc = "Open the file manager in nvim's working directory",
-            },
-            {
                 -- NOTE: this requires a version of yazi that includes
                 -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
                 "<c-up>",
@@ -245,6 +239,27 @@ return {
                 vim.keymap.set("n", "]c",         function() gitsigns.next_hunk() end, { desc = "Next hunk", buffer = bufnr })
                 vim.keymap.set("n", "[c",         function() gitsigns.prev_hunk() end, { desc = "Next hunk", buffer = bufnr })
             end,
+        },
+    },
+    {
+        "numToStr/Comment.nvim",
+        dependencies = {
+            "JoosepAlviste/nvim-ts-context-commentstring",
+        },
+        opts = {
+            toggler = {
+                line = "<leader>c<leader>",
+                block = "<leader>B<leader>",
+            },
+            opleader = {
+                line = "<leader>c",
+                block = "<leader>B",
+            },
+            extra = {
+                above = "<leader>cO",
+                below = "<leader>co",
+                eol = "<leader>cA",
+            },
         },
     },
     {
