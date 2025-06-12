@@ -1,5 +1,4 @@
 return {
-
     {
         "ravitemer/mcphub.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
@@ -34,6 +33,7 @@ return {
     {
         "yetone/avante.nvim",
         lazy = true,
+        enabled = false,
         cmd = "AvanteToggle",
         version = false, -- Never set this value to "*"! Never!
         build = "make",
@@ -131,9 +131,14 @@ return {
         lazy = true,
         cmd = "CodeCompanionActions",
         opts = {
-            srategies = {
+            strategies = {
                 chat = {
-                    adapter = "copilot",
+                    -- adapter = "copilot",
+                    adapter = "anthropic",
+                    -- provider = {
+                    --     api_key = os.getenv("ANTHROPIC_API_KEY"),
+                    --     -- model = "claude-3-opus-20240229",
+                    -- },
                 },
             },
             extensions = {
