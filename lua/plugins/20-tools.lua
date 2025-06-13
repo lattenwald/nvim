@@ -354,4 +354,8 @@ return {
             require("indent_blankline").setup(opts)
         end,
     },
+    {
+        "ovk/endec.nvim",
+        opts = {},
+    },
 }
