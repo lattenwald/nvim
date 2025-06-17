@@ -1,7 +1,7 @@
 require("config.utils").mason_install("yaml-language-server")
-require("config.utils").mason_install("yamlfix")
+require("config.utils").mason_install("yamlfmt")
 require("conform").setup({
     formatters_by_ft = {
-        yaml = { "yamlfix" },
+        yaml = { "yamlfmt" },
     },
 })
