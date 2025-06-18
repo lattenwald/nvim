@@ -8,6 +8,7 @@ vim.filetype.add({
 vim.filetype.add({
     filename = {
         ["rebar.config"] = "erlang",
+        ["sys.config"] = "erlang",
     },
 })
 
