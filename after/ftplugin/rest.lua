@@ -5,3 +5,11 @@ require("conform").setup({
         rest = { "kulala-fmt" },
     },
 })
+
+local bufnr = vim.api.nvim_get_current_buf()
+vim.keymap.set("n", "<leader>Rr", function()
+    vim.cmd.Rest("run")
+end, { silent = true, buffer = bufnr, desc = "REST run" })
+vim.keymap.set("n", "<leader>Rl", function()
+    vim.cmd.Rest("last")
+end, { silent = true, buffer = bufnr, desc = "REST re-run last" })
