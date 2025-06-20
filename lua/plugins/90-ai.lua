@@ -153,6 +153,10 @@ return {
             },
             keymaps = {
                 clear_chat = "xx",
+                close = {
+                    modes = { n = "<C-x>", i = "<C-x>" },
+                    opts = {},
+                },
             },
             display = {
                 chat = {
