@@ -11,6 +11,12 @@ vim.filetype.add({
         ["sys.config"] = "erlang",
     },
 })
+vim.filetype.add({
+    pattern = {
+        ["sys.config.src.*"] = "erlang",
+    },
+})
+
 
 require("config.opts")
 require("config.lazy")
