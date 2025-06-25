@@ -5,7 +5,15 @@ return {
         build = "npm install -g mcp-hub@latest",
         opts = {
             config = vim.fn.expand("~/.config/nvim/mcpservers.json"),
-            auto_approve = true,
+            auto_approve = false,
+            extensions = {
+                avante = {
+                    make_slash_commands = true,
+                },
+                codecompanion = {
+                    make_slash_commands = true,
+                },
+            },
         },
     },
     {
@@ -38,7 +46,8 @@ return {
         version = false, -- Never set this value to "*"! Never!
         build = "make",
         opts = {
-            provider = "copilot",
+            -- provider = "copilot",
+            provider = "claude",
             file_selector = {
                 provider = "snacks",
                 provider_opts = {
@@ -82,7 +91,6 @@ return {
         -- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
-            "stevearc/dressing.nvim",
             "nvim-lua/plenary.nvim",
             "MunifTanjim/nui.nvim",
 
@@ -104,14 +112,6 @@ return {
                         use_absolute_path = true,
                     },
                 },
-            },
-            {
-                -- Make sure to set this up properly if you have lazy=true
-                "MeanderingProgrammer/render-markdown.nvim",
-                opts = {
-                    file_types = { "markdown", "Avante", "codecompanion" },
-                },
-                ft = { "markdown", "Avante" },
             },
         },
         config = function(_, opts)

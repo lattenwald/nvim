@@ -3,13 +3,6 @@
     
   ],
   "mcpServers": {
-    "github.com/upstash/context7-mcp": {
-      "args": [
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "command": "npx"
-    },
     "github.com/modelcontextprotocol/servers/tree/main/src/filesystem": {
       "args": [
         "-y",
@@ -30,6 +23,30 @@
         "mcp-server-kubernetes"
       ],
       "command": "npx"
+    },
+    "github.com/modelcontextprotocol/servers/tree/main/src/git": {
+      "disabled": false,
+      "args": [
+        "mcp-server-git"
+      ],
+      "command": "uvx"
+    },
+    "github.com/upstash/context7-mcp": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "command": "npx"
+    },
+    "github.com/Garoth/echo-mcp": {
+      "autoApprove": [
+        "echo"
+      ],
+      "disabled": false,
+      "args": [
+        "/home/aleksandr-kiusev/.mcphub/servers/echo-mcp/build/index.js"
+      ],
+      "command": "node"
     }
   }
 }
