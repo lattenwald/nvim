@@ -29,6 +29,9 @@ return {
                     vim.keymap.set("n", "<leader>a", function()
                         vim.lsp.buf.code_action()
                     end, { buffer = bufnr, desc = "LSP Code Action" })
+                    vim.keymap.set("n", "<leader>D", function()
+                        vim.diagnostic.open_float()
+                    end, { buffer = bufnr, desc = "Show diagnostic" })
                 end,
             })
         end,
