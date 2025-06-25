@@ -198,7 +198,7 @@ end
 
 function M.setup(config)
     M.config = vim.tbl_deep_extend("force", {
-        project_markers = { ".git", "Cargo.toml", "pyproject.toml", "rebar.config" },
+        project_markers = { ".git", "Cargo.toml", "pyproject.toml", "rebar.config", "project-root" },
     }, config or {})
 
     vim.api.nvim_create_user_command("ProjectAdd", function()
