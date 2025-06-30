@@ -1,13 +1,24 @@
 {
-  "nativeMCPServers": [
-    
-  ],
   "mcpServers": {
+    "github.com/modelcontextprotocol/servers/tree/main/src/git": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-git"
+      ],
+      "disabled": false
+    },
     "github.com/modelcontextprotocol/servers/tree/main/src/filesystem": {
       "args": [
         "-y",
         "@modelcontextprotocol/server-filesystem",
         "/home/aleksandr-kiusev"
+      ],
+      "command": "npx"
+    },
+    "github.com/upstash/context7-mcp": {
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
       ],
       "command": "npx"
     },
@@ -18,35 +29,24 @@
       ],
       "command": "npx"
     },
+    "github.com/Garoth/echo-mcp": {
+      "disabled": true,
+      "command": "node",
+      "args": [
+        "/home/aleksandr-kiusev/.mcphub/servers/echo-mcp/build/index.js"
+      ],
+      "autoApprove": [
+        "echo"
+      ]
+    },
     "github.com/Flux159/mcp-server-kubernetes": {
       "args": [
         "mcp-server-kubernetes"
       ],
       "command": "npx"
-    },
-    "github.com/modelcontextprotocol/servers/tree/main/src/git": {
-      "disabled": false,
-      "args": [
-        "mcp-server-git"
-      ],
-      "command": "uvx"
-    },
-    "github.com/upstash/context7-mcp": {
-      "args": [
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "command": "npx"
-    },
-    "github.com/Garoth/echo-mcp": {
-      "autoApprove": [
-        "echo"
-      ],
-      "disabled": false,
-      "args": [
-        "/home/aleksandr-kiusev/.mcphub/servers/echo-mcp/build/index.js"
-      ],
-      "command": "node"
     }
-  }
+  },
+  "nativeMCPServers": [
+    
+  ]
 }
