@@ -305,6 +305,7 @@ return {
     },
     {
         "kiyoon/treesitter-indent-object.nvim",
+        enabled = false,
         keys = {
             {
                 "ai",
@@ -342,7 +343,8 @@ return {
     },
     {
         "lukas-reineke/indent-blankline.nvim",
-        tag = "v2.20.8", -- Use v2
+        enabled = false,
+        -- tag = "v2.20.8", -- Use v2
         event = "BufReadPost",
         opts = {
             space_char_blankline = " ",
