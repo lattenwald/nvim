@@ -39,6 +39,95 @@ return {
         end,
     },
     {
+        "coder/claudecode.nvim",
+        dependencies = { "folke/snacks.nvim" },
+        config = function()
+            require("claudecode").setup()
+
+            -- Set up buffer-local keymaps for claude-code diff context
+            vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "OptionSet" }, {
+                group = vim.api.nvim_create_augroup("ClaudeCodeDiffKeymaps", { clear = true }),
+                pattern = { "*", "diff" },
+                callback = function()
+                    local current_buf = vim.api.nvim_get_current_buf()
+
+                    -- Multiple ways to detect diff mode
+                    local is_diff_mode = vim.wo.diff
+                        or vim.opt_local.diff:get()
+                        or vim.api.nvim_win_get_option(0, "diff")
+                        or vim.fn.getwinvar(0, "&diff") == 1
+
+                    -- Check if we're in a claude-code diff context
+                    local is_claude_diff = vim.b[current_buf].claudecode_diff_tab_name ~= nil
+                        or vim.b[current_buf].claudecode_diff_new_win ~= nil
+                        or (vim.fn.bufname() or ""):match("%.new$")
+                        or (vim.fn.bufname() or ""):match("%(New%)")
+                        or (vim.fn.bufname() or ""):match("%(proposed%)")
+
+                    if is_diff_mode and is_claude_diff then
+                        -- Buffer-local keymaps matching gitsigns pattern
+                        local opts = { buffer = current_buf, silent = true }
+
+                        -- Navigation (like gitsigns ]c/[c)
+                        vim.keymap.set("n", "]c", function()
+                            if vim.wo.diff then
+                                vim.cmd.normal({ "]c", bang = true })
+                            end
+                        end, vim.tbl_extend("force", opts, { desc = "Next diff hunk" }))
+
+                        vim.keymap.set("n", "[c", function()
+                            if vim.wo.diff then
+                                vim.cmd.normal({ "[c", bang = true })
+                            end
+                        end, vim.tbl_extend("force", opts, { desc = "Previous diff hunk" }))
+
+                        -- Hunk operations (like gitsigns h* pattern)
+                        vim.keymap.set("n", "hs", "<cmd>ClaudeCodeDiffAccept<cr>", vim.tbl_extend("force", opts, { desc = "Accept (stage) diff" }))
+                        vim.keymap.set(
+                            "n",
+                            "<leader>hr",
+                            "<cmd>ClaudeCodeDiffDeny<cr>",
+                            vim.tbl_extend("force", opts, { desc = "Reset (deny) diff" })
+                        )
+                        vim.keymap.set("n", "<leader>hp", function()
+                            -- Preview current hunk in diff mode
+                            if vim.wo.diff then
+                                vim.cmd("normal! zR") -- Open all folds to see diff
+                            end
+                        end, vim.tbl_extend("force", opts, { desc = "Preview diff hunk" }))
+
+                        -- Additional claude-code specific operations
+                        vim.keymap.set(
+                            "n",
+                            "<leader>ha",
+                            "<cmd>ClaudeCodeDiffAccept<cr>",
+                            vim.tbl_extend("force", opts, { desc = "Accept all diffs" })
+                        )
+                        vim.keymap.set("n", "<leader>hd", "<cmd>ClaudeCodeDiffDeny<cr>", vim.tbl_extend("force", opts, { desc = "Deny all diffs" }))
+                    end
+                end,
+            })
+        end,
+        keys = {
+            { "<leader>w", nil, desc = "AI/Claude Code" },
+            { "<leader>wc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+            { "<leader>wf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
+            { "<leader>wr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
+            { "<leader>wC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+            { "<leader>wb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
+            { "<leader>ws", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+            {
+                "<leader>ws",
+                "<cmd>ClaudeCodeTreeAdd<cr>",
+                desc = "Add file",
+                ft = { "NvimTree", "neo-tree", "oil" },
+            },
+            -- Diff management (global keymaps)
+            { "<leader>wa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+            { "<leader>wd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+        },
+    },
+    {
         "yetone/avante.nvim",
         lazy = true,
         enabled = false,
@@ -170,15 +259,15 @@ return {
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
-            {
-                "echasnovski/mini.diff",
-                config = function()
-                    local diff = require("mini.diff")
-                    diff.setup({
-                        source = diff.gen_source.none(),
-                    })
-                end,
-            },
+            -- {
+            --     "echasnovski/mini.diff",
+            --     config = function()
+            --         local diff = require("mini.diff")
+            --         diff.setup({
+            --             source = diff.gen_source.none(),
+            --         })
+            --     end,
+            -- },
             {
                 "HakonHarnes/img-clip.nvim",
                 opts = {
