@@ -18,3 +18,4 @@ vim.o.expandtab = true
 vim.o.scl = "yes:1"
 
 vim.o.number = true
+vim.o.splitright = true

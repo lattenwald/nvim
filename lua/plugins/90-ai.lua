@@ -39,6 +39,25 @@ return {
         end,
     },
     {
+        "CopilotC-Nvim/CopilotChat.nvim",
+        dependencies = {
+            {
+                "zbirenbaum/copilot.lua",
+            },
+            {
+                "nvim-lua/plenary.nvim",
+                branch = "master",
+            },
+        },
+        build = "make tiktoken",
+        opts = {
+            window = {
+                layout = "vertical",
+                width = 0.35,
+            },
+        },
+    },
+    {
         "coder/claudecode.nvim",
         dependencies = { "folke/snacks.nvim" },
         config = function()
