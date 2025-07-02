@@ -12,6 +12,7 @@ return {
             ensure_installed = {
                 "markdown",
                 "markdown_inline",
+                "regex",
             },
             sync_install = false,
             auto_install = true,
