@@ -5,3 +5,6 @@ require("conform").setup({
         json = { "prettierd" },
     },
 })
+
+vim.bo.formatexpr = ""
+vim.bo.formatprg = "jq"
