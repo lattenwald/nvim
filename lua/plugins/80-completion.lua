@@ -86,6 +86,10 @@ return {
                         async = true,
                     },
                 },
+                -- Disable blink.cmp in copilot-chat buffers
+                per_filetype = {
+                    ["copilot-chat"] = {},
+                },
             },
 
             fuzzy = { implementation = "prefer_rust_with_warning" },
