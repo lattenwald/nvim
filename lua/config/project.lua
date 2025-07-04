@@ -148,10 +148,7 @@ function M.list_projects()
 
                     if git_root then
                         local cwd = vim.fn.fnamemodify(git_root, ":h")
-                        local ok = pcall(Snacks.picker.git_files, { cwd = cwd })
-                        if not ok then
-                            Snacks.picker.files({ cwd = cwd })
-                        end
+                        Snacks.picker.files({ cwd = cwd })
                     else
                         Snacks.picker.files({ cwd = project_dir })
                     end
