@@ -362,4 +362,7 @@ return {
         "ovk/endec.nvim",
         opts = {},
     },
+    {
+        "sindrets/diffview.nvim",
+    },
 }
