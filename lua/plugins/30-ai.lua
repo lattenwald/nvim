@@ -59,6 +59,7 @@ return {
     },
     {
         "coder/claudecode.nvim",
+        enabled = false,
         dependencies = { "folke/snacks.nvim" },
         config = function()
             require("claudecode").setup()
@@ -144,6 +145,30 @@ return {
             -- Diff management (global keymaps)
             { "<leader>wa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
             { "<leader>wd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+        },
+    },
+    {
+        "greggh/claude-code.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim", -- Required for git operations
+        },
+        opts = {
+            window = {
+                position = "vertical",
+            },
+            -- Keymaps
+            keymaps = {
+                toggle = {
+                    normal = "<C-,>", -- Normal mode keymap for toggling Claude Code, false to disable
+                    terminal = "<C-,>", -- Terminal mode keymap for toggling Claude Code, false to disable
+                    variants = {
+                        continue = "<leader>cC", -- Normal mode keymap for Claude Code with continue flag
+                        verbose = "<leader>cV", -- Normal mode keymap for Claude Code with verbose flag
+                    },
+                },
+                window_navigation = true, -- Enable window navigation keymaps (<C-h/j/k/l>)
+                scrolling = true, -- Enable scrolling keymaps (<C-f/b>) for page up/down
+            },
         },
     },
     {
@@ -299,4 +324,3 @@ return {
         },
     },
 }
-
