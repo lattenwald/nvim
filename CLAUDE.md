@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This is a comprehensive Neovim configuration based on lazy.nvim with language-specific plugins and LSP servers installed on demand. The configuration follows a modular approach with filetype-specific configurations and AI integrations.
+This is a comprehensive Neovim configuration based on lazy.nvim with language-specific plugins and LSP servers installed on demand. The configuration follows a modular approach with filetype-specific configurations and extensive AI integrations including GitHub Copilot, Claude via Avante, CodeCompanion, and MCPHub.
 
 ## Key Architecture
 
@@ -61,7 +61,7 @@ The configuration includes multiple AI providers:
 - **CodeCompanion**: Additional AI coding assistant
 - **MCPHub**: MCP server integrations
 
-AI configuration is managed through `avante_opts.yaml` (copy from `avante_opts.yaml.example`), which provides shared configuration for copilot workspace folders.
+AI configuration is managed through `avante_opts.yaml` (copy from `avante_opts.yaml.example`), which provides shared configuration for multiple AI providers including Copilot workspace folders, Claude API settings, and other AI integrations.
 
 ## Key Features
 
@@ -79,11 +79,21 @@ Configured debugging for:
 - Python (via nvim-dap-python)
 
 ### Language Support
-Full LSP support for: Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSON/JSON5, XML, HTML, JavaScript, YAML, TOML, Markdown.
+Full LSP support for: Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSON/JSON5, XML, HTML, JavaScript, YAML, TOML, Markdown, CSS, SQL, HTTP/REST, LaTeX, C.
+
+### Additional Features
+- **Project Management**: Session management via snacks.nvim with `projects.yaml` configuration
+- **File Management**: Yazi integration for advanced file browsing
+- **Terminal Integration**: Built-in terminal management and LazyGit integration
+- **REST Client**: HTTP request testing via rest.nvim
+- **Image Support**: Image clipboard integration for markdown
+- **Folding**: Enhanced folding with nvim-ufo
+- **Notifications**: Modern notification system with nvim-notify
+- **Auto-save**: Automatic directory changing and file management
 
 ## Important Keybindings
 
-- `<space>sk`: Show all key bindings in Snacks picker
+- `<space>Sk`: Show all key bindings in Snacks picker
 - `<space>?`: Show all key bindings in WhichKey
 - `<space>/`: Show buffer-local key bindings
 - `<space>p`: Projects picker
@@ -95,6 +105,11 @@ Full LSP support for: Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSO
 ## File Structure Notes
 
 - Plugin lazy-loading is handled through lazy.nvim with `event = "VeryLazy"` as default
-- Color scheme is set to `tokyonight-night` in init.lua
-- Mason is used for LSP server, DAP adapter, and tool management
+- Color scheme is set to `tokyonight-night` in init.lua (configurable themes include Edge, Everforest, Gruvbox Material, Material, Oceanic Next, Sonokai, Wombat, Zephyr)
+- Mason is used for LSP server, DAP adapter, and tool management with automatic installation
 - File type detection includes custom patterns for Ansible YAML and Erlang config files
+- Configuration includes development tools like StyLua (formatting), Selene (linting)
+- Plugin lazy-loading optimized with `event = "VeryLazy"` and specific triggers
+- AI providers are configured via `avante_opts.yaml` for consistency across plugins
+- MCP (Model Context Protocol) servers configured in `mcpservers.json`
+- Project definitions stored in `projects.yaml` for quick project switching
