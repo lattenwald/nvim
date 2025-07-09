@@ -1,4 +1,4 @@
-require("config.utils").mason_install("erlang-ls")
+-- require("config.utils").mason_install("erlang-ls")
 
 -- local dap = require("dap")
 --
