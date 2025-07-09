@@ -59,10 +59,15 @@ return {
     },
     {
         "coder/claudecode.nvim",
-        enabled = false,
+        -- enabled = false,
         dependencies = { "folke/snacks.nvim" },
-        config = function()
-            require("claudecode").setup()
+        opts = {
+            terminal = {
+                split_width_percentage = 0.4,
+            },
+        },
+        config = function(_, opts)
+            require("claudecode").setup(opts)
 
             -- Set up buffer-local keymaps for claude-code diff context
             vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "OptionSet" }, {
@@ -129,6 +134,7 @@ return {
             })
         end,
         keys = {
+            { "<C-,>", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
             { "<leader>w", nil, desc = "AI/Claude Code" },
             { "<leader>wc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
             { "<leader>wf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
@@ -149,6 +155,7 @@ return {
     },
     {
         "greggh/claude-code.nvim",
+        enabled = false,
         dependencies = {
             "nvim-lua/plenary.nvim", -- Required for git operations
         },
