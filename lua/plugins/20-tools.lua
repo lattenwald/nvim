@@ -69,11 +69,6 @@ return {
         keys = {
             -- 👇 in this section, choose your own keymappings!
             {
-                "<leader>-",
-                "<cmd>Yazi<enter>",
-                desc = "Open yazi at the current file",
-            },
-            {
                 "<leader>z",
                 "<cmd>Yazi<enter>",
                 desc = "Open yazi at the current file",
@@ -81,7 +76,7 @@ return {
             {
                 -- NOTE: this requires a version of yazi that includes
                 -- https://github.com/sxyazi/yazi/pull/1305 from 2024-07-18
-                "<c-up>",
+                "<leader>-",
                 "<cmd>Yazi toggle<enter>",
                 desc = "Resume the last yazi session",
             },
