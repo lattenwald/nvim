@@ -88,6 +88,9 @@ return {
             { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
             { "<C-`>", function() Snacks.terminal() end, desc = "Terminal", mode = {"n", "i", "v", "t" }  },
 
+            { "<C-.>", function() Snacks.terminal({ "gemini" }) end, desc = "Gemini Terminal", mode = {"n", "i", "v", "t" } },
+
+
             { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
 
             { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
