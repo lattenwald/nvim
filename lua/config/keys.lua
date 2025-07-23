@@ -15,6 +15,16 @@ function _G.get_wildmenu_key(key_wildmenu, key_regular)
     return vim.fn.wildmenumode() ~= 0 and key_wildmenu or key_regular
 end
 
+-----------------------
+-- CLIPBOARD SECTION --
+-----------------------
+-- Normal & Visual: Shift+Insert pastes like Ctrl+V does elsewhere
+vim.keymap.set({ "n", "v" }, "<S-Insert>", '"+p', { noremap = true, silent = true })
+-- Insert: Shift+Insert inserts the + register without leaving insert mode
+vim.keymap.set("i", "<S-Insert>", '<C-R>+', { noremap = true, silent = true })
+-- Command-line (/:, ?:, :): Shift+Insert pastes into the prompt
+vim.keymap.set("c", "<S-Insert>", '<C-R>+', { noremap = true, silent = true })
+
 -- vim.keymap.set doesn't work
 -- Map <Down> to act as <Right> in wildmenu, otherwise as normal <Down>
 -- Map <Up> to act as <Left> in wildmenu, otherwise as normal <Up>

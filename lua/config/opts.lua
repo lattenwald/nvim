@@ -2,7 +2,7 @@ vim.o.guifont = "Hack:h10"
 vim.o.mouse = "a"
 
 -- clipboard
-vim.opt.clipboard = "unnamedplus"
+vim.opt.clipboard:prepend({ "unnamed", "unnamedplus" })
 
 -- misc
 vim.o.hidden = true
