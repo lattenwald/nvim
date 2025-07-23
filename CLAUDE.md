@@ -113,3 +113,18 @@ Full LSP support for: Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSO
 - AI providers are configured via `avante_opts.yaml` for consistency across plugins
 - MCP (Model Context Protocol) servers configured in `mcpservers.json`
 - Project definitions stored in `projects.yaml` for quick project switching
+
+## Git Commit Message Format
+
+Write concise commit messages without emotional or unneeded adjectives:
+- First line: Brief description of change
+- Bullet points: Specific changes made
+- Focus on what changed, not why or how
+
+Example:
+```
+Enhanced clipboard configuration and keybindings
+
+- Updated clipboard settings to prepend unnamed and unnamedplus
+- Added Shift+Insert paste mappings for all modes
+```
