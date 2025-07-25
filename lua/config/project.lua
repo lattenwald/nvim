@@ -148,7 +148,11 @@ function M.list_projects()
 
                     if git_root then
                         local cwd = vim.fn.fnamemodify(git_root, ":h")
-                        Snacks.picker.files({ cwd = cwd })
+                        Snacks.picker.files({
+                            cwd = cwd,
+                            hidden = true,
+                            ignored = true,
+                        })
                     else
                         Snacks.picker.files({ cwd = project_dir })
                     end
