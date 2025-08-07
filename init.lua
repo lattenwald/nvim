@@ -16,10 +16,15 @@ vim.filetype.add({
         ["sys.config.src.*"] = "erlang",
     },
 })
-
+vim.filetype.add({
+    filename = {
+        ["kamailio.cfg"] = "kamailio",
+    }
+})
 
 require("config.opts")
 require("config.lazy")
+require("config.parsers")
 require("config.project").setup({})
 require("config.keys")
 
