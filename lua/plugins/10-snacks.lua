@@ -49,6 +49,9 @@ return {
             },
             picker = {
                 enabled = true,
+                root = {
+                    patterns = { ".git", "project-root" },
+                },
                 win = {
                     input = {
                         keys = {
@@ -99,13 +102,13 @@ return {
 
             { "<leader>f", function()
                 local current_dir = vim.fn.expand("%:p:h")
-                local git_root = vim.fs.find(".git", {
+                local project_root = vim.fs.find({ ".git", "project-root" }, {
                     path = current_dir,
                     upward = true,
                 })[1]
 
-                if git_root then
-                    local cwd = vim.fn.fnamemodify(git_root, ":h")
+                if project_root then
+                    local cwd = vim.fn.fnamemodify(project_root, ":h")
                     local ok = pcall(Snacks.picker.git_files, { cwd = cwd })
                     if not ok then
                         Snacks.picker.files({ cwd = cwd })
@@ -113,7 +116,7 @@ return {
                 else
                     Snacks.picker.files({ cwd = current_dir })
                 end
-            end, desc = "Find Files (Git/Regular)" },
+            end, desc = "Find Files (Git/Project Root)" },
 
             -- LSP
             { "gd", function() Snacks.picker.lsp_definitions({auto_confirm = false}) end, desc = "Goto Definition" },

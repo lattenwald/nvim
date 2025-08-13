@@ -21,7 +21,7 @@ local projects_file = vim.fn.stdpath("data") .. "/projects.yaml" -- Path to stor
 
 -- Function to find the project root
 local function find_project_root()
-    local markers = M.config.project_markers or { ".git", "Cargo.toml", "pyproject.toml", "rebar.config" }
+    local markers = M.config.project_markers or { ".git", "project-root" }
     local cwd = vim.fs.find(markers, {
         upward = true,
         stop = vim.loop.os_homedir(),
@@ -199,7 +199,7 @@ end
 
 function M.setup(config)
     M.config = vim.tbl_deep_extend("force", {
-        project_markers = { ".git", "Cargo.toml", "pyproject.toml", "rebar.config", "project-root" },
+        project_markers = { ".git", "project-root" },
     }, config or {})
 
     vim.api.nvim_create_user_command("ProjectAdd", function()

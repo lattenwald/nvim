@@ -163,10 +163,10 @@ return {
         opts = {
             keep_dir = false,
             flags = {
-                ["rs"] = { "Cargo.toml" },
-                ["c"] = { "Makefile", "CMake" },
-                ["py"] = { "pyproject.toml", "requirements.txt" },
-                ["erl"] = { "rebar.config", ".elp.toml", "erlang_ls.config", "Makefile" },
+                -- ["rs"] = { "Cargo.toml" },
+                -- ["c"] = { "Makefile", "CMake" },
+                -- ["py"] = { "pyproject.toml", "requirements.txt" },
+                -- ["erl"] = { "rebar.config", ".elp.toml", "erlang_ls.config", "Makefile" },
             },
 
             -- Define generic flags for all files
