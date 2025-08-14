@@ -2,6 +2,26 @@ return {
     {
         "mrcjkb/rustaceanvim",
         lazy = false,
+        event = "BufReadPre",
+        init = function()
+            vim.notify("setting up rustaceanvim")
+            vim.g.rustaceanvim = {
+                server = {
+                    settings = {
+                        ["rust-analyzer"] = {
+                            cargo = {
+                                buildScripts = {
+                                    enable = true,
+                                },
+                            },
+                            procMacro = {
+                                enable = true,
+                            },
+                        },
+                    },
+                },
+            }
+        end,
     },
     {
         "saecki/crates.nvim",
