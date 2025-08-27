@@ -114,12 +114,34 @@ Full LSP support for: Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSO
 - MCP (Model Context Protocol) servers configured in `mcpservers.json`
 - Project definitions stored in `projects.yaml` for quick project switching
 
-## Git Commit Message Format
 
-Write concise commit messages without emotional or unneeded adjectives:
-- First line: Brief description of change
-- Bullet points: Specific changes made
+## Git Commit Message Standards
+Follow conventional commits format with these rules:
+
+**Format:**
+```
+type: short description
+
+Detailed explanation if needed:
+- Add specific changes made
+- Use bullet points for clarity
+- Include code examples only when helpful
+
+Example configurations or usage patterns if relevant.
+```
+
+**Rules:**
+- MUST have First line: Brief description of change
+- MAY use conventional commit types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
 - Focus on what changed, not why or how
+- No unmeasured adjectives (avoid "excellent", "comprehensive", "amazing", etc.)
+- Do not mention "BREAKING CHANGE: None" - only include if there are actual breaking changes
+- Do not list changed files - git stats show this automatically
+- Do not mention "ready for next phase" or future work
+- Keep descriptions factual and measurable
+- Include code examples only when they clarify the change
+- Avoid inflating bullet point lists with obvious or redundant details
+- Summarize related changes concisely rather than listing every minor modification
 
 Example:
 ```
