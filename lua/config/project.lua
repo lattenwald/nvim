@@ -21,16 +21,37 @@ local projects_file = vim.fn.stdpath("data") .. "/projects.yaml" -- Path to stor
 
 -- Function to find the project root
 local function find_project_root()
-    local markers = M.config.project_markers or { ".git", "project-root" }
-    local cwd = vim.fs.find(markers, {
-        upward = true,
-        stop = vim.loop.os_homedir(),
-        path = uv.cwd(),
-    })[1]
-    if not cwd then
-        return nil
+    local markers = M.config.project_markers or { ".git", "Cargo.toml", "pyproject.toml", "rebar.config", "project-root" }
+    local start_dir = uv.cwd()
+    local stop_dir = vim.loop.os_homedir()
+
+    local current_dir = start_dir
+    while current_dir do
+        for _, marker in ipairs(markers) do
+            local marker_path = current_dir .. "/" .. marker
+            -- vim.fs.stat is a sync call that returns nil if the path doesn't exist.
+            -- This works for both files (e.g., Cargo.toml) and directories (e.g., .git).
+            if vim.fs.stat(marker_path) then
+                return current_dir -- Found the directory containing the marker.
+            end
+        end
+
+        -- Stop if we have searched the stop_dir and found nothing.
+        if current_dir == stop_dir then
+            return nil
+        end
+
+        local parent_dir = vim.fn.fnamemodify(current_dir, ":h")
+
+        -- Stop if we have reached the filesystem root.
+        if parent_dir == current_dir or not parent_dir or parent_dir == "" then
+            return nil
+        end
+
+        current_dir = parent_dir
     end
-    return vim.fs.dirname(cwd)
+
+    return nil
 end
 
 -- Function to read projects from YAML file
