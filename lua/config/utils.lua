@@ -1,16 +1,27 @@
 local M = {}
 
-function M.mason_install(pkgname)
+function M.mason_install(pkgname, on_installed)
     local mason_registry = require("mason-registry")
     if not mason_registry.is_installed(pkgname) then
         local pkg = mason_registry.get_package(pkgname)
         pkg:install():once("closed", function()
-            if not mason_registry.is_installed(pkgname) then
-                vim.notify(string.format("%s has been installed successfully!", pkgname), vim.log.levels.INFO)
+            if mason_registry.is_installed(pkgname) then
+                vim.schedule(function()
+                    vim.notify(string.format("%s has been installed successfully!", pkgname), vim.log.levels.INFO)
+                    if on_installed then
+                        on_installed()
+                    end
+                end)
             else
-                vim.notify(string.format("Failed to install %s.", pkgname), vim.log.levels.ERROR)
+                vim.schedule(function()
+                    vim.notify(string.format("Failed to install %s.", pkgname), vim.log.levels.ERROR)
+                end)
             end
         end)
+    else
+        if on_installed then
+            on_installed()
+        end
     end
 end
 
