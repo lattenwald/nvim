@@ -64,6 +64,10 @@ return {
         opts = {
             terminal = {
                 split_width_percentage = 0.4,
+                provider = "snacks",
+                provider_opts = {
+                    external_terminal_cmd = "alacritty -e %s", -- Replace with your preferred terminal program. %s is replaced with claude command
+                },
             },
         },
         config = function(_, opts)
@@ -129,6 +133,9 @@ return {
                             vim.tbl_extend("force", opts, { desc = "Accept all diffs" })
                         )
                         vim.keymap.set("n", "<leader>hd", "<cmd>ClaudeCodeDiffDeny<cr>", vim.tbl_extend("force", opts, { desc = "Deny all diffs" }))
+
+                        vim.keymap.set("n", "<leader>wa", "<cmd>ClaudeCodeDiffAccept<cr>", vim.tbl_extend("force", opts, { desc = "Accept diff" }))
+                        vim.keymap.set("n", "<leader>wd", "<cmd>ClaudeCodeDiffDeny<cr>", vim.tbl_extend("force", opts, { desc = "Deny diff" }))
                     end
                 end,
             })
@@ -148,13 +155,11 @@ return {
                 desc = "Add file",
                 ft = { "NvimTree", "neo-tree", "oil" },
             },
-            -- Diff management (global keymaps)
-            { "<leader>wa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-            { "<leader>wd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
         },
     },
     {
         "olimorris/codecompanion.nvim",
+        enabled = false,
         lazy = true,
         cmd = "CodeCompanionActions",
         opts = {
