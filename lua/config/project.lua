@@ -29,9 +29,9 @@ local function find_project_root()
     while current_dir do
         for _, marker in ipairs(markers) do
             local marker_path = current_dir .. "/" .. marker
-            -- vim.fs.stat is a sync call that returns nil if the path doesn't exist.
+            -- vim.loop.fs_stat is a sync call that returns nil if the path doesn't exist.
             -- This works for both files (e.g., Cargo.toml) and directories (e.g., .git).
-            if vim.fs.stat(marker_path) then
+            if vim.loop.fs_stat(marker_path) then
                 return current_dir -- Found the directory containing the marker.
             end
         end
