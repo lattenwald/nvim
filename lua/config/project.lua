@@ -162,15 +162,11 @@ function M.list_projects()
                 if item then
                     local project_dir = vim.fn.fnameescape(item.path)
                     vim.cmd("cd " .. project_dir)
-                    local git_root = vim.fs.find(".git", {
-                        path = project_dir,
-                        upward = true,
-                    })[1]
+                    local git_root = vim.fs.root(project_dir, { ".git" })
 
                     if git_root then
-                        local cwd = vim.fn.fnamemodify(git_root, ":h")
                         Snacks.picker.files({
-                            cwd = cwd,
+                            cwd = git_root,
                             hidden = true,
                             ignored = true,
                         })

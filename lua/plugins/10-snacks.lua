@@ -102,13 +102,10 @@ return {
 
             { "<leader>f", function()
                 local current_dir = vim.fn.expand("%:p:h")
-                local project_root = vim.fs.find({ ".git", "project-root" }, {
-                    path = current_dir,
-                    upward = true,
-                })[1]
+                local project_root = vim.fs.root(current_dir, { ".git", "project-root" })
 
                 if project_root then
-                    local cwd = vim.fn.fnamemodify(project_root, ":h")
+                    local cwd = project_root
                     local ok = pcall(Snacks.picker.git_files, { cwd = cwd })
                     if not ok then
                         Snacks.picker.files({ cwd = cwd })
