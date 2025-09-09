@@ -102,7 +102,7 @@ return {
 
             { "<leader>f", function()
                 local current_dir = vim.fn.expand("%:p:h")
-                local project_root = vim.fs.root(current_dir, { ".git", "project-root" })
+                local project_root = require("config.utils").find_project_root(current_dir, { ".git", "project-root" })
 
                 if project_root then
                     local cwd = project_root

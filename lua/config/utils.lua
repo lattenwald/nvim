@@ -1,5 +1,26 @@
 local M = {}
 
+-- Cache for root finding to prevent redundant filesystem searches
+local root_cache = {}
+
+-- Safe root finding with boundaries and caching
+function M.find_project_root(start_path, patterns)
+    patterns = patterns or { ".git", "project-root" }
+    local cache_key = start_path .. ":" .. table.concat(patterns, ",")
+
+    if root_cache[cache_key] ~= nil then
+        return root_cache[cache_key]
+    end
+
+    -- Stop searching at home directory and filesystem root
+    local stop_dirs = { vim.fn.expand("~"), "/" }
+    local root = vim.fs.root(start_path, patterns, { stop = stop_dirs })
+
+    -- Cache result (even if nil) to prevent future searches
+    root_cache[cache_key] = root
+    return root
+end
+
 function M.mason_install(pkgname, on_installed)
     local mason_registry = require("mason-registry")
     if not mason_registry.is_installed(pkgname) then
@@ -34,7 +55,7 @@ end
 
 function M.current_repo_name()
     local current_dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
-    local project_root = vim.fs.root(current_dir, { ".git", "Cargo.toml", "rebar.config", "pyproject.toml" })
+    local project_root = M.find_project_root(current_dir, { ".git", "Cargo.toml", "rebar.config", "pyproject.toml" })
     return project_root and vim.fs.basename(project_root) or nil
 end
 

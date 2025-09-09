@@ -46,7 +46,7 @@ end
 
 -- Function to add the current project
 function M.add_project()
-    local project_root = vim.fs.root(vim.uv.cwd(), M.config.project_markers)
+    local project_root = require("config.utils").find_project_root(vim.uv.cwd(), M.config.project_markers)
     if not project_root then
         vim.notify("No project root found.", vim.log.levels.WARN)
         return
@@ -127,7 +127,7 @@ function M.list_projects()
                 if item then
                     local project_dir = vim.fn.fnameescape(item.path)
                     vim.cmd("cd " .. project_dir)
-                    local git_root = vim.fs.root(project_dir, { ".git" })
+                    local git_root = require("config.utils").find_project_root(project_dir, { ".git" })
 
                     if git_root then
                         Snacks.picker.files({
