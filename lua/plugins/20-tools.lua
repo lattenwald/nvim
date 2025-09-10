@@ -159,21 +159,6 @@ return {
         end,
     },
     {
-        "albenisolmos/autochdir.nvim",
-        opts = {
-            keep_dir = false,
-            flags = {
-                -- ["rs"] = { "Cargo.toml" },
-                -- ["c"] = { "Makefile", "CMake" },
-                -- ["py"] = { "pyproject.toml", "requirements.txt" },
-                -- ["erl"] = { "rebar.config", ".elp.toml", "erlang_ls.config", "Makefile" },
-            },
-
-            -- Define generic flags for all files
-            generic_flags = { ".git", "project-root" },
-        },
-    },
-    {
         "windwp/nvim-autopairs",
         event = "InsertEnter",
         config = function()

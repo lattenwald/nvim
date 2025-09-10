@@ -26,6 +26,7 @@ require("config.opts")
 require("config.lazy")
 require("config.parsers")
 require("config.project").setup({})
+require("config.autochdir").setup()
 require("config.keys")
 
 if vim.g.neovide then
