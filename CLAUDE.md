@@ -1,152 +1,263 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Step-by-step guidance for Claude Code when working with this Neovim configuration repository.
 
-## Overview
+## 🏗️ Repository Structure
 
-This is a comprehensive Neovim configuration based on lazy.nvim with language-specific plugins and LSP servers installed on demand. The configuration follows a modular approach with filetype-specific configurations and extensive AI integrations including GitHub Copilot, Claude via Avante, CodeCompanion, and MCPHub.
+**This is a modular Neovim configuration using lazy.nvim with AI integrations.**
 
-## Key Architecture
+### File Organization
+```
+init.lua                    # Entry point - loads core modules
+lua/config/                 # Core configuration
+├── opts.lua               # Neovim options
+├── keys.lua               # Global keymaps  
+├── lazy.lua               # Plugin manager setup
+├── project.lua            # Project management
+└── utils.lua              # Utility functions
+lua/plugins/               # Plugin configurations by prefix:
+├── 10-*.lua              # Core (theme, snacks)
+├── 20-*.lua              # Dev tools (treesitter, which-key)
+├── 30-*.lua              # AI integrations (copilot, avante)
+├── 40-*.lua              # UI components (statusline, trouble)
+├── 55-*.lua              # LSP configuration
+├── 65-*.lua              # Debugging setup
+├── 70-*.lua              # Completion system
+└── 90-*.lua              # Language-specific plugins
+after/ftplugin/            # Auto-install LSP servers per filetype
+```
 
-### Plugin Organization
-- **10-** prefix: Core plugins (theme, snacks)
-- **20-** prefix: Development tools (treesitter, which-key, etc.)
-- **30-** prefix: AI integrations (copilot, avante, codecompanion, mcphub)
-- **40-** prefix: UI components (statusline, trouble)
-- **55-** prefix: LSP configuration
-- **65-** prefix: Debugging setup
-- **70-** prefix: Completion system
-- **90-** prefix: Language-specific plugins
+## 🎯 Essential Actions
 
-### Configuration Structure
-- `init.lua`: Main entry point, sets up filetype detection and loads core modules
-- `lua/config/`: Core configuration modules
-  - `opts.lua`: Basic Neovim options
-  - `keys.lua`: Global keymaps
-  - `lazy.lua`: Lazy.nvim bootstrap and setup
-  - `project.lua`: Project management
-  - `utils.lua`: Utility functions
-- `lua/plugins/`: Plugin configurations organized by prefix
-- `after/ftplugin/`: Language-specific configurations that auto-install LSP servers
+### Before Making Changes
+1. **Run formatting check**: `stylua --check .`
+2. **Run linting**: `selene .` 
+3. **Check for existing patterns**: Search similar configurations first
 
-### LSP Server Installation
-LSP servers are installed on demand only when explicitly configured in `after/ftplugin/*.lua` files. Each filetype plugin calls `require("config.utils").mason_install()` to ensure the necessary tools are available.
+### When Adding Plugins
+1. **Choose correct prefix** based on plugin type (10-90)
+2. **Use lazy loading**: Set `event = "VeryLazy"` unless specific trigger needed
+3. **Check dependencies**: Ensure required tools are available via Mason
+4. **Test configuration**: Verify plugin loads and functions correctly
 
-## Development Commands
+### When Modifying Code
+1. **Follow existing patterns**: Check similar functions for style consistency
+2. **Update cache keys**: If modifying cached functions, update cache invalidation
+3. **Maintain backward compatibility**: Don't break existing function signatures
+4. **Add appropriate comments**: Only when complexity requires explanation
+
+### Quality Assurance
+1. **Format code**: `stylua .`
+2. **Fix linting issues**: `selene .` 
+3. **Test functionality**: Verify changes work in Neovim
+4. **Check for regressions**: Ensure existing features still work
+
+## 🔧 Development Workflow
 
 ### Code Formatting
 ```bash
-# Format Lua files
-stylua .
-
-# Check Lua formatting
+# Check formatting
 stylua --check .
+
+# Apply formatting
+stylua .
 ```
 
-### Code Linting
+### Code Linting  
 ```bash
-# Lint Lua files with Selene
+# Lint all Lua files
 selene .
 ```
 
 ### Configuration Files
-- `stylua.toml`: StyLua formatter configuration (spaces, 150 column width)
-- `selene.toml`: Selene linter configuration for Neovim
+- `stylua.toml`: 150 column width, spaces
+- `selene.toml`: Neovim standard library
 
-## AI Integration
+## 🤖 AI Integration Setup
 
-The configuration includes multiple AI providers:
-- **Copilot**: GitHub Copilot integration via copilot.lua
-- **Avante**: AI assistant with provider configuration
-- **CodeCompanion**: Additional AI coding assistant
-- **MCPHub**: MCP server integrations
+### Required Configuration Files
+1. **Copy example file**: `cp avante_opts.yaml.example avante_opts.yaml`
+2. **Configure providers**: Add API keys and settings
+3. **Set up MCP servers**: Configure `mcpservers.json` if needed
+4. **Define projects**: Add entries to `projects.yaml`
 
-AI configuration is managed through `avante_opts.yaml` (copy from `avante_opts.yaml.example`), which provides shared configuration for multiple AI providers including Copilot workspace folders, Claude API settings, and other AI integrations.
+### AI Providers Available
+- **GitHub Copilot**: Via copilot.lua
+- **Claude**: Via Avante plugin  
+- **CodeCompanion**: Additional AI assistant
+- **MCPHub**: Model Context Protocol servers
 
-## Key Features
+## 📋 Language Support
 
-### Completion System
-Uses blink.cmp as the primary completion engine with:
-- LSP-based completions
-- Snippet support via LuaSnip
-- Cmdline completion
-- AI-powered suggestions
+### Automatic LSP Installation
+Each `after/ftplugin/*.lua` file calls `require("config.utils").mason_install()` to install required LSP servers on demand.
 
-### Debugging Support
-Configured debugging for:
-- Rust (via rustaceanvim)
-- Go (via nvim-dap-go)
-- Python (via nvim-dap-python)
+### Supported Languages
+Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSON/JSON5, XML, HTML, JavaScript, YAML, TOML, Markdown, CSS, SQL, HTTP/REST, LaTeX, C
 
-### Language Support
-Full LSP support for: Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSON/JSON5, XML, HTML, JavaScript, YAML, TOML, Markdown, CSS, SQL, HTTP/REST, LaTeX, C.
+### Adding New Language Support
+1. **Create ftplugin file**: `after/ftplugin/[language].lua`
+2. **Install LSP server**: Call `mason_install("server-name")`  
+3. **Configure LSP**: Set up language-specific options
+4. **Add plugin if needed**: Create `90-[language].lua` for specialized tools
 
-### Additional Features
-- **Project Management**: Session management via snacks.nvim with `projects.yaml` configuration
-- **File Management**: Yazi integration for advanced file browsing
-- **Terminal Integration**: Built-in terminal management and LazyGit integration
-- **REST Client**: HTTP request testing via rest.nvim
-- **Image Support**: Image clipboard integration for markdown
-- **Folding**: Enhanced folding with nvim-ufo
-- **Notifications**: Modern notification system with nvim-notify
-- **Auto-save**: Automatic directory changing and file management
+## 🎨 Theming and UI
 
-## Important Keybindings
+### Available Themes
+tokyonight-night (default), Edge, Everforest, Gruvbox Material, Material, Oceanic Next, Sonokai, Wombat, Zephyr
 
-- `<space>Sk`: Show all key bindings in Snacks picker
-- `<space>?`: Show all key bindings in WhichKey
-- `<space>/`: Show buffer-local key bindings
-- `<space>p`: Projects picker
+### UI Components
+- **Completion**: blink.cmp with LSP, snippets, AI suggestions
+- **Statusline**: Custom statusline configuration
+- **File explorer**: Yazi integration
+- **Notifications**: nvim-notify
+- **Folding**: nvim-ufo enhanced folding
+
+## ⌨️ Key Bindings Reference
+
+### Discovery
+- `<space>Sk`: Show all keybindings (Snacks picker)
+- `<space>?`: Show all keybindings (WhichKey)
+- `<space>/`: Show buffer-local keybindings
+
+### Essential
+- `<space>p`: Project switcher
 - `<leader>n`: LSP rename symbol
-- `<leader>d`: LSP hover
+- `<leader>d`: LSP hover documentation  
 - `<leader>a`: LSP code actions
-- `<esc>`: Close floats, clear highlights, clear LSP references
+- `<esc>`: Close floats, clear highlights/references
 
-## File Structure Notes
+## ✅ Git Commit Standards
 
-- Plugin lazy-loading is handled through lazy.nvim with `event = "VeryLazy"` as default
-- Color scheme is set to `tokyonight-night` in init.lua (configurable themes include Edge, Everforest, Gruvbox Material, Material, Oceanic Next, Sonokai, Wombat, Zephyr)
-- Mason is used for LSP server, DAP adapter, and tool management with automatic installation
-- File type detection includes custom patterns for Ansible YAML and Erlang config files
-- Configuration includes development tools like StyLua (formatting), Selene (linting)
-- Plugin lazy-loading optimized with `event = "VeryLazy"` and specific triggers
-- AI providers are configured via `avante_opts.yaml` for consistency across plugins
-- MCP (Model Context Protocol) servers configured in `mcpservers.json`
-- Project definitions stored in `projects.yaml` for quick project switching
-
-
-## Git Commit Message Standards
-Follow conventional commits format with these rules:
-
-**Format:**
+### Format Template
 ```
-type: short description
+type: brief description (50 chars max)
 
-Detailed explanation if needed:
-- Add specific changes made
-- Use bullet points for clarity
-- Include code examples only when helpful
-
-Example configurations or usage patterns if relevant.
+High-level explanation of what and why (if complex).
 ```
 
-**Rules:**
-- MUST have First line: Brief description of change
-- MAY use conventional commit types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
-- Focus on what changed, not why or how
-- No unmeasured adjectives (avoid "excellent", "comprehensive", "amazing", etc.)
-- Do not mention "BREAKING CHANGE: None" - only include if there are actual breaking changes
-- Do not list changed files - git stats show this automatically
-- Do not mention "ready for next phase" or future work
-- Keep descriptions factual and measurable
-- Include code examples only when they clarify the change
-- Avoid inflating bullet point lists with obvious or redundant details
-- Summarize related changes concisely rather than listing every minor modification
+### Step-by-Step Commit Process
+1. **Choose type**: `feat|fix|docs|style|refactor|test|chore`
+2. **Write brief description**: High-level what changed
+3. **Add single-line explanation**: Focus on what/why, not implementation details
+4. **Avoid noise words**: No "excellent", "comprehensive", "amazing"  
+5. **Skip obvious info**: Don't list changed files or "BREAKING CHANGE: None"
+6. **Keep it concise**: One explanatory sentence maximum
 
-Example:
+### Examples
+✅ **Good**: 
 ```
-Enhanced clipboard configuration and keybindings
+feat: add submodule support to project root detection
 
-- Updated clipboard settings to prepend unnamed and unnamedplus
-- Added Shift+Insert paste mappings for all modes
+Skip submodule .git files and search upward for parent repository when ignore_submodules option is enabled.
 ```
+
+✅ **Good (simple)**:
+```
+fix: prevent infinite loop in project root detection
+```
+
+❌ **Bad**:
+```
+feat: amazing comprehensive enhancement to project detection
+
+- Modified utils.lua
+- Added some new functionality  
+- Ready for next phase of development
+```
+
+## 💬 Code Commenting Guidelines
+
+### DO Comment For
+
+#### 1. Complex Configuration Decisions
+```lua
+-- Stop at home directory and filesystem root to prevent infinite loops
+-- in edge cases like broken symlinks or permission issues
+local stop_dirs = { vim.fn.expand("~"), "/" }
+```
+
+#### 2. Plugin Compatibility Issues
+```lua  
+-- Use blink.cmp instead of nvim-cmp for better performance with large LSP responses
+-- Treesitter highlighting conflicts with semantic tokens in some themes
+```
+
+#### 3. Non-obvious API Behavior  
+```lua
+-- vim.loop.fs_stat returns nil for broken symlinks, unlike vim.fn.stat
+-- Cache key includes ignore_submodules to differentiate search results
+```
+
+#### 4. External References
+```lua
+-- Based on LSP spec: https://microsoft.github.io/language-server-protocol/
+-- Follows lazy.nvim patterns: https://github.com/folke/lazy.nvim#-plugin-spec
+```
+
+#### 5. Workflow Rationale
+```lua
+-- Use <leader>n instead of <leader>r for rename to avoid telescope conflicts
+-- Set event = "VeryLazy" to defer loading for faster startup times
+```
+
+### DON'T Comment For
+
+#### 1. Obvious Configurations
+```lua
+-- BAD: Setup telescope with default configuration
+require("telescope").setup({})
+```
+
+#### 2. Simple Keybindings
+```lua  
+-- BAD: Map leader-f to find files
+vim.keymap.set("n", "<leader>f", ":Telescope find_files<CR>")
+```
+
+#### 3. Standard Options
+```lua
+-- BAD: Enable line numbers
+vim.opt.number = true
+```
+
+## 🔍 Debugging Features
+
+### Available Debuggers
+- **Rust**: rustaceanvim integration
+- **Go**: nvim-dap-go
+- **Python**: nvim-dap-python
+
+### Adding New Debugger
+1. **Create plugin file**: `65-[language]-debug.lua`
+2. **Configure adapter**: Set up nvim-dap adapter
+3. **Add keybindings**: Configure debugging shortcuts
+4. **Test functionality**: Verify breakpoints and stepping work
+
+## 📁 Project Management
+
+### Projects Configuration
+Edit `projects.yaml` to add new projects:
+```yaml
+- name: "Project Name"
+  path: "/path/to/project"
+  description: "Project description"
+```
+
+### Session Management
+- Powered by snacks.nvim
+- Automatic session saving/restoration
+- Per-project configuration
+
+## 🚀 Performance Optimization
+
+### Plugin Loading Strategy
+- **Core plugins**: Load immediately (10-prefix)
+- **Most plugins**: `event = "VeryLazy"` for deferred loading
+- **Language plugins**: Load on filetype detection
+- **LSP servers**: Install on demand per filetype
+
+### Cache Strategy
+- Root finding results cached with differentiated keys
+- Plugin configurations lazy-loaded
+- Mason packages installed only when needed
