@@ -12,11 +12,8 @@ local function auto_chdir()
         return
     end
 
-    local project_root = require("config.utils").find_project_root(
-        current_file,
-        { ".git", "project-root", "Cargo.toml", "pyproject.toml", "rebar.config" },
-        { ignore_submodules = true }
-    )
+    local project_root =
+        require("config.utils").find_project_root(current_file, { ".git", "project-root", "Cargo.toml", "pyproject.toml", "rebar.config" })
 
     if project_root and project_root ~= last_dir then
         vim.cmd("cd " .. vim.fn.fnameescape(project_root))

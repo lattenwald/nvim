@@ -6,7 +6,7 @@ local root_cache = {}
 -- Safe root finding with boundaries, caching, and submodule support
 function M.find_project_root(start_path, patterns, opts)
     opts = opts or {}
-    local ignore_submodules = opts.ignore_submodules or false
+    local ignore_submodules = opts.ignore_submodules ~= false
 
     patterns = patterns or { ".git", "project-root" }
     -- Add ignore_submodules to cache key to differentiate results
@@ -100,7 +100,7 @@ end
 
 function M.current_repo_name()
     local current_dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
-    local project_root = M.find_project_root(current_dir, { ".git", "Cargo.toml", "rebar.config", "pyproject.toml" }, { ignore_submodules = true })
+    local project_root = M.find_project_root(current_dir, { ".git", "Cargo.toml", "rebar.config", "pyproject.toml" })
     return project_root and vim.fs.basename(project_root) or nil
 end
 
