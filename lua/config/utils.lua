@@ -3,18 +3,63 @@ local M = {}
 -- Cache for root finding to prevent redundant filesystem searches
 local root_cache = {}
 
--- Safe root finding with boundaries and caching
-function M.find_project_root(start_path, patterns)
+-- Safe root finding with boundaries, caching, and submodule support
+function M.find_project_root(start_path, patterns, opts)
+    opts = opts or {}
+    local ignore_submodules = opts.ignore_submodules or false
+
     patterns = patterns or { ".git", "project-root" }
-    local cache_key = start_path .. ":" .. table.concat(patterns, ",")
+    -- Add ignore_submodules to cache key to differentiate results
+    local cache_key = start_path .. ":" .. table.concat(patterns, ",") .. ":sub=" .. tostring(ignore_submodules)
 
     if root_cache[cache_key] ~= nil then
         return root_cache[cache_key]
     end
 
-    -- Stop searching at home directory and filesystem root
     local stop_dirs = { vim.fn.expand("~"), "/" }
-    local root = vim.fs.root(start_path, patterns, { stop = stop_dirs })
+
+    -- Ensure we start searching from a directory
+    local start_dir
+    local start_stat = vim.loop.fs_stat(start_path)
+    if start_stat and start_stat.type == "directory" then
+        start_dir = start_path
+    else
+        start_dir = vim.fs.dirname(start_path)
+    end
+
+    local current_path = vim.fs.normalize(start_dir)
+    local root = nil
+
+    while current_path and not vim.tbl_contains(stop_dirs, current_path) do
+        local found_marker = false
+
+        for _, pattern in ipairs(patterns) do
+            local marker_path = current_path .. "/" .. pattern
+            local stat = vim.loop.fs_stat(marker_path)
+
+            if stat then
+                if pattern == ".git" and ignore_submodules and stat.type == "file" then
+                    -- This is a submodule .git file, ignore it and continue searching upwards
+                    -- Continue to next iteration without setting found_marker
+                else
+                    -- Found a valid root marker
+                    root = current_path
+                    found_marker = true
+                    break
+                end
+            end
+        end
+
+        if found_marker then
+            break
+        end
+
+        local parent = vim.fs.dirname(current_path)
+        if parent == current_path then -- Reached filesystem root
+            break
+        end
+        current_path = parent
+    end
 
     -- Cache result (even if nil) to prevent future searches
     root_cache[cache_key] = root
@@ -55,7 +100,7 @@ end
 
 function M.current_repo_name()
     local current_dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
-    local project_root = M.find_project_root(current_dir, { ".git", "Cargo.toml", "rebar.config", "pyproject.toml" })
+    local project_root = M.find_project_root(current_dir, { ".git", "Cargo.toml", "rebar.config", "pyproject.toml" }, { ignore_submodules = true })
     return project_root and vim.fs.basename(project_root) or nil
 end
 
