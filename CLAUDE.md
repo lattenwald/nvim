@@ -129,27 +129,45 @@ tokyonight-night (default), Edge, Everforest, Gruvbox Material, Material, Oceani
 
 ## ✅ Git Commit Standards
 
-### Format Template
+### Format Templates
+**Simple (single focused change):**
 ```
 type: brief description (50 chars max)
 
-High-level explanation of what and why (if complex).
+High-level explanation of what and why (1-2 sentences).
+```
+
+**Complex (multiple loosely related changes):**
+```
+type: brief description (50 chars max)
+
+High-level explanation of what and why (1-2 sentences).
+
+Changes:
+- Specific change 1 with brief context
+- Specific change 2 with brief context
 ```
 
 ### Step-by-Step Commit Process
 1. **Choose type**: `feat|fix|docs|style|refactor|test|chore`
 2. **Write brief description**: High-level what changed
-3. **Add single-line explanation**: Focus on what/why, not implementation details
-4. **Avoid noise words**: No "excellent", "comprehensive", "amazing"  
-5. **Skip obvious info**: Don't list changed files or "BREAKING CHANGE: None"
-6. **Keep it concise**: One explanatory sentence maximum
+3. **Add explanation**: 1-2 sentences about what/why, not implementation details
+4. **Use bullet points only for multiple major unrelated changes**: Add "Changes:" section when commit contains loosely related modifications
+5. **Keep focused commits simple**: Single-purpose commits don't need bullet points
+6. **Avoid noise words**: No "excellent", "comprehensive", "amazing"
 
 ### Examples
-✅ **Good**: 
+✅ **Good (complex)**:
 ```
-feat: add submodule support to project root detection
+feat: replace autochdir with custom submodule-aware implementation
 
-Skip submodule .git files and search upward for parent repository when ignore_submodules option is enabled.
+Replace autochdir.nvim plugin with custom implementation
+
+Changes:
+- Replace autochdir.nvim plugin with lua/config/autochdir.lua with
+custom BufEnter autocommand
+- Update project.lua to use ignore_submodules option in add/list
+functions
 ```
 
 ✅ **Good (simple)**:
