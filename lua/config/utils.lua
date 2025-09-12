@@ -100,7 +100,7 @@ end
 
 function M.current_repo_name()
     local current_dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
-    local project_root = M.find_project_root(current_dir, { ".git", "Cargo.toml", "rebar.config", "pyproject.toml" })
+    local project_root = M.find_project_root(current_dir, { ".git" })
     return project_root and vim.fs.basename(project_root) or nil
 end
 
