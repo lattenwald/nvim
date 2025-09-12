@@ -45,6 +45,15 @@ return {
                         expr = true,
                         desc = "Double escape to normal mode",
                     },
+                    shift_enter = {
+                        "<S-Enter>",
+                        function()
+                            return "\\<CR>"
+                        end,
+                        mode = "t",
+                        expr = true,
+                        desc = "Send backslash newline",
+                    },
                 },
             },
             picker = {
