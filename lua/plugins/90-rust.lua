@@ -2,14 +2,14 @@ return {
     {
         "mrcjkb/rustaceanvim",
         lazy = false,
-        event = "BufReadPre",
         init = function()
             vim.notify("setting up rustaceanvim")
             vim.g.rustaceanvim = {
                 server = {
-                    settings = {
+                    default_settings = {
                         ["rust-analyzer"] = {
                             cargo = {
+                                loadOutDirsFromCheck = true,
                                 buildScripts = {
                                     enable = true,
                                 },
