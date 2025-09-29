@@ -1,6 +1,7 @@
 return {
     {
         "ravitemer/mcphub.nvim",
+        enabled = false,
         dependencies = { "nvim-lua/plenary.nvim" },
         build = "npm install -g mcp-hub@latest",
         opts = {
@@ -40,6 +41,7 @@ return {
     },
     {
         "CopilotC-Nvim/CopilotChat.nvim",
+        enabled = false,
         dependencies = {
             {
                 "zbirenbaum/copilot.lua",
