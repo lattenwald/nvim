@@ -12,3 +12,5 @@
 /snacks
 /telescope*
 /tree-sitter-gitcommit
+/tree-sitter-*-tmp
+/tree-sitter-*.tar.gz

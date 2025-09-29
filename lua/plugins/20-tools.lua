@@ -8,24 +8,9 @@ return {
     },
     {
         "nvim-treesitter/nvim-treesitter",
-        opts = {
-            ensure_installed = {
-                "markdown",
-                "markdown_inline",
-                "regex",
-            },
-            sync_install = false,
-            auto_install = true,
-            highlight = {
-                enable = true,
-                disable = {
-                    "latex",
-                },
-            },
-        },
-        config = function(_, opts)
-            require("nvim-treesitter.configs").setup(opts)
-        end,
+        lazy = false,
+        branch = "main",
+        build = ":TSUpdate",
     },
     {
         "windwp/nvim-ts-autotag",
