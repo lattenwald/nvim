@@ -11,6 +11,5 @@
 /projects.yaml
 /snacks
 /telescope*
-/tree-sitter-gitcommit
-/tree-sitter-*-tmp
-/tree-sitter-*.tar.gz
+/tree-sitter-*
+/site

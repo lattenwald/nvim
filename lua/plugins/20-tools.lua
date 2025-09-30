@@ -8,25 +8,29 @@ return {
     },
     {
         "nvim-treesitter/nvim-treesitter",
-        opts = {
-            opts = {
-                ensure_installed = {
-                    "markdown",
-                    "markdown_inline",
-                    "regex",
-                },
-                sync_install = false,
-                auto_install = true,
-                highlight = {
-                    enable = true,
-                    disable = {
-                        "latex",
-                    },
-                },
-            },
-        },
-        config = function(_, opts)
-            require("nvim-treesitter.configs").setup(opts)
+        lazy = false,
+        branch = "main",
+        build = ":TSUpdate",
+        opts = {},
+        config = function()
+            vim.api.nvim_create_autocmd("FileType", {
+                pattern = "*",
+                callback = function(args)
+                    local ft = vim.bo[args.buf].filetype
+                    if not ft or ft == "" then
+                        return
+                    end
+                    local lang = vim.treesitter.language.get_lang(ft)
+                    if not lang then
+                        return
+                    end
+                    if vim.treesitter.language.add(lang) then
+                        require("nvim-treesitter").install({ lang })
+                        vim.treesitter.stop(args.buf)
+                        vim.treesitter.start()
+                    end
+                end,
+            })
         end,
     },
     {
