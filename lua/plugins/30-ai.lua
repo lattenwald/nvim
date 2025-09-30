@@ -1,20 +1,11 @@
 return {
     {
         "ravitemer/mcphub.nvim",
-        enabled = false,
         dependencies = { "nvim-lua/plenary.nvim" },
         build = "npm install -g mcp-hub@latest",
         opts = {
-            config = vim.fn.expand("~/.config/nvim/mcpservers.json"),
+            config = vim.fn.expand("~/.mcp-hub/config.json"),
             auto_approve = false,
-            extensions = {
-                avante = {
-                    make_slash_commands = true,
-                },
-                codecompanion = {
-                    make_slash_commands = true,
-                },
-            },
         },
     },
     {
