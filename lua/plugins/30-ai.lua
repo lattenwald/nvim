@@ -31,28 +31,7 @@ return {
         end,
     },
     {
-        "CopilotC-Nvim/CopilotChat.nvim",
-        enabled = false,
-        dependencies = {
-            {
-                "zbirenbaum/copilot.lua",
-            },
-            {
-                "nvim-lua/plenary.nvim",
-                branch = "master",
-            },
-        },
-        build = "make tiktoken",
-        opts = {
-            window = {
-                layout = "vertical",
-                width = 0.35,
-            },
-        },
-    },
-    {
         "coder/claudecode.nvim",
-        -- enabled = false,
         dependencies = { "folke/snacks.nvim" },
         opts = {
             terminal = {
@@ -147,74 +126,6 @@ return {
                 "<cmd>ClaudeCodeTreeAdd<cr>",
                 desc = "Add file",
                 ft = { "NvimTree", "neo-tree", "oil" },
-            },
-        },
-    },
-    {
-        "olimorris/codecompanion.nvim",
-        enabled = false,
-        lazy = true,
-        cmd = "CodeCompanionActions",
-        opts = {
-            strategies = {
-                chat = {
-                    -- adapter = "copilot",
-                    adapter = "anthropic",
-                    -- provider = {
-                    --     api_key = os.getenv("ANTHROPIC_API_KEY"),
-                    --     -- model = "claude-3-opus-20240229",
-                    -- },
-                },
-            },
-            extensions = {
-                mcphub = {
-                    callback = "mcphub.extensions.codecompanion",
-                    opts = {
-                        make_vars = true,
-                        make_slash_commands = true,
-                        show_result_in_chat = true,
-                    },
-                },
-            },
-            keymaps = {
-                clear_chat = "xx",
-                close = {
-                    modes = { n = "<C-x>", i = "<C-x>" },
-                    opts = {},
-                },
-            },
-            display = {
-                chat = {
-                    window = {
-                        position = "right",
-                        width = 0.4,
-                    },
-                },
-            },
-        },
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "nvim-treesitter/nvim-treesitter",
-            -- {
-            --     "echasnovski/mini.diff",
-            --     config = function()
-            --         local diff = require("mini.diff")
-            --         diff.setup({
-            --             source = diff.gen_source.none(),
-            --         })
-            --     end,
-            -- },
-            {
-                "HakonHarnes/img-clip.nvim",
-                opts = {
-                    filetypes = {
-                        codecompanion = {
-                            prompt_for_file_name = false,
-                            template = "[Image]($FILE_PATH)",
-                            use_absolute_path = true,
-                        },
-                    },
-                },
             },
         },
     },
