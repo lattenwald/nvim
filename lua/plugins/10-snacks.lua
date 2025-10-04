@@ -100,7 +100,13 @@ return {
             { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
             { "<C-`>", function() Snacks.terminal() end, desc = "Terminal", mode = {"n", "i", "v", "t" }  },
 
-            { "<C-.>", function() Snacks.terminal({ "gemini" }) end, desc = "Gemini Terminal", mode = {"n", "i", "v", "t" } },
+            -- AI Helpers
+            { "<leader>s", nil, desc = "AI Helpers" },
+            { "<leader>ss", function() require("config.ai_helpers").switch_helper() end, desc = "Switch AI Helper", mode = {"n", "v"} },
+            { "<leader>st", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "i", "v"} },
+            { "<C-.>", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "i", "v", "t" } },
+            { "<leader>sv", function() require("config.ai_helpers").send_selection() end, mode = "v", desc = "Send Selection to AI" },
+            { "<leader>sb", function() require("config.ai_helpers").send_buffer() end, desc = "Send Buffer to AI", mode = "n" },
 
 
             { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
@@ -172,6 +178,17 @@ return {
             { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
         },
         init = function()
+            -- Setup AI helpers
+            require("config.ai_helpers").setup({
+                storage = "memory", -- or "file" for persistence across sessions
+                default_helper = "gemini",
+                terminal = {
+                    type = "split", -- "float" or "split"
+                    position = "right", -- for split: "right", "left", "top", "bottom"
+                    size = 0.4, -- for split: fraction of screen (0.0-1.0)
+                },
+            })
+
             local trim_trailing_ws = true
 
             local function trim_whitespace()

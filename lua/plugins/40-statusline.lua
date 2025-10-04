@@ -35,6 +35,19 @@ return {
                     lualine_x = {
                         {
                             function()
+                                local ok, ai_helpers = pcall(require, "config.ai_helpers")
+                                if ok and ai_helpers and ai_helpers.lualine_component then
+                                    local status_ok, result = pcall(ai_helpers.lualine_component)
+                                    if status_ok then
+                                        return result
+                                    end
+                                end
+                                return ""
+                            end,
+                            color = { fg = "#bd93f9" },
+                        },
+                        {
+                            function()
                                 -- Check if MCPHub is loaded
                                 if not vim.g.loaded_mcphub then
                                     return "󰐻 -"
