@@ -1,1 +1,1 @@
-require("config.utils").mason_install("markdown-oxide")
+require("config.utils").mason_install("marksman")
