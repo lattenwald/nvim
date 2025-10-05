@@ -1,4 +1,7 @@
-vim.o.guifont = "Hack:h10"
+vim.o.guifont = "FiraCode Nerd Font:h10"
+-- vim.o.guifont = "Hack:h10"
+vim.opt.linespace = -1 -- Negative linespace to tighten rows
+
 vim.o.mouse = "a"
 
 vim.g.neovide_scroll_animation_length = 0.1
