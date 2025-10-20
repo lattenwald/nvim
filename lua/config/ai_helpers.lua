@@ -157,6 +157,7 @@ local function get_or_create_terminal(cmd)
 
     term = Snacks.terminal(cmd, term_opts)
     M.terminal_instances[helper_name] = term
+    term.ai_helper = helper_name
 
     return term
 end
@@ -232,6 +233,21 @@ function M.send_buffer()
         vim.api.nvim_chan_send(chan, "@" .. file .. " ")
     end
 end
+function M.get_helper_from_buffer(bufnr)
+    bufnr = bufnr or vim.api.nvim_get_current_buf()
+
+    for helper_name, term in pairs(M.terminal_instances) do
+        if term and term:valid() then
+            local term_buf = type(term.buf) == "number" and term.buf or term.buf.buf
+            if term_buf == bufnr then
+                return helper_name
+            end
+        end
+    end
+
+    return nil
+end
+
 function M.lualine_component()
     if M.current_helper then
         local helper = M.helpers[M.current_helper]

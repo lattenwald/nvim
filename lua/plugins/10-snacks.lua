@@ -200,14 +200,15 @@ return {
                     local bufnr = vim.api.nvim_get_current_buf()
                     vim.keymap.set("t", "<S-CR>", function()
                         local buf = vim.api.nvim_get_current_buf()
-                        local cmd = vim.api.nvim_buf_get_name(buf)
+                        local ai_helpers = require("config.ai_helpers")
+                        local helper_name = ai_helpers.get_helper_from_buffer(buf)
 
-                        if cmd:match("cursor%-agent") then
+                        if helper_name == "cursor" then
                             return "<C-J>"
                         else
                             return "\\<CR>"
                         end
-                    end, { buffer = bufnr, expr = true, desc = "Smart enter: <C-J> for cursor-agent, \\<CR> for others" })
+                    end, { buffer = bufnr, expr = true, desc = "Smart enter: <C-J> for cursor, \\<CR> for others" })
                 end,
             })
 
