@@ -129,6 +129,17 @@ tokyonight-night (default), Edge, Everforest, Gruvbox Material, Material, Oceani
 
 ## ✅ Git Commit Standards
 
+### 🚨 CRITICAL GIT RULES
+
+**NEVER RUN `git add` - EVER!**
+
+The user stages files manually. Your role is ONLY to:
+1. View staged changes with `git diff --staged`
+2. Create commit messages with `git commit -m "message"`
+3. NEVER use `git add` in any form (`git add .`, `git add -A`, `git add <file>`)
+
+Violating this rule disrupts the user's workflow.
+
 ### Format Templates
 **Simple (single focused change):**
 ```
