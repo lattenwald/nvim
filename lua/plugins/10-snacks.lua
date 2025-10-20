@@ -45,15 +45,6 @@ return {
                         expr = true,
                         desc = "Double escape to normal mode",
                     },
-                    shift_enter = {
-                        "<S-Enter>",
-                        function()
-                            return "\\<CR>"
-                        end,
-                        mode = "t",
-                        expr = true,
-                        desc = "Send backslash newline",
-                    },
                 },
             },
             picker = {
@@ -180,7 +171,7 @@ return {
         init = function()
             -- Setup AI helpers
             require("config.ai_helpers").setup({
-                storage = "memory", -- or "file" for persistence across sessions
+                storage = "file", -- or "file" for persistence across sessions
                 default_helper = "gemini",
                 terminal = {
                     type = "split", -- "float" or "split"
@@ -200,6 +191,24 @@ return {
             vim.api.nvim_create_autocmd("BufWritePre", {
                 pattern = "*",
                 callback = trim_whitespace,
+            })
+
+            -- Setup shift-enter keybinding for terminal buffers
+            vim.api.nvim_create_autocmd("TermOpen", {
+                pattern = "*",
+                callback = function()
+                    local bufnr = vim.api.nvim_get_current_buf()
+                    vim.keymap.set("t", "<S-CR>", function()
+                        local buf = vim.api.nvim_get_current_buf()
+                        local cmd = vim.api.nvim_buf_get_name(buf)
+
+                        if cmd:match("cursor%-agent") then
+                            return "<C-J>"
+                        else
+                            return "\\<CR>"
+                        end
+                    end, { buffer = bufnr, expr = true, desc = "Smart enter: <C-J> for cursor-agent, \\<CR> for others" })
+                end,
             })
 
             vim.api.nvim_create_autocmd("User", {

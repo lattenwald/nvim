@@ -2,10 +2,17 @@ return {
     {
         "ravitemer/mcphub.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
-        build = "npm install -g mcp-hub@latest",
+        -- build = "npm install -g mcp-hub@latest",
+        build = "npm install -g github:donadiosolutions/mcp-hub#feat/stream-http",
         opts = {
             config = vim.fn.expand("~/.mcp-hub/config.json"),
             auto_approve = false,
+            log = {
+                level = vim.log.levels.DEBUG,
+                to_file = false,
+                file_path = nil,
+                prefix = "MCPHub",
+            },
         },
     },
     {

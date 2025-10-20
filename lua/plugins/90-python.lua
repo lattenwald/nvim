@@ -1,6 +1,7 @@
 return {
     {
         "mfussenegger/nvim-dap-python",
+        enabled = false,
         config = function()
             require("dap-python").setup("uv")
         end,

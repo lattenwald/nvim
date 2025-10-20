@@ -155,7 +155,7 @@ local function get_or_create_terminal(cmd)
         }
     end
 
-    term = snacks.terminal(cmd, term_opts)
+    term = Snacks.terminal(cmd, term_opts)
     M.terminal_instances[helper_name] = term
 
     return term
