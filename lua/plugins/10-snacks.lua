@@ -193,13 +193,20 @@ return {
                 callback = trim_whitespace,
             })
 
-            -- Setup shift-enter keybinding for terminal buffers
+            -- Map Shift-Enter to <C-J> for Claude Code and Cursor to submit prompts,
+            -- and to escaped <CR> for other terminals
             vim.api.nvim_create_autocmd("TermOpen", {
                 pattern = "*",
                 callback = function()
                     local bufnr = vim.api.nvim_get_current_buf()
                     vim.keymap.set("t", "<S-CR>", function()
                         local buf = vim.api.nvim_get_current_buf()
+                        local bufname = vim.fn.bufname(buf)
+
+                        if bufname:match(":claude$") then
+                            return "<C-J>"
+                        end
+
                         local ai_helpers = require("config.ai_helpers")
                         local helper_name = ai_helpers.get_helper_from_buffer(buf)
 
@@ -208,7 +215,7 @@ return {
                         else
                             return "\\<CR>"
                         end
-                    end, { buffer = bufnr, expr = true, desc = "Smart enter: <C-J> for cursor, \\<CR> for others" })
+                    end, { buffer = bufnr, expr = true, desc = "Smart enter: <C-J> for cursor and claude, \\<CR> for others" })
                 end,
             })
 
