@@ -135,14 +135,14 @@ local function get_or_create_terminal(cmd)
     local ok, snacks = pcall(require, "snacks")
     if not ok then
         vim.notify("Snacks.nvim not available", vim.log.levels.ERROR)
-        return nil
+        return nil, false
     end
 
     local helper_name = M.current_helper
     local term = M.terminal_instances[helper_name]
 
     if term and term:valid() then
-        return term
+        return term, false
     end
 
     local term_opts = { cwd = vim.fn.getcwd() }
@@ -159,7 +159,7 @@ local function get_or_create_terminal(cmd)
     M.terminal_instances[helper_name] = term
     term.ai_helper = helper_name
 
-    return term
+    return term, true
 end
 function M.toggle_terminal()
     local helper = M.get_current_config()
@@ -168,7 +168,19 @@ function M.toggle_terminal()
         return
     end
 
-    get_or_create_terminal(helper.cmd)
+    local term, created = get_or_create_terminal(helper.cmd)
+    if term then
+        if created then
+            -- Terminal was just created and is already shown, do nothing
+        else
+            local win_visible = term.win and vim.api.nvim_win_is_valid(term.win)
+            if win_visible then
+                term:hide()
+            else
+                term:show()
+            end
+        end
+    end
 end
 function M.send_selection()
     local helper = M.get_current_config()

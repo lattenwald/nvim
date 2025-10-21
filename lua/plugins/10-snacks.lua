@@ -216,6 +216,11 @@ return {
                             return "\\<CR>"
                         end
                     end, { buffer = bufnr, expr = true, desc = "Smart enter: <C-J> for cursor and claude, \\<CR> for others" })
+
+                    -- Map Ctrl+. to toggle AI helper terminal in terminal mode
+                    vim.keymap.set("t", "<C-.>", function()
+                        require("config.ai_helpers").toggle_terminal()
+                    end, { buffer = bufnr, desc = "Toggle AI Terminal" })
                 end,
             })
 
