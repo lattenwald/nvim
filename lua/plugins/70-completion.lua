@@ -25,7 +25,7 @@ return {
                 ["<down>"] = { 'select_next', 'fallback' },
                 ["<tab>"] = { 'accept', 'fallback' },
                 ["<c-enter>"] = { 'select_and_accept', 'fallback' },
-                ["<leader>cD"] = { 'show_documentation' },
+                ["<c-h>"] = { 'show_documentation' },
             },
 
             cmdline = {
