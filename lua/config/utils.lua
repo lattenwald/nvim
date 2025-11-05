@@ -3,6 +3,32 @@ local M = {}
 -- Cache for root finding to prevent redundant filesystem searches
 local root_cache = {}
 
+function M.get_git_type(git_path)
+    local stat = vim.loop.fs_stat(git_path)
+
+    if not stat then
+        return nil
+    end
+
+    if stat.type == "directory" then
+        return "repository"
+    end
+
+    local file = io.open(git_path, "r")
+    if file then
+        local content = file:read("*l")
+        file:close()
+
+        if content and content:match("gitdir:.*/%.git/worktrees/") then
+            return "worktree"
+        elseif content and content:match("gitdir:.*/%.git/modules/") then
+            return "submodule"
+        end
+    end
+
+    return "repository"
+end
+
 -- Safe root finding with boundaries, caching, and submodule support
 function M.find_project_root(start_path, patterns, opts)
     opts = opts or {}
@@ -38,11 +64,16 @@ function M.find_project_root(start_path, patterns, opts)
             local stat = vim.loop.fs_stat(marker_path)
 
             if stat then
-                if pattern == ".git" and ignore_submodules and stat.type == "file" then
-                    -- This is a submodule .git file, ignore it and continue searching upwards
-                    -- Continue to next iteration without setting found_marker
+                if pattern == ".git" then
+                    local git_type = M.get_git_type(marker_path)
+                    local should_skip = git_type == "submodule" and ignore_submodules
+
+                    if not should_skip then
+                        root = current_path
+                        found_marker = true
+                        break
+                    end
                 else
-                    -- Found a valid root marker
                     root = current_path
                     found_marker = true
                     break
