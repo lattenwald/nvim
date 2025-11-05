@@ -11,7 +11,9 @@ A comprehensive [Neovim](https://neovim.io/) configuration built with [lazy.nvim
 - **Language support** - Rust, Go, Python, Lua, JavaScript, and more
 - **Debugging support** - DAP integration for multiple languages
 - **Git integration** - vim-fugitive, Gitsigns, Diffview, and LazyGit
-- **Project management** - Session management and project switching
+- **Project management** - Session management, project switching, worktree and submodule support
+- **Per-project configuration** - Language tool settings via project-local config files
+- **Window focus indicators** - Visual dimming and optional borders
 - **Extensible architecture** - Modular plugin organization
 
 ## Installation
@@ -43,6 +45,11 @@ A comprehensive [Neovim](https://neovim.io/) configuration built with [lazy.nvim
 
 ## Architecture
 
+The configuration features:
+- **Worktree-aware directory changing** - Automatically detects Git worktrees and submodules
+- **Per-project language server configuration** - Override settings per project via local config files
+- **Modular plugin organization** - Grouped by functionality for maintainability
+
 ### Plugin Organization
 Plugins are organized by numbered prefixes for loading order and functionality:
 - **10-** Core plugins (theme, snacks)
@@ -65,6 +72,8 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 │   ├── opts.lua            # Neovim options
 │   ├── keys.lua            # Global keymaps
 │   ├── lazy.lua            # Plugin manager setup
+│   ├── autochdir.lua       # Custom autochdir with worktree support
+│   ├── ai_helpers.lua      # AI terminal integration
 │   └── utils.lua           # Utility functions
 ├── lua/plugins/            # Plugin configurations
 ├── after/ftplugin/         # Language-specific configs
@@ -106,6 +115,7 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 **Global AI Shortcuts:**
 - `<C-,>` - Quick toggle Claude
 - `<C-.>` - Gemini terminal for quick queries
+- `Shift+Enter` - Continue Claude Code conversation in terminal
 
 ### Git Integration
 **vim-fugitive** (command-driven workflow):
@@ -161,7 +171,7 @@ providers:
 ## Language Support
 
 ### Supported Languages
-- **Rust** - LSP, DAP, rustaceanvim integration
+- **Rust** - LSP, DAP, rustaceanvim integration, per-project configuration
 - **Go** - LSP, DAP, testing, and tools
 - **Python** - LSP, DAP, formatting, linting
 - **Lua** - LSP for Neovim development
@@ -195,6 +205,19 @@ Supported debuggers:
 - **Python** - debugpy integration
 
 ## Customization
+
+### Per-Project Configuration
+
+**Rust Projects:**
+Create `.rust-analyzer.json` in project root to override settings:
+```json
+{
+  "check": {
+    "allTargets": false
+  }
+}
+```
+Settings are automatically merged with defaults when opening Rust files.
 
 ### Adding New Languages
 1. Create `after/ftplugin/<language>.lua`
