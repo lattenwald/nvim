@@ -3,21 +3,65 @@ return {
         "mrcjkb/rustaceanvim",
         lazy = false,
         init = function()
-            vim.notify("setting up rustaceanvim")
+            local function load_project_rust_config(start_path)
+                local utils = require("config.utils")
+                local root = utils.find_project_root(start_path, { ".git", "project-root" })
+
+                if not root then
+                    return {}, nil
+                end
+
+                local config_file = root .. "/.rust-analyzer.json"
+
+                if vim.fn.filereadable(config_file) == 1 then
+                    local content = table.concat(vim.fn.readfile(config_file), "\n")
+                    local ok, config = pcall(vim.json.decode, content)
+                    if ok and type(config) == "table" then
+                        return config, root
+                    else
+                        vim.notify("Failed to parse " .. config_file .. ": " .. tostring(config), vim.log.levels.WARN)
+                    end
+                end
+                return {}, root
+            end
+
+            local default_config = {
+                cargo = {
+                    loadOutDirsFromCheck = true,
+                    buildScripts = {
+                        enable = true,
+                    },
+                },
+                procMacro = {
+                    enable = true,
+                },
+            }
+
+            local configured_roots = {}
+
             vim.g.rustaceanvim = {
                 server = {
+                    on_attach = function(client, bufnr)
+                        local buf_path = vim.api.nvim_buf_get_name(bufnr)
+                        if buf_path == "" then
+                            return
+                        end
+
+                        local project_config, root = load_project_rust_config(buf_path)
+
+                        if root and not configured_roots[root] then
+                            configured_roots[root] = true
+
+                            local merged_config = vim.tbl_deep_extend("force", default_config, project_config)
+
+                            client.config.settings["rust-analyzer"] = merged_config
+                            client.notify("workspace/didChangeConfiguration", {
+                                settings = client.config.settings,
+                            })
+                        end
+                    end,
                     default_settings = {
-                        ["rust-analyzer"] = {
-                            cargo = {
-                                loadOutDirsFromCheck = true,
-                                buildScripts = {
-                                    enable = true,
-                                },
-                            },
-                            procMacro = {
-                                enable = true,
-                            },
-                        },
+                        ["rust-analyzer"] = default_config,
                     },
                 },
             }
