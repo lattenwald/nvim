@@ -42,6 +42,8 @@ return {
             vim.g.rustaceanvim = {
                 server = {
                     on_attach = function(client, bufnr)
+                        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+
                         local buf_path = vim.api.nvim_buf_get_name(bufnr)
                         if buf_path == "" then
                             return
