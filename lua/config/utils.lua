@@ -129,6 +129,18 @@ function M.ts_install(parsername)
     end
 end
 
+function M.lsp_setup(server_name, opts)
+    if vim.fn.executable(server_name) ~= 1 then
+        return false
+    end
+
+    if opts then
+        vim.lsp.config(server_name, opts)
+    end
+    vim.lsp.enable(server_name)
+    return true
+end
+
 function M.current_repo_name()
     local current_dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
     local project_root = M.find_project_root(current_dir, { ".git" })

@@ -1,20 +1,25 @@
-require("config.utils").mason_install("lemminx", function()
-    local opts = {
-        settings = {
-            xml = {
-                validation = {
-                    enabled = true,
-                    resolveExternalEntities = true,
-                },
-                catalogs = {
-                    "~/.config/xml-catalogs/catalog.xml",
-                },
-                format = {
-                    enabled = true,
-                    splitAttributes = "preserve",
-                },
+local utils = require("config.utils")
+
+local opts = {
+    cmd = { "lemminx" },
+    filetypes = { "xml" },
+    settings = {
+        xml = {
+            validation = {
+                enabled = true,
+                resolveExternalEntities = true,
+            },
+            catalogs = {
+                "~/.config/xml-catalogs/catalog.xml",
+            },
+            format = {
+                enabled = true,
+                splitAttributes = "preserve",
             },
         },
-    }
-    require("lspconfig").lemminx.setup(opts)
+    },
+}
+
+utils.mason_install("lemminx", function()
+    utils.lsp_setup("lemminx", opts)
 end)
