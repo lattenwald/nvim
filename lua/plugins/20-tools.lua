@@ -1,12 +1,5 @@
 return {
     {
-        "vhyrro/luarocks.nvim",
-        priority = 1000, -- Very high priority is required, luarocks.nvim should run as the first plugin in your config.
-        opts = {
-            rocks = { "xml2lua", "mimetypes", "lyaml" },
-        },
-    },
-    {
         "nvim-treesitter/nvim-treesitter",
         lazy = false,
         branch = "main",

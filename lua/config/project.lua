@@ -14,16 +14,21 @@
 local M = {}
 
 local uv = vim.loop
-local yaml = require("lyaml")
+local yaml_ok, yaml = pcall(require, "lyaml")
+if not yaml_ok then
+    vim.notify("lyaml not available - project persistence disabled", vim.log.levels.WARN)
+end
 
 -- Path to the projects file
 local projects_file = vim.fn.stdpath("data") .. "/projects.yaml" -- Path to store project data
 
 -- Function to read projects from YAML file
 local function read_projects()
+    if not yaml_ok then
+        return {}
+    end
     local ok, result = pcall(require("config.utils").load_yaml, projects_file)
     if not ok or type(result) ~= "table" then
-        vim.notify("Failed to parse projects file: " .. (result or "unknown error"), vim.log.levels.ERROR)
         return {}
     end
     return result
@@ -31,6 +36,9 @@ end
 
 -- Function to write projects to YAML file using lyaml
 local function write_projects(projects)
+    if not yaml_ok then
+        return false
+    end
     local ok, err = pcall(function()
         local yaml_content = yaml.dump({ projects })
         local file = assert(io.open(projects_file, "w"))

@@ -22,6 +22,7 @@ vim.filetype.add({
     }
 })
 
+require("config.nix")
 require("config.opts")
 require("config.lazy")
 require("config.project").setup({})

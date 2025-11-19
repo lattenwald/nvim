@@ -136,7 +136,11 @@ function M.current_repo_name()
 end
 
 function M.load_yaml(path)
-    local yaml = require("lyaml")
+    local ok, yaml = pcall(require, "lyaml")
+    if not ok then
+        vim.notify("lyaml not available - install via luarocks.nvim", vim.log.levels.WARN)
+        return nil
+    end
     local file = io.open(path, "r")
     if not file then
         vim.notify("Failed to open YAML file: " .. path, vim.log.levels.ERROR)
