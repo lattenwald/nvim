@@ -1,9 +1,13 @@
 return {
     {
         "rest-nvim/rest.nvim",
+        ft = "http",
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
             "j-hui/fidget.nvim",
+        },
+        keys = {
+            { "<C-r>", "<cmd>Rest run<CR>", desc = "Run REST request", ft = "http" },
         },
         config = function(_, opts)
             vim.g.rest_nvim = opts
