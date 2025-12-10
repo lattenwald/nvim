@@ -1,9 +1,10 @@
 return {
     {
-        "ravitemer/mcphub.nvim",
+        -- "ravitemer/mcphub.nvim",
+        "lattenwald/mcphub.nvim", -- forked version to soften version mismatch behavior
         dependencies = { "nvim-lua/plenary.nvim" },
         -- build = "npm install -g mcp-hub@latest",
-        build = "npm install -g github:donadiosolutions/mcp-hub#feat/stream-http",
+        -- build = "npm install -g github:donadiosolutions/mcp-hub#feat/stream-http",
         opts = {
             config = vim.fn.expand("~/.mcp-hub/config.json"),
             auto_approve = false,

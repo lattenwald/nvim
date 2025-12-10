@@ -69,3 +69,17 @@ end, { desc = "close floats, clear highligths, etc." })
 vim.keymap.set("t", "<S-Insert>", function()
     vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
 end, { desc = "Paste from system clipboard" })
+
+-- Command aliases
+vim.api.nvim_create_user_command("DO", function(opts)
+    vim.cmd("DiffviewOpen " .. opts.args)
+end, {
+    nargs = "*",
+    complete = function(arg_lead)
+        return vim.fn.getcompletion("DiffviewOpen " .. arg_lead, "cmdline")
+    end,
+})
+
+vim.api.nvim_create_user_command("DC", function()
+    vim.cmd("DiffviewClose")
+end, { nargs = 0 })

@@ -8,6 +8,7 @@ return {
         },
         keys = {
             { "<C-r>", "<cmd>Rest run<CR>", desc = "Run REST request", ft = "http" },
+            { "<C-S-r>", ":Rest run ", desc = "Run named REST request", ft = "http" },
         },
         config = function(_, opts)
             vim.g.rest_nvim = opts
