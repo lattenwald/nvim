@@ -124,9 +124,12 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 
 **Other Git Tools:**
 - `<leader>gg` - LazyGit
+- `]c` / `[c` - Navigate to next/prev hunk (staged and unstaged)
 - `hs` - Stage Git hunk (gitsigns)
 - `<leader>hp` - Preview Git hunk
 - `<leader>hr` - Reset Git hunk
+- `<leader>hS` - Stage entire buffer
+- `<leader>hu` - Undo stage hunk
 
 ### Essential Bindings
 - `<leader>p` - Projects picker
@@ -134,6 +137,14 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 - `<leader>d` - LSP hover documentation
 - `<leader>a` - LSP code actions
 - `<esc>` - Close floats, clear highlights
+
+### Command Aliases
+- `:DO` - Alias for `:DiffviewOpen` (supports arguments and tab completion)
+- `:DC` - Alias for `:DiffviewClose`
+
+### REST Client (http files)
+- `<C-r>` - Run REST request under cursor
+- `<C-S-r>` - Run named REST request (with completion)
 
 ## AI Integration
 
@@ -181,6 +192,7 @@ providers:
 - **HTML/CSS** - Web development tools
 - **Erlang/Elixir** - Language support
 - **Bash/Shell** - Script development
+- **Nix** - LSP and formatting
 
 ### LSP Server Installation
 LSP servers are installed automatically when you open a supported file type. Configuration is handled in `after/ftplugin/<language>.lua` files.
@@ -286,6 +298,7 @@ This configuration is provided as-is under the MIT License.
 - [x] **Functional** - Erlang, Elixir support
 - [x] **Shell** - Bash, Zsh scripting
 - [x] **Config** - TOML, JSON5 support
+- [x] **Nix** - LSP and formatting
 
 ### ✅ Development Tools
 - [x] **Debugging** - Rust, Go, Python DAP integration
