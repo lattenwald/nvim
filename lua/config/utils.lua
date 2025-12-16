@@ -181,4 +181,8 @@ function M.is_plugin_installed(name)
     return false
 end
 
+function M.has_gui()
+    return vim.env.DISPLAY ~= nil or vim.env.WAYLAND_DISPLAY ~= nil or vim.g.neovide
+end
+
 return M
