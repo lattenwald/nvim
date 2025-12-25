@@ -14,6 +14,9 @@ return {
             vim.g.rest_nvim = opts
         end,
         opts = {
+            rocks = {
+                hererocks = true,
+            },
             ui = {
                 keybinds = {
                     prev = "<S-Left>",
