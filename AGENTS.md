@@ -27,6 +27,26 @@ lua/plugins/               # Plugin configurations by prefix:
 after/ftplugin/            # Auto-install LSP servers per filetype
 ```
 
+## 🚨 Critical Rules
+
+### Do EXACTLY What Is Asked
+- **"Add keybinding X"** = add ONLY that keybinding, no new functions or helpers
+- **"Duplicate keybinding"** = same action, different key - no new logic
+- **Find existing binding first**: Before adding `<leader>X` as duplicate of `<C-X>`, grep to find where `<C-X>` is defined
+- **Put duplicates in same file**: `<leader>,` duplicating `<C-,>` must be in the same file as `<C-,>`
+
+### No Over-Engineering
+- If user asks for A, do A - not A + B + C "for completeness"
+- Adding helper functions when only keybindings were requested = violation
+- Adding new config entries when only keybindings were requested = violation
+
+### Keybinding Colocation
+```bash
+# BEFORE adding <leader>X as duplicate of <C-X>:
+grep -r "<C-X>" lua/  # Find where original is defined
+# Add <leader>X in SAME file, adjacent to <C-X>
+```
+
 ## 🎯 Essential Actions
 
 ### Before Making Changes
