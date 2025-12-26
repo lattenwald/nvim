@@ -90,12 +90,14 @@ return {
             { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
             { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
             { "<C-`>", function() Snacks.terminal() end, desc = "Terminal", mode = {"n", "i", "v", "t" }  },
+            { "<leader>`", function() Snacks.terminal() end, desc = "Terminal", mode = {"n", "v" }  },
 
             -- AI Helpers
             { "<leader>s", nil, desc = "AI Helpers" },
             { "<leader>ss", function() require("config.ai_helpers").switch_helper() end, desc = "Switch AI Helper", mode = {"n", "v"} },
             { "<leader>st", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "v"} },
             { "<C-.>", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "i", "v", "t" } },
+            { "<leader>.", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "v" } },
             { "<leader>sv", function() require("config.ai_helpers").send_selection() end, mode = "v", desc = "Send Selection to AI" },
             { "<leader>sb", function() require("config.ai_helpers").send_buffer() end, desc = "Send Buffer to AI", mode = "n" },
 

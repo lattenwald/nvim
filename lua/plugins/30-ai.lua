@@ -122,6 +122,7 @@ return {
         end,
         keys = {
             { "<C-,>", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+            { "<leader>,", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
             { "<leader>w", nil, desc = "AI/Claude Code" },
             { "<leader>wc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
             { "<leader>wf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
