@@ -8,7 +8,8 @@ return {
         ft = { "markdown", "Avante", "codecompanion" },
     },
     {
-        "brianhuster/live-preview.nvim",
+        -- Using lvim-tech's fork with fix for server nil race condition (PR #348)
+        "lvim-tech/live-preview.nvim",
         dependencies = {
             "folke/snacks.nvim",
         },
