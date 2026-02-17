@@ -298,6 +298,34 @@ Edit `projects.yaml` to add new projects:
 - Automatic session saving/restoration
 - Per-project configuration
 
+## 🔀 Plugin Fork Management
+
+When an upstream plugin has a bug with an unmerged fix, we fork and carry the patch.
+
+### Conventions
+- **Clone forks to** `~/git/`
+- **Comment in plugin spec**: explain why forked and reference upstream PR
+- **Keep commented-out origin URL** above the fork URL for easy switch-back
+- **One custom commit on top of upstream** — cherry-pick the fix, don't merge
+
+### Workflow
+1. **Fork**: `gh repo fork author/plugin.nvim --clone=false`
+2. **Clone**: `git clone git@github.com:lattenwald/plugin.nvim.git ~/git/plugin.nvim`
+3. **Add upstream remote**: `git remote add upstream https://github.com/author/plugin.nvim.git`
+4. **Cherry-pick fix** onto latest upstream main
+5. **Push** and update plugin spec to use `"lattenwald/plugin.nvim"`
+6. **Periodically rebase**: `git fetch upstream && git reset --hard upstream/main && git cherry-pick <fix-sha> && git push --force`
+7. **Check if PR merged**: once merged, switch back to origin and delete fork
+
+### Plugin spec pattern
+```lua
+{
+    -- Reason for fork (upstream PR #NNN) until merged
+    -- "author/plugin.nvim",
+    "lattenwald/plugin.nvim",
+}
+```
+
 ## 🚀 Performance Optimization
 
 ### Plugin Loading Strategy
