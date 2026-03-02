@@ -3,9 +3,9 @@ return {
         "MeanderingProgrammer/render-markdown.nvim",
         opts = {
             latex = { enabled = false },
-            file_types = { "markdown", "codecompanion" },
+            file_types = { "markdown" },
         },
-        ft = { "markdown", "codecompanion" },
+        ft = { "markdown" },
     },
     {
         -- Own fork with server race condition fix (upstream PR #348) until merged
