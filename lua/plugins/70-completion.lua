@@ -6,10 +6,6 @@ return {
     },
     {
         "saghen/blink.cmp",
-        dependencies = {
-            "Kaiser-Yang/blink-cmp-avante",
-            "fang2hou/blink-copilot",
-        },
 
         -- use a release tag to download pre-built binaries
         version = "*",
@@ -50,26 +46,7 @@ return {
             },
 
             sources = {
-                default = { "avante", "copilot", "lsp", "path", "snippets", "buffer" },
-                providers = {
-                    avante = {
-                        module = "blink-cmp-avante",
-                        name = "Avante",
-                        opts = {
-                            -- options for blink-cmp-avante
-                        },
-                    },
-                    copilot = {
-                        name = "copilot",
-                        module = "blink-copilot",
-                        score_offset = 100,
-                        async = true,
-                    },
-                },
-                -- Disable blink.cmp in copilot-chat buffers
-                per_filetype = {
-                    ["copilot-chat"] = {},
-                },
+                default = { "lsp", "path", "snippets", "buffer" },
             },
 
             fuzzy = { implementation = "prefer_rust_with_warning" },

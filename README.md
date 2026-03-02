@@ -5,7 +5,7 @@ A comprehensive [Neovim](https://neovim.io/) configuration built with [lazy.nvim
 ## Features
 
 - **On-demand LSP servers** - Automatically install and configure LSP servers only when needed
-- **AI integrations** - Claude Code, Copilot completion, and Gemini terminal integration
+- **AI integrations** - Claude Code and Gemini terminal integration
 - **Modern completion** - blink.cmp with LSP, snippets, and AI suggestions
 - **Integrated file management** - Yazi terminal file manager with floating window support
 - **Language support** - Rust, Go, Python, Lua, JavaScript, and more
@@ -38,8 +38,6 @@ A comprehensive [Neovim](https://neovim.io/) configuration built with [lazy.nvim
 
 4. **AI Configuration (Optional)**
    ```bash
-   cp ~/.config/nvim/avante_opts.yaml.example ~/.config/nvim/avante_opts.yaml
-   # Edit avante_opts.yaml with your AI provider settings
    # Configure mcpservers.json for MCP integrations if needed
    ```
 
@@ -55,7 +53,7 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 - **10-** Core plugins (theme, snacks)
 - **20-** Development tools (treesitter, which-key, yazi)
 - **25-** Git integration (fugitive, gitsigns, diffview)
-- **30-** AI integrations (claudecode, copilot, codecompanion, mcphub)
+- **30-** AI integrations (claudecode, mcphub)
 - **40-** UI components (statusline, trouble)
 - **55-** LSP configuration
 - **65-** Debugging setup
@@ -77,7 +75,6 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 │   └── utils.lua           # Utility functions
 ├── lua/plugins/            # Plugin configurations
 ├── after/ftplugin/         # Language-specific configs
-├── avante_opts.yaml        # AI provider configuration
 ├── mcpservers.json         # MCP server configurations
 └── projects.yaml           # Project definitions
 ```
@@ -152,32 +149,16 @@ The configuration provides a multi-tiered AI development environment with specia
 
 ### AI Tool Roles
 - **`coder/claudecode.nvim`** (Primary) - Main AI chat interface for context-aware questions, code explanations, and suggestions as diffs. Access via `<leader>w` keybindings.
-- **GitHub Copilot** (Completion) - Inline ghost-text completions and suggestions.
 - **Gemini Pro** (Quick Access) - Terminal-based tool for quick queries. Activated with `<C-.>`.
-- **CodeCompanion** (Extended) - Additional AI coding features and chat interface.
 - **MCPHub** (Integration) - Model Context Protocol server integrations.
 
 ### Configuration
-AI settings are managed in `avante_opts.yaml` and `mcpservers.json`:
-
-**Main AI Configuration (`avante_opts.yaml`)**:
-```yaml
-providers:
-  copilot:
-    endpoint: "https://api.github.com"
-    model: "gpt-4"
-  claude:
-    endpoint: "https://api.anthropic.com"
-    model: "claude-3-sonnet-20240229"
-```
-
-**MCP Servers (`mcpservers.json`)**: Configuration for Model Context Protocol integrations
+AI settings are managed in `mcpservers.json` for Model Context Protocol integrations.
 
 ### Workflow Recommendations
 1. Use **Claude Code** (`<leader>wc`) for code discussions, refactoring, and explanations
-2. Use **Copilot** for in-line code completions while typing
-3. Use **Gemini** (`<C-.>`) for quick queries without context switching
-4. Check **Claude Code status** with `:ClaudeCodeStatus` if needed
+2. Use **Gemini** (`<C-.>`) for quick queries without context switching
+3. Check **Claude Code status** with `:ClaudeCodeStatus` if needed
 
 ## Language Support
 
@@ -250,7 +231,7 @@ The configuration uses Tokyo Night theme by default. Change in `lua/plugins/10-t
 
 ### Common Issues
 1. **LSP not working** - Check `:Mason` for server installation
-2. **AI features not working** - Verify `avante_opts.yaml` configuration
+2. **AI features not working** - Verify `mcpservers.json` configuration
 3. **Plugin errors** - Run `:Lazy sync` to update plugins
 4. **Key bindings not working** - Check for conflicts with `:WhichKey`
 
@@ -279,7 +260,7 @@ This configuration is provided as-is under the MIT License.
 - [x] **Plugin Management** - Lazy.nvim with optimized loading
 - [x] **LSP Integration** - Mason + lspconfig for 15+ languages
 - [x] **Completion System** - blink.cmp with LSP, snippets, AI
-- [x] **AI Integration** - Claude Code (primary), Copilot (completion), Gemini Pro (terminal), CodeCompanion, MCPHub
+- [x] **AI Integration** - Claude Code (primary), Gemini Pro (terminal), MCPHub
 - [x] **Git Integration** - vim-fugitive, Gitsigns, Diffview, LazyGit
 - [x] **File Management** - Yazi terminal file manager with floating windows, session resume, project switching
 - [x] **UI Enhancement** - Which-key, Trouble, statusline
@@ -312,6 +293,5 @@ This configuration is provided as-is under the MIT License.
 ### 🔄 Future Enhancements
 - [ ] **Extended Debugging** - Erlang, Elixir, Bash, Lua, Perl
 - [ ] **AI Optimization** - Unified configuration loading
-- [ ] **Configuration Naming** - Rename `avante_opts.yaml` to `ai_config.yaml`
 - [ ] **Performance** - Additional lazy loading optimizations
 - [ ] **Documentation** - Tutorials and examples

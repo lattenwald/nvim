@@ -4,7 +4,6 @@ return {
         dependencies = {
             "nvim-tree/nvim-web-devicons",
             "linrongbin16/lsp-progress.nvim",
-            "AndreM222/copilot-lualine",
         },
         config = function()
             local lualine = require("lualine")
@@ -86,7 +85,6 @@ return {
                                 end
                             end,
                         },
-                        "copilot",
                         "encoding",
                         "fileformat",
                         "filetype",

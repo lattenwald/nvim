@@ -17,28 +17,6 @@ return {
         },
     },
     {
-        "zbirenbaum/copilot.lua",
-        lazy = true,
-        cmd = "Copilot",
-        opts = {
-            suggestion = {
-                enabled = false,
-            },
-            panel = {
-                enabled = false,
-                auto_refresh = true,
-            },
-        },
-        config = function(_, opts)
-            local avante_opts_file = vim.fn.stdpath("data") .. "/avante_opts.yaml"
-            local yaml_opts = require("config.utils").load_yaml(avante_opts_file)
-            if yaml_opts and yaml_opts["copilot"] then
-                opts = vim.tbl_deep_extend("force", opts or {}, yaml_opts.copilot or {})
-            end
-            require("copilot").setup(opts)
-        end,
-    },
-    {
         "coder/claudecode.nvim",
         dependencies = { "folke/snacks.nvim" },
         opts = {

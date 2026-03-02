@@ -11,14 +11,14 @@ Step-by-step guidance for Claude Code when working with this Neovim configuratio
 init.lua                    # Entry point - loads core modules
 lua/config/                 # Core configuration
 ├── opts.lua               # Neovim options
-├── keys.lua               # Global keymaps  
+├── keys.lua               # Global keymaps
 ├── lazy.lua               # Plugin manager setup
 ├── project.lua            # Project management
 └── utils.lua              # Utility functions
 lua/plugins/               # Plugin configurations by prefix:
 ├── 10-*.lua              # Core (theme, snacks)
 ├── 20-*.lua              # Dev tools (treesitter, which-key)
-├── 30-*.lua              # AI integrations (copilot, avante)
+├── 30-*.lua              # AI integrations (claudecode, mcphub)
 ├── 40-*.lua              # UI components (statusline, trouble)
 ├── 55-*.lua              # LSP configuration
 ├── 65-*.lua              # Debugging setup
@@ -51,7 +51,7 @@ grep -r "<C-X>" lua/  # Find where original is defined
 
 ### Before Making Changes
 1. **Run formatting check**: `stylua --check .`
-2. **Run linting**: `selene .` 
+2. **Run linting**: `selene .`
 3. **Check for existing patterns**: Search similar configurations first
 
 ### When Adding Plugins
@@ -68,7 +68,7 @@ grep -r "<C-X>" lua/  # Find where original is defined
 
 ### Quality Assurance
 1. **Format code**: `stylua .`
-2. **Fix linting issues**: `selene .` 
+2. **Fix linting issues**: `selene .`
 3. **Test functionality**: Verify changes work in Neovim
 4. **Check for regressions**: Ensure existing features still work
 
@@ -83,7 +83,7 @@ stylua --check .
 stylua .
 ```
 
-### Code Linting  
+### Code Linting
 ```bash
 # Lint all Lua files
 selene .
@@ -102,9 +102,7 @@ selene .
 4. **Define projects**: Add entries to `projects.yaml`
 
 ### AI Providers Available
-- **GitHub Copilot**: Via copilot.lua
-- **Claude**: Via Avante plugin  
-- **CodeCompanion**: Additional AI assistant
+- **Claude Code**: Via claudecode.nvim
 - **MCPHub**: Model Context Protocol servers
 
 ## 📋 Language Support
@@ -117,7 +115,7 @@ Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSON/JSON5, XML, HTML, Ja
 
 ### Adding New Language Support
 1. **Create ftplugin file**: `after/ftplugin/[language].lua`
-2. **Install LSP server**: Call `mason_install("server-name")`  
+2. **Install LSP server**: Call `mason_install("server-name")`
 3. **Configure LSP**: Set up language-specific options
 4. **Add plugin if needed**: Create `90-[language].lua` for specialized tools
 
@@ -143,7 +141,7 @@ tokyonight-night (default), Edge, Everforest, Gruvbox Material, Material, Oceani
 ### Essential
 - `<space>p`: Project switcher
 - `<leader>n`: LSP rename symbol
-- `<leader>d`: LSP hover documentation  
+- `<leader>d`: LSP hover documentation
 - `<leader>a`: LSP code actions
 - `<esc>`: Close floats, clear highlights/references
 
@@ -211,7 +209,7 @@ fix: prevent infinite loop in project root detection
 feat: amazing comprehensive enhancement to project detection
 
 - Modified utils.lua
-- Added some new functionality  
+- Added some new functionality
 - Ready for next phase of development
 ```
 
@@ -227,12 +225,12 @@ local stop_dirs = { vim.fn.expand("~"), "/" }
 ```
 
 #### 2. Plugin Compatibility Issues
-```lua  
+```lua
 -- Use blink.cmp instead of nvim-cmp for better performance with large LSP responses
 -- Treesitter highlighting conflicts with semantic tokens in some themes
 ```
 
-#### 3. Non-obvious API Behavior  
+#### 3. Non-obvious API Behavior
 ```lua
 -- vim.loop.fs_stat returns nil for broken symlinks, unlike vim.fn.stat
 -- Cache key includes ignore_submodules to differentiate search results
@@ -259,7 +257,7 @@ require("telescope").setup({})
 ```
 
 #### 2. Simple Keybindings
-```lua  
+```lua
 -- BAD: Map leader-f to find files
 vim.keymap.set("n", "<leader>f", ":Telescope find_files<CR>")
 ```
