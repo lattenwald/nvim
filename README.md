@@ -6,13 +6,14 @@ A comprehensive [Neovim](https://neovim.io/) configuration built with [lazy.nvim
 
 - **On-demand LSP servers** - Automatically install and configure LSP servers only when needed
 - **AI integrations** - Claude Code and Gemini terminal integration
-- **Modern completion** - blink.cmp with LSP, snippets, and AI suggestions
+- **Modern completion** - blink.cmp with LSP, snippets, and buffer sources
 - **Integrated file management** - Yazi terminal file manager with floating window support
 - **Language support** - Rust, Go, Python, Lua, JavaScript, and more
 - **Debugging support** - DAP integration for multiple languages
 - **Git integration** - vim-fugitive, Gitsigns, Diffview, and LazyGit
 - **Project management** - Session management, project switching, worktree and submodule support
 - **Per-project configuration** - Language tool settings via project-local config files
+- **Enhanced UI** - noice.nvim for cmdline/messages, nvim-ufo for code folding
 - **Window focus indicators** - Visual dimming and optional borders
 - **Extensible architecture** - Modular plugin organization
 
@@ -72,6 +73,9 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 │   ├── lazy.lua            # Plugin manager setup
 │   ├── autochdir.lua       # Custom autochdir with worktree support
 │   ├── ai_helpers.lua      # AI terminal integration
+│   ├── project.lua         # Project management
+│   ├── neovide.lua         # Neovide GUI settings
+│   ├── nix.lua             # Nix-specific configuration
 │   └── utils.lua           # Utility functions
 ├── lua/plugins/            # Plugin configurations
 ├── after/ftplugin/         # Language-specific configs
@@ -130,9 +134,11 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 
 ### Essential Bindings
 - `<leader>p` - Projects picker
-- `<leader>n` - LSP rename symbol
+- `<leader>n` - LSP rename symbol (incremental via inc-rename)
 - `<leader>d` - LSP hover documentation
 - `<leader>a` - LSP code actions
+- `<leader>t` - List TODOs in Trouble
+- `gpd/gpt/gpi/gpr` - Preview definition/type/implementation/references
 - `<esc>` - Close floats, clear highlights
 
 ### Command Aliases
@@ -140,8 +146,10 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 - `:DC` - Alias for `:DiffviewClose`
 
 ### REST Client (http files)
-- `<C-r>` - Run REST request under cursor
-- `<C-S-r>` - Run named REST request (with completion)
+- `<leader>Rs` - Send request under cursor
+- `<leader>Ra` - Send all requests
+- `<leader>Rb` - Open scratchpad
+- `<leader>Re` - Select environment
 
 ## AI Integration
 
@@ -163,14 +171,15 @@ AI settings are managed in `mcpservers.json` for Model Context Protocol integrat
 ## Language Support
 
 ### Supported Languages
-- **Rust** - LSP, DAP, rustaceanvim integration, per-project configuration
+- **Rust** - LSP, DAP, rustaceanvim, crates.nvim for Cargo.toml
 - **Go** - LSP, DAP, testing, and tools
-- **Python** - LSP, DAP, formatting, linting
+- **Python** - LSP, DAP, formatting, linting, venv-selector
 - **Lua** - LSP for Neovim development
 - **JavaScript/TypeScript** - LSP, formatting
-- **Markdown** - Editing and preview
+- **LaTeX** - vimtex for editing, compilation, and preview
+- **Markdown** - render-markdown for in-buffer rendering, live-preview in browser
 - **JSON/YAML** - Schema validation
-- **HTML/CSS** - Web development tools
+- **HTML/CSS** - Web development tools, nvim-ts-autotag
 - **Erlang/Elixir** - Language support
 - **Bash/Shell** - Script development
 - **Nix** - LSP and formatting
@@ -196,6 +205,13 @@ Supported debuggers:
 - **Rust** - Built-in via rustaceanvim
 - **Go** - Delve integration
 - **Python** - debugpy integration
+
+### Other Tools
+- **todo-comments** - TODO/FIXME/HACK highlighting (`<leader>t` to list)
+- **goto-preview** - Preview definitions/references in floating windows (`gp` prefix)
+- **inc-rename** - Incremental rename UI (behind `<leader>n`)
+- **endec** - Encoding/decoding utility
+- **sudo.nvim** - Read/write files with sudo (`:SudoRead`, `:SudoWrite`)
 
 ## Customization
 
@@ -259,22 +275,23 @@ This configuration is provided as-is under the MIT License.
 ### ✅ Core Features
 - [x] **Plugin Management** - Lazy.nvim with optimized loading
 - [x] **LSP Integration** - Mason + lspconfig for 15+ languages
-- [x] **Completion System** - blink.cmp with LSP, snippets, AI
+- [x] **Completion System** - blink.cmp with LSP, snippets, buffer
 - [x] **AI Integration** - Claude Code (primary), Gemini Pro (terminal), MCPHub
 - [x] **Git Integration** - vim-fugitive, Gitsigns, Diffview, LazyGit
 - [x] **File Management** - Yazi terminal file manager with floating windows, session resume, project switching
-- [x] **UI Enhancement** - Which-key, Trouble, statusline
-- [x] **Code Editing** - Surround, Autopairs, commenting
+- [x] **UI Enhancement** - Which-key, Trouble, noice.nvim, statusline
+- [x] **Code Editing** - Surround, Autopairs, commenting, todo-comments
 - [x] **Terminal Integration** - Built-in terminal management with Gemini Pro integration
-- [x] **REST Client** - HTTP request testing
+- [x] **REST Client** - kulala.nvim HTTP request testing
 
 ### ✅ Language Support
-- [x] **Rust** - Full LSP + DAP + rustaceanvim
+- [x] **Rust** - Full LSP + DAP + rustaceanvim + crates.nvim
 - [x] **Go** - Full LSP + DAP + testing tools
-- [x] **Python** - Full LSP + DAP + formatting
+- [x] **Python** - Full LSP + DAP + formatting + venv-selector
 - [x] **Lua** - Full LSP for Neovim development
 - [x] **JavaScript/TypeScript** - Full LSP support
-- [x] **Markdown** - Editing and rendering
+- [x] **LaTeX** - vimtex editing, compilation, preview
+- [x] **Markdown** - render-markdown, live-preview in browser
 - [x] **Web** - HTML, CSS, JSON, YAML, XML
 - [x] **Functional** - Erlang, Elixir support
 - [x] **Shell** - Bash, Zsh scripting

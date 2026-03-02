@@ -13,13 +13,17 @@ lua/config/                 # Core configuration
 ├── opts.lua               # Neovim options
 ├── keys.lua               # Global keymaps
 ├── lazy.lua               # Plugin manager setup
+├── autochdir.lua          # Custom autochdir with worktree support
+├── ai_helpers.lua         # AI terminal integration
 ├── project.lua            # Project management
+├── neovide.lua            # Neovide GUI settings
+├── nix.lua                # Nix-specific configuration
 └── utils.lua              # Utility functions
 lua/plugins/               # Plugin configurations by prefix:
 ├── 10-*.lua              # Core (theme, snacks)
 ├── 20-*.lua              # Dev tools (treesitter, which-key)
 ├── 30-*.lua              # AI integrations (claudecode, mcphub)
-├── 40-*.lua              # UI components (statusline, trouble)
+├── 40-*.lua              # UI components (statusline, trouble, window-focus)
 ├── 55-*.lua              # LSP configuration
 ├── 65-*.lua              # Debugging setup
 ├── 70-*.lua              # Completion system
@@ -96,10 +100,8 @@ selene .
 ## 🤖 AI Integration Setup
 
 ### Required Configuration Files
-1. **Copy example file**: `cp avante_opts.yaml.example avante_opts.yaml`
-2. **Configure providers**: Add API keys and settings
-3. **Set up MCP servers**: Configure `mcpservers.json` if needed
-4. **Define projects**: Add entries to `projects.yaml`
+1. **Set up MCP servers**: Configure `mcpservers.json` if needed
+2. **Define projects**: Add entries to `projects.yaml`
 
 ### AI Providers Available
 - **Claude Code**: Via claudecode.nvim
@@ -125,7 +127,7 @@ Rust, Lua, Python, Go, Erlang, Elixir, Bash/zsh, Perl, JSON/JSON5, XML, HTML, Ja
 tokyonight-night (default), Edge, Everforest, Gruvbox Material, Material, Oceanic Next, Sonokai, Wombat, Zephyr
 
 ### UI Components
-- **Completion**: blink.cmp with LSP, snippets, AI suggestions
+- **Completion**: blink.cmp with LSP, snippets, buffer sources
 - **Statusline**: Custom statusline configuration
 - **File explorer**: Yazi integration
 - **Notifications**: nvim-notify
