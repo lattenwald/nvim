@@ -123,8 +123,8 @@ function M.mason_install(pkgname, on_installed)
 end
 
 function M.ts_install(parsername)
-    local parsers = require("nvim-treesitter.parsers")
-    if not parsers.has_parser(parsername) then
+    local ok = pcall(vim.treesitter.language.inspect, parsername)
+    if not ok then
         vim.cmd("TSInstall " .. parsername)
     end
 end
