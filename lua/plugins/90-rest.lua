@@ -1,29 +1,16 @@
 return {
     {
-        "rest-nvim/rest.nvim",
-        ft = "http",
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter",
-            "j-hui/fidget.nvim",
-        },
+        "mistweaverco/kulala.nvim",
         keys = {
-            { "<C-r>", "<cmd>Rest run<CR>", desc = "Run REST request", ft = "http" },
-            { "<C-S-r>", ":Rest run ", desc = "Run named REST request", ft = "http" },
+            { "<leader>Rs", desc = "Send request" },
+            { "<leader>Ra", desc = "Send all requests" },
+            { "<leader>Rb", desc = "Open scratchpad" },
         },
-        config = function(_, opts)
-            vim.g.rest_nvim = opts
-        end,
+        ft = { "http", "rest" },
         opts = {
-            ui = {
-                keybinds = {
-                    prev = "<S-Left>",
-                    next = "<S-Right>",
-                },
-            },
-            cookies = {
-                enable = true,
-                path = vim.fn.expand("$HOME/REST/rest-nvim.cookies"),
-            },
+            global_keymaps = true,
+            global_keymaps_prefix = "<leader>R",
+            kulala_keymaps_prefix = "",
         },
     },
 }
