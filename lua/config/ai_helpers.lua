@@ -49,6 +49,12 @@ M.helpers = {
         icon = "",
         send_format = "file_line",
     },
+    codex = {
+        name = "Codex",
+        cmd = "codex",
+        icon = "󰧑",
+        send_format = "text",
+    },
     cursor = {
         name = "Cursor",
         cmd = "cursor-agent",

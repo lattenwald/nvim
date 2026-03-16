@@ -8,3 +8,5 @@ require("conform").setup({
         html = { "prettierd" },
     },
 })
+
+vim.keymap.set("n", "<leader>o", ":silent !xdg-open %<CR>", { buffer = true, desc = "Open in browser" })
