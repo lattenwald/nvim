@@ -53,7 +53,7 @@ M.helpers = {
         name = "Codex",
         cmd = "codex",
         icon = "󰧑",
-        send_format = "text",
+        send_format = "file_line",
     },
     cursor = {
         name = "Cursor",
@@ -77,6 +77,7 @@ function M.get_current_config()
     end
     return nil
 end
+
 function M.set_helper(helper_name, skip_notify)
     if not M.helpers[helper_name] then
         vim.notify("Unknown AI helper: " .. helper_name, vim.log.levels.ERROR)
@@ -102,6 +103,7 @@ function M.set_helper(helper_name, skip_notify)
 
     return true
 end
+
 function M.switch_helper()
     local helper_names = vim.tbl_keys(M.helpers)
     table.sort(helper_names)
@@ -119,6 +121,7 @@ function M.switch_helper()
         end
     end)
 end
+
 function M.get_selection()
     local start_pos = vim.fn.getpos("'<")
     local end_pos = vim.fn.getpos("'>")
@@ -137,6 +140,7 @@ function M.get_selection()
 
     return table.concat(lines, "\n")
 end
+
 local function get_or_create_terminal(cmd)
     local ok, snacks = pcall(require, "snacks")
     if not ok then
@@ -167,6 +171,7 @@ local function get_or_create_terminal(cmd)
 
     return term, true
 end
+
 function M.toggle_terminal()
     local helper = M.get_current_config()
     if not helper then
@@ -188,6 +193,7 @@ function M.toggle_terminal()
         end
     end
 end
+
 function M.send_selection()
     local helper = M.get_current_config()
     if not helper then
@@ -223,17 +229,25 @@ function M.send_selection()
             return
         end
 
+        local file = vim.fn.expand("%:p")
+        local start_line = vim.fn.getpos("'<")[2]
+        local end_line = vim.fn.getpos("'>")[2]
+        local header = "--- " .. file .. ":" .. start_line .. "-" .. end_line .. "\n"
+
         local term = get_or_create_terminal(helper.cmd)
         if term then
             term:show()
             local buf = type(term.buf) == "number" and term.buf or term.buf.buf
             local chan = vim.api.nvim_buf_get_var(buf, "terminal_job_id")
+            vim.api.nvim_chan_send(chan, header)
             for line in selection:gmatch("[^\n]+") do
                 vim.api.nvim_chan_send(chan, line .. "\n")
             end
+            vim.api.nvim_chan_send(chan, "---\n")
         end
     end
 end
+
 function M.send_buffer()
     local helper = M.get_current_config()
     if not helper then
@@ -251,6 +265,7 @@ function M.send_buffer()
         vim.api.nvim_chan_send(chan, "@" .. file .. " ")
     end
 end
+
 function M.get_helper_from_buffer(bufnr)
     bufnr = bufnr or vim.api.nvim_get_current_buf()
 
@@ -273,6 +288,7 @@ function M.lualine_component()
     end
     return "󰚩 No AI"
 end
+
 function M.setup(opts)
     opts = opts or {}
 
@@ -318,7 +334,7 @@ function M.setup(opts)
 
     vim.api.nvim_create_user_command("AIHelperSend", function()
         M.send_selection()
-    end, { desc = "Send selection to AI helper" })
+    end, { desc = "Send selection to AI helper", range = true })
 
     vim.api.nvim_create_user_command("AIHelperSendBuffer", function()
         M.send_buffer()
