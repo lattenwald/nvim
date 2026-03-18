@@ -86,7 +86,7 @@ return {
                     }
                 }
             }) end, desc = "Buffers" },
-            { "<leader>r", function() Snacks.picker.grep() end, desc = "Grep" },
+            { "<leader>r", function() Snacks.picker.grep({ hidden = true }) end, desc = "Grep" },
             { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
             { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
             { "<C-`>", function() Snacks.terminal() end, desc = "Terminal", mode = {"n", "i", "v", "t" }  },
@@ -145,6 +145,7 @@ return {
             { "<leader>Sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
             { "<leader>SB", function() Snacks.picker.grep_buffers() end, desc = "Grep Open Buffers" },
             { "<leader>Sg", function() Snacks.picker.grep() end, desc = "Grep" },
+            { "<leader>Sr", function() Snacks.picker.grep({ hidden = true, ignored = true }) end, desc = "Grep (hidden+ignored)" },
             { "<leader>Sw", function() Snacks.picker.grep_word() end, desc = "Visual selection or word", mode = { "n", "x" } },
 
             -- search
