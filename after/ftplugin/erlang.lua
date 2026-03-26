@@ -1,3 +1,10 @@
+vim.lsp.config("elp", {
+    cmd = { "elp", "server" },
+    filetypes = { "erlang" },
+    root_markers = { "rebar.config", "erlang.mk", ".erlang.mk", "Makefile" },
+})
+vim.lsp.enable("elp")
+
 -- require("config.utils").mason_install("erlang-ls")
 
 -- local dap = require("dap")
