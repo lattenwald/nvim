@@ -99,6 +99,7 @@ Plugins are organized by numbered prefixes for loading order and functionality:
 - `<leader><space>` - Smart find files
 - `<leader>F` - Find files
 - `<leader>f` - Find files (Git/Regular)
+- `<leader>T` - Navigator tasks (.agent/tasks)
 - `<leader>r` - Grep
 - `<leader>b` - Buffers
 

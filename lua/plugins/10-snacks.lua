@@ -108,6 +108,25 @@ return {
 
             { "<leader>F", function() Snacks.picker.files() end, desc = "Find Files" },
 
+            { "<leader>T", function()
+                local current_dir = vim.fn.expand("%:p:h")
+                local project_root = require("config.utils").find_project_root(current_dir, { ".git", "project-root" })
+                if not project_root then
+                    Snacks.notify.warn("No project root found")
+                    return
+                end
+                local tasks_dir = project_root .. "/.agent/tasks"
+                if vim.fn.isdirectory(tasks_dir) == 1 then
+                    Snacks.picker.files({
+                        cwd = tasks_dir,
+                        matcher = { sort_empty = true },
+                        sort = { fields = { "score:desc", "idx:desc" } },
+                    })
+                else
+                    Snacks.notify.warn("No .agent/tasks directory found")
+                end
+            end, desc = "Navigator Tasks" },
+
             { "<leader>f", function()
                 local current_dir = vim.fn.expand("%:p:h")
                 local project_root = require("config.utils").find_project_root(current_dir, { ".git", "project-root" })
