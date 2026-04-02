@@ -208,25 +208,19 @@ return {
         opts = {},
     },
     {
-        "numToStr/Comment.nvim",
-        dependencies = {
-            "JoosepAlviste/nvim-ts-context-commentstring",
-        },
-        opts = {
-            toggler = {
-                line = "<leader>c<leader>",
-                block = "<leader>B<leader>",
-            },
-            opleader = {
-                line = "<leader>c",
-                block = "<leader>B",
-            },
-            extra = {
-                above = "<leader>cO",
-                below = "<leader>co",
-                eol = "<leader>cA",
-            },
-        },
+        "folke/ts-comments.nvim",
+        event = "VeryLazy",
+        opts = {},
+        config = function(_, opts)
+            require("ts-comments").setup(opts)
+            vim.keymap.set("n", "<leader>c<leader>", "gcc", { remap = true, desc = "Toggle comment line" })
+            vim.keymap.set("n", "<leader>B<leader>", "gbc", { remap = true, desc = "Toggle comment block" })
+            vim.keymap.set({ "x", "o" }, "<leader>c", "gc", { remap = true, desc = "Comment line" })
+            vim.keymap.set({ "x", "o" }, "<leader>B", "gb", { remap = true, desc = "Comment block" })
+            vim.keymap.set("n", "<leader>cO", "gcO", { remap = true, desc = "Comment above" })
+            vim.keymap.set("n", "<leader>co", "gco", { remap = true, desc = "Comment below" })
+            vim.keymap.set("n", "<leader>cA", "gcA", { remap = true, desc = "Comment end of line" })
+        end,
     },
     {
         "kevinhwang91/nvim-ufo",
