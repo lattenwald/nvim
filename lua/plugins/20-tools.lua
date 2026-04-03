@@ -224,6 +224,7 @@ return {
     },
     {
         "kevinhwang91/nvim-ufo",
+        enabled = false,
         dependencies = { "kevinhwang91/promise-async" },
         opts = {
             provider_selector = function(bufnr, filetype)
@@ -247,10 +248,6 @@ return {
 
             require("ufo").setup(opts)
         end,
-    },
-    {
-        "AckslD/messages.nvim",
-        opts = {},
     },
     {
         "tzachar/local-highlight.nvim",

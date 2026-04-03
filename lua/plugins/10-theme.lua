@@ -25,20 +25,7 @@ return {
         end,
     },
     {
-        "mhartington/oceanic-next",
-    },
-    {
         "folke/tokyonight.nvim",
-    },
-    {
-        "nvimdev/zephyr-nvim",
-    },
-    {
-        "vim-scripts/wombat256.vim",
-    },
-    {
-        "ViViDboarder/wombat.nvim",
-        dependencies = { "rktjmp/lush.nvim" },
     },
     {
         "sainnhe/everforest",

@@ -64,7 +64,6 @@ return {
                     rust = "rs",
                     teal = "tl",
                     typescript = "ts",
-                    jinja = "jinja",
                     html = "html",
                 },
             }
@@ -75,6 +74,7 @@ return {
     },
     {
         "rmagatti/goto-preview",
+        enabled = false,
         dependencies = { "rmagatti/logger.nvim" },
         event = "LspAttach",
         opts = {

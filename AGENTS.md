@@ -22,7 +22,7 @@ lua/config/                 # Core configuration
 lua/plugins/               # Plugin configurations by prefix:
 ├── 10-*.lua              # Core (theme, snacks)
 ├── 20-*.lua              # Dev tools (treesitter, which-key)
-├── 30-*.lua              # AI integrations (claudecode, mcphub)
+├── 30-*.lua              # AI integrations (claudecode)
 ├── 40-*.lua              # UI components (statusline, trouble, window-focus)
 ├── 55-*.lua              # LSP configuration
 ├── 65-*.lua              # Debugging setup
@@ -105,7 +105,6 @@ selene .
 
 ### AI Providers Available
 - **Claude Code**: Via claudecode.nvim
-- **MCPHub**: Model Context Protocol servers
 
 ## 📋 Language Support
 
