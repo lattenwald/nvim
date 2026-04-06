@@ -225,7 +225,7 @@ return {
                         local buf = vim.api.nvim_get_current_buf()
                         local bufname = vim.fn.bufname(buf)
 
-                        if bufname:match(":claude$") then
+                        if bufname:match(":claude%f[%s%z]") then
                             return "<C-J>"
                         end
 

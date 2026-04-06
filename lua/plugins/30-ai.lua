@@ -3,6 +3,10 @@ return {
         "coder/claudecode.nvim",
         dependencies = { "folke/snacks.nvim" },
         opts = {
+            terminal_cmd = "claude --enable-auto-mode",
+            env = {
+                CLAUDE_CODE_NO_FLICKER = "1",
+            },
             terminal = {
                 split_width_percentage = 0.4,
                 provider = "snacks",
