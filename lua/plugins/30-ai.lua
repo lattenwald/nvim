@@ -6,6 +6,7 @@ return {
             terminal_cmd = "claude --enable-auto-mode",
             env = {
                 CLAUDE_CODE_NO_FLICKER = "1",
+                CLAUDE_CODE_DISABLE_TERMINAL_TITLE = "1",
             },
             terminal = {
                 split_width_percentage = 0.4,
@@ -86,7 +87,7 @@ return {
             })
         end,
         keys = {
-            { "<C-,>", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+            { "<C-,>", "<cmd>ClaudeCode<cr>", mode = { "n", "t" }, desc = "Toggle Claude" },
             { "<leader>,", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
             { "<leader>w", nil, desc = "AI/Claude Code" },
             { "<leader>wc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
