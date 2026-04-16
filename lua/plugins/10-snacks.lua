@@ -115,17 +115,24 @@ return {
                     Snacks.notify.warn("No project root found")
                     return
                 end
-                local tasks_dir = project_root .. "/.agent/tasks"
-                if vim.fn.isdirectory(tasks_dir) == 1 then
-                    Snacks.picker.files({
-                        cwd = tasks_dir,
-                        matcher = { sort_empty = true },
-                        sort = { fields = { "score:desc", "idx:desc" } },
-                    })
-                else
-                    Snacks.notify.warn("No .agent/tasks directory found")
+                local dirs = {}
+                for _, dir in ipairs({ ".agent", "docs", "ai" }) do
+                    local full = project_root .. "/" .. dir
+                    if vim.fn.isdirectory(full) == 1 then
+                        table.insert(dirs, full)
+                    end
                 end
-            end, desc = "Navigator Tasks" },
+                if #dirs == 0 then
+                    Snacks.notify.warn("No .agent/, docs/, or ai/ directory found")
+                    return
+                end
+                Snacks.picker.files({
+                    dirs = dirs,
+                    ft = "md",
+                    matcher = { sort_empty = true },
+                    sort = { fields = { "score:desc", "idx:desc" } },
+                })
+            end, desc = "Project Docs" },
 
             { "<leader>f", function()
                 local current_dir = vim.fn.expand("%:p:h")
