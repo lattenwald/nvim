@@ -5,7 +5,6 @@ return {
         opts = {
             terminal_cmd = "claude --enable-auto-mode",
             env = {
-                CLAUDE_CODE_NO_FLICKER = "1",
                 CLAUDE_CODE_DISABLE_TERMINAL_TITLE = "1",
             },
             terminal = {
