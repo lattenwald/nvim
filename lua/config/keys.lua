@@ -8,6 +8,9 @@ vim.keymap.set({ "n", "t" }, "<M-right>", "<Cmd>wincmd l<enter>", { desc = "Go t
 vim.keymap.set({ "n", "t" }, "<M-up>", "<Cmd>wincmd k<enter>", { desc = "Go to top window" })
 vim.keymap.set({ "n", "t" }, "<M-down>", "<Cmd>wincmd j<enter>", { desc = "Go to bottom window" })
 
+vim.keymap.set("t", "<C-PageDown>", "<Cmd>tabnext<enter>", { desc = "Next tab" })
+vim.keymap.set("t", "<C-PageUp>", "<Cmd>tabprevious<enter>", { desc = "Previous tab" })
+
 -- wildmenu (cmdline)
 vim.opt.wildmenu = true
 vim.opt.wildmode = "longest:full,full"
