@@ -43,10 +43,10 @@ M.terminal_config = {
 
 -- Helper configurations
 M.helpers = {
-    gemini = {
-        name = "Gemini",
-        cmd = "gemini",
-        icon = "",
+    droid = {
+        name = "Droid",
+        cmd = "droid",
+        icon = "󰚩",
         send_format = "file_line",
     },
     codex = {
@@ -58,8 +58,14 @@ M.helpers = {
     cursor = {
         name = "Cursor",
         cmd = "cursor-agent",
-        icon = "",
+        icon = "",
         send_format = "text",
+    },
+    gemini = {
+        name = "Gemini",
+        cmd = "gemini",
+        icon = "",
+        send_format = "file_line",
     },
 }
 
@@ -203,7 +209,7 @@ function M.send_selection()
 
     if helper.send_format == "file_line" then
         -- Claude Code format: @file#L1 or @file#L1-5
-        local file = vim.fn.expand("%:p")
+        local file = helper.absolute_path and vim.fn.expand("%:p") or vim.fn.expand("%:.")
         local start_pos = vim.fn.getpos("'<")
         local end_pos = vim.fn.getpos("'>")
         local start_line = start_pos[2]
@@ -229,7 +235,7 @@ function M.send_selection()
             return
         end
 
-        local file = vim.fn.expand("%:p")
+        local file = helper.absolute_path and vim.fn.expand("%:p") or vim.fn.expand("%:.")
         local start_line = vim.fn.getpos("'<")[2]
         local end_line = vim.fn.getpos("'>")[2]
         local header = "--- " .. file .. ":" .. start_line .. "-" .. end_line .. "\n"
@@ -255,7 +261,7 @@ function M.send_buffer()
         return
     end
 
-    local file = vim.fn.expand("%:p")
+    local file = helper.absolute_path and vim.fn.expand("%:p") or vim.fn.expand("%:.")
 
     local term = get_or_create_terminal(helper.cmd)
     if term then
