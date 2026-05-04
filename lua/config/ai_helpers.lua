@@ -227,6 +227,10 @@ function M.send_selection()
             local buf = type(term.buf) == "number" and term.buf or term.buf.buf
             local chan = vim.api.nvim_buf_get_var(buf, "terminal_job_id")
             vim.api.nvim_chan_send(chan, location .. " ")
+            if term.win and vim.api.nvim_win_is_valid(term.win) then
+                vim.api.nvim_set_current_win(term.win)
+                vim.cmd("startinsert")
+            end
         end
     else
         local selection = M.get_selection()
@@ -250,6 +254,10 @@ function M.send_selection()
                 vim.api.nvim_chan_send(chan, line .. "\n")
             end
             vim.api.nvim_chan_send(chan, "---\n")
+            if term.win and vim.api.nvim_win_is_valid(term.win) then
+                vim.api.nvim_set_current_win(term.win)
+                vim.cmd("startinsert")
+            end
         end
     end
 end
@@ -269,6 +277,10 @@ function M.send_buffer()
         local buf = type(term.buf) == "number" and term.buf or term.buf.buf
         local chan = vim.api.nvim_buf_get_var(buf, "terminal_job_id")
         vim.api.nvim_chan_send(chan, "@" .. file .. " ")
+        if term.win and vim.api.nvim_win_is_valid(term.win) then
+            vim.api.nvim_set_current_win(term.win)
+            vim.cmd("startinsert")
+        end
     end
 end
 
