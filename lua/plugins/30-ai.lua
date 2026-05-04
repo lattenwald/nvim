@@ -92,8 +92,37 @@ return {
             { "<leader>wf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
             { "<leader>wr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
             { "<leader>wC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
-            { "<leader>wb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-            { "<leader>ws", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+            {
+                "<leader>wt",
+                function()
+                    require("config.ai_helpers").toggle_terminal()
+                end,
+                desc = "Toggle AI Helper Terminal",
+                mode = { "n", "v" },
+            },
+            {
+                "<leader>wh",
+                function()
+                    require("config.ai_helpers").switch_helper()
+                end,
+                desc = "Choose AI Helper",
+                mode = { "n", "v" },
+            },
+            {
+                "<leader>wb",
+                function()
+                    require("config.ai_helpers").smart_send_buffer()
+                end,
+                desc = "Send buffer to AI (smart)",
+            },
+            {
+                "<leader>ws",
+                function()
+                    require("config.ai_helpers").smart_send_selection()
+                end,
+                mode = "v",
+                desc = "Send selection to AI (smart)",
+            },
             {
                 "<leader>ws",
                 "<cmd>ClaudeCodeTreeAdd<cr>",

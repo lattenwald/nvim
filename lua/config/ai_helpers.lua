@@ -147,6 +147,11 @@ function M.get_selection()
     return table.concat(lines, "\n")
 end
 
+-- Snacks terminal exposes buf as a number on some versions and as a table on others
+local function term_bufnr(term)
+    return type(term.buf) == "number" and term.buf or term.buf.buf
+end
+
 local function get_or_create_terminal(cmd)
     local ok, snacks = pcall(require, "snacks")
     if not ok then
@@ -223,9 +228,7 @@ function M.send_selection()
         local term = get_or_create_terminal(helper.cmd)
         if term then
             term:show()
-            -- Snacks terminal object may have buf as number or table
-            local buf = type(term.buf) == "number" and term.buf or term.buf.buf
-            local chan = vim.api.nvim_buf_get_var(buf, "terminal_job_id")
+            local chan = vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id")
             vim.api.nvim_chan_send(chan, location .. " ")
             if term.win and vim.api.nvim_win_is_valid(term.win) then
                 vim.api.nvim_set_current_win(term.win)
@@ -247,8 +250,7 @@ function M.send_selection()
         local term = get_or_create_terminal(helper.cmd)
         if term then
             term:show()
-            local buf = type(term.buf) == "number" and term.buf or term.buf.buf
-            local chan = vim.api.nvim_buf_get_var(buf, "terminal_job_id")
+            local chan = vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id")
             vim.api.nvim_chan_send(chan, header)
             for line in selection:gmatch("[^\n]+") do
                 vim.api.nvim_chan_send(chan, line .. "\n")
@@ -274,8 +276,7 @@ function M.send_buffer()
     local term = get_or_create_terminal(helper.cmd)
     if term then
         term:show()
-        local buf = type(term.buf) == "number" and term.buf or term.buf.buf
-        local chan = vim.api.nvim_buf_get_var(buf, "terminal_job_id")
+        local chan = vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id")
         vim.api.nvim_chan_send(chan, "@" .. file .. " ")
         if term.win and vim.api.nvim_win_is_valid(term.win) then
             vim.api.nvim_set_current_win(term.win)
@@ -288,15 +289,70 @@ function M.get_helper_from_buffer(bufnr)
     bufnr = bufnr or vim.api.nvim_get_current_buf()
 
     for helper_name, term in pairs(M.terminal_instances) do
-        if term and term:valid() then
-            local term_buf = type(term.buf) == "number" and term.buf or term.buf.buf
-            if term_buf == bufnr then
-                return helper_name
-            end
+        if term and term:valid() and term_bufnr(term) == bufnr then
+            return helper_name
         end
     end
 
     return nil
+end
+
+local function buf_visible(bufnr)
+    return bufnr ~= nil and #vim.fn.win_findbuf(bufnr) > 0
+end
+
+local function is_ai_helper_visible()
+    for _, term in pairs(M.terminal_instances) do
+        if term and term:valid() and buf_visible(term_bufnr(term)) then
+            return true
+        end
+    end
+    return false
+end
+
+local function is_claudecode_visible()
+    local ok, cc_term = pcall(require, "claudecode.terminal")
+    if not ok then
+        return false
+    end
+    return buf_visible(cc_term.get_active_terminal_bufnr())
+end
+
+local function route_send(claude_action, helper_action)
+    local claude = is_claudecode_visible()
+    local helper = is_ai_helper_visible()
+    if claude and helper then
+        local options = {
+            { label = "Claude Code", action = claude_action },
+            { label = "AI Helper", action = helper_action },
+        }
+        vim.ui.select(options, {
+            prompt = "Send to:",
+            format_item = function(item)
+                return item.label
+            end,
+        }, function(choice)
+            if choice then
+                choice.action()
+            end
+        end)
+    elseif helper then
+        helper_action()
+    else
+        claude_action()
+    end
+end
+
+function M.smart_send_selection()
+    route_send(function()
+        vim.cmd("'<,'>ClaudeCodeSend")
+    end, M.send_selection)
+end
+
+function M.smart_send_buffer()
+    route_send(function()
+        vim.cmd("ClaudeCodeAdd %")
+    end, M.send_buffer)
 end
 
 function M.lualine_component()
