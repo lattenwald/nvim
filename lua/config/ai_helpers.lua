@@ -128,13 +128,35 @@ function M.switch_helper()
     end)
 end
 
+-- Visual marks '< and '> are only set after leaving visual mode (:help '<).
+-- When invoked via lazy.nvim's first-load stub the marks may still be [0,0,0,0],
+-- so we read live positions while in visual mode and fall back to marks otherwise.
+local function visual_bounds()
+    local mode = vim.fn.mode()
+    local s_pos, e_pos
+    if mode == "v" or mode == "V" or mode == "\22" then
+        s_pos = vim.fn.getpos("v")
+        e_pos = vim.fn.getpos(".")
+    else
+        s_pos = vim.fn.getpos("'<")
+        e_pos = vim.fn.getpos("'>")
+    end
+    if s_pos[2] > e_pos[2] or (s_pos[2] == e_pos[2] and s_pos[3] > e_pos[3]) then
+        s_pos, e_pos = e_pos, s_pos
+    end
+    if mode == "V" then
+        s_pos[3] = 1
+        e_pos[3] = vim.v.maxcol
+    end
+    return s_pos, e_pos
+end
+
 function M.get_selection()
-    local start_pos = vim.fn.getpos("'<")
-    local end_pos = vim.fn.getpos("'>")
+    local start_pos, end_pos = visual_bounds()
     local lines = vim.fn.getline(start_pos[2], end_pos[2])
 
     if #lines == 0 then
-        return nil
+        return nil, start_pos, end_pos
     end
 
     if #lines == 1 then
@@ -144,7 +166,7 @@ function M.get_selection()
         lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
     end
 
-    return table.concat(lines, "\n")
+    return table.concat(lines, "\n"), start_pos, end_pos
 end
 
 -- Snacks terminal exposes buf as a number on some versions and as a table on others
@@ -153,12 +175,6 @@ local function term_bufnr(term)
 end
 
 local function get_or_create_terminal(cmd)
-    local ok, snacks = pcall(require, "snacks")
-    if not ok then
-        vim.notify("Snacks.nvim not available", vim.log.levels.ERROR)
-        return nil, false
-    end
-
     local helper_name = M.current_helper
     local term = M.terminal_instances[helper_name]
 
@@ -169,10 +185,12 @@ local function get_or_create_terminal(cmd)
     local term_opts = { cwd = vim.fn.getcwd() }
 
     if M.terminal_config.type == "split" then
+        local pos = M.terminal_config.position
+        local size = M.terminal_config.size
         term_opts.win = {
-            position = M.terminal_config.position,
-            width = M.terminal_config.position == "left" or M.terminal_config.position == "right" and M.terminal_config.size or nil,
-            height = M.terminal_config.position == "top" or M.terminal_config.position == "bottom" and M.terminal_config.size or nil,
+            position = pos,
+            width = (pos == "left" or pos == "right") and size or nil,
+            height = (pos == "top" or pos == "bottom") and size or nil,
         }
     end
 
@@ -183,6 +201,23 @@ local function get_or_create_terminal(cmd)
     return term, true
 end
 
+local function helper_filename(helper)
+    return helper.absolute_path and vim.fn.expand("%:p") or vim.fn.expand("%:.")
+end
+
+local function send_to_terminal(cmd, write)
+    local term = get_or_create_terminal(cmd)
+    if not term then
+        return
+    end
+    term:show()
+    write(vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id"))
+    if term.win and vim.api.nvim_win_is_valid(term.win) then
+        vim.api.nvim_set_current_win(term.win)
+        vim.cmd("startinsert")
+    end
+end
+
 function M.toggle_terminal()
     local helper = M.get_current_config()
     if not helper then
@@ -191,17 +226,15 @@ function M.toggle_terminal()
     end
 
     local term, created = get_or_create_terminal(helper.cmd)
-    if term then
-        if created then
-            -- Terminal was just created and is already shown, do nothing
-        else
-            local win_visible = term.win and vim.api.nvim_win_is_valid(term.win)
-            if win_visible then
-                term:hide()
-            else
-                term:show()
-            end
-        end
+    -- Newly created terminals are already shown by Snacks.terminal()
+    if not term or created then
+        return
+    end
+    local win_visible = term.win and vim.api.nvim_win_is_valid(term.win)
+    if win_visible then
+        term:hide()
+    else
+        term:show()
     end
 end
 
@@ -212,11 +245,11 @@ function M.send_selection()
         return
     end
 
+    local file = helper_filename(helper)
+
     if helper.send_format == "file_line" then
         -- Claude Code format: @file#L1 or @file#L1-5
-        local file = helper.absolute_path and vim.fn.expand("%:p") or vim.fn.expand("%:.")
-        local start_pos = vim.fn.getpos("'<")
-        local end_pos = vim.fn.getpos("'>")
+        local start_pos, end_pos = visual_bounds()
         local start_line = start_pos[2]
         local end_line = end_pos[2]
 
@@ -225,42 +258,25 @@ function M.send_selection()
             location = location .. "-" .. end_line
         end
 
-        local term = get_or_create_terminal(helper.cmd)
-        if term then
-            term:show()
-            local chan = vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id")
+        send_to_terminal(helper.cmd, function(chan)
             vim.api.nvim_chan_send(chan, location .. " ")
-            if term.win and vim.api.nvim_win_is_valid(term.win) then
-                vim.api.nvim_set_current_win(term.win)
-                vim.cmd("startinsert")
-            end
-        end
+        end)
     else
-        local selection = M.get_selection()
+        local selection, start_pos, end_pos = M.get_selection()
         if not selection then
             vim.notify("No selection found", vim.log.levels.WARN)
             return
         end
 
-        local file = helper.absolute_path and vim.fn.expand("%:p") or vim.fn.expand("%:.")
-        local start_line = vim.fn.getpos("'<")[2]
-        local end_line = vim.fn.getpos("'>")[2]
-        local header = "--- " .. file .. ":" .. start_line .. "-" .. end_line .. "\n"
+        local header = "--- " .. file .. ":" .. start_pos[2] .. "-" .. end_pos[2] .. "\n"
 
-        local term = get_or_create_terminal(helper.cmd)
-        if term then
-            term:show()
-            local chan = vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id")
+        send_to_terminal(helper.cmd, function(chan)
             vim.api.nvim_chan_send(chan, header)
             for line in selection:gmatch("[^\n]+") do
                 vim.api.nvim_chan_send(chan, line .. "\n")
             end
             vim.api.nvim_chan_send(chan, "---\n")
-            if term.win and vim.api.nvim_win_is_valid(term.win) then
-                vim.api.nvim_set_current_win(term.win)
-                vim.cmd("startinsert")
-            end
-        end
+        end)
     end
 end
 
@@ -271,18 +287,11 @@ function M.send_buffer()
         return
     end
 
-    local file = helper.absolute_path and vim.fn.expand("%:p") or vim.fn.expand("%:.")
+    local file = helper_filename(helper)
 
-    local term = get_or_create_terminal(helper.cmd)
-    if term then
-        term:show()
-        local chan = vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id")
+    send_to_terminal(helper.cmd, function(chan)
         vim.api.nvim_chan_send(chan, "@" .. file .. " ")
-        if term.win and vim.api.nvim_win_is_valid(term.win) then
-            vim.api.nvim_set_current_win(term.win)
-            vim.cmd("startinsert")
-        end
-    end
+    end)
 end
 
 function M.get_helper_from_buffer(bufnr)
