@@ -43,6 +43,12 @@ M.terminal_config = {
 
 -- Helper configurations
 M.helpers = {
+    antigravity = {
+        name = "Antigravity",
+        cmd = "agy --add-dir .",
+        icon = "󰊭",
+        send_format = "file_line",
+    },
     droid = {
         name = "Droid",
         cmd = "droid",
