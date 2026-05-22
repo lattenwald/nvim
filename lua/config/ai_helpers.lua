@@ -67,16 +67,10 @@ M.helpers = {
         icon = "",
         send_format = "text",
     },
-    gemini = {
-        name = "Gemini",
-        cmd = "gemini",
-        icon = "",
-        send_format = "file_line",
-    },
 }
 
 M.current_helper = nil
-M.default_helper = "gemini"
+M.default_helper = ""
 M.terminal_instances = {}
 
 function M.get_current()
@@ -400,7 +394,7 @@ function M.setup(opts)
     local stored = M.storage[M.current_storage].load()
     if stored and M.helpers[stored] then
         M.set_helper(stored, true)
-    else
+    elseif M.helpers[M.default_helper] then
         M.set_helper(M.default_helper, true)
     end
     vim.api.nvim_create_user_command("AIHelperSwitch", function(cmd_opts)
