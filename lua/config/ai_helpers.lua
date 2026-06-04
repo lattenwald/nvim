@@ -354,7 +354,9 @@ end
 
 function M.smart_send_selection()
     route_send(function()
-        vim.cmd("'<,'>ClaudeCodeSend")
+        -- Explicit range, not '<,'>: marks aren't set on the first lazy call, but visual_bounds() reads live positions.
+        local start_pos, end_pos = visual_bounds()
+        vim.cmd(string.format("%d,%dClaudeCodeSend", start_pos[2], end_pos[2]))
     end, M.send_selection)
 end
 
