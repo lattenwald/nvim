@@ -6,7 +6,6 @@ vim.o.mouse = "a"
 
 vim.g.neovide_scroll_animation_length = 0.1
 
-vim.opt.title = true
 -- Global statusline
 vim.opt.laststatus = 3
 

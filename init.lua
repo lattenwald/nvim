@@ -27,6 +27,7 @@ require("config.opts")
 require("config.lazy")
 require("config.project").setup({})
 require("config.autochdir").setup()
+require("config.title").setup()
 require("config.keys")
 
 require("config.utils").mason_install("tree-sitter-cli")

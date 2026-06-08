@@ -1,15 +1,5 @@
--- This lua file is a module for working with projects, implementing following logic:
--- Projects are stored in yaml file projects.yaml, format is:
--- - name: project name
---   path: path
--- project name is project directory basename, path is absolute path to project
---
--- There are following functions:
--- 1. function to read this file and display projects in Snacks.picker. On selecting particular
---    project directory is changed to this project dir and then Snacks picker files selector is shown
--- 2. function to add current project. Project is identified by presence of .git, Cargo.toml, or pyproject.toml
---    in current or nearest parent directory. That directory is project root.
--- 3. function to remove project, selected in Snacks picker, bound to <C-d> or <Delete>
+-- Persists projects as a list of { name = <dir basename>, path = <absolute path> }
+-- in projects.yaml, managed through the Snacks.picker UI in M.list_projects().
 
 local M = {}
 
@@ -19,22 +9,55 @@ if not yaml_ok then
     vim.notify("lyaml not available - project persistence disabled", vim.log.levels.WARN)
 end
 
--- Path to the projects file
-local projects_file = vim.fn.stdpath("data") .. "/projects.yaml" -- Path to store project data
+local projects_file = vim.fn.stdpath("data") .. "/projects.yaml"
 
--- Function to read projects from YAML file
-local function read_projects()
+-- Memoized; reloaded whenever projects.yaml's mtime changes.
+local projects_cache = nil
+local cache_mtime = nil
+
+local function file_mtime()
+    local stat = uv.fs_stat(projects_file)
+    return stat and stat.mtime
+end
+
+local function mtime_unchanged(mtime)
+    return cache_mtime and mtime and cache_mtime.sec == mtime.sec and cache_mtime.nsec == mtime.nsec
+end
+
+-- Quiet read of projects.yaml.
+function M.get_projects()
     if not yaml_ok then
         return {}
     end
-    local ok, result = pcall(require("config.utils").load_yaml, projects_file)
-    if not ok or type(result) ~= "table" then
-        return {}
+
+    local mtime = file_mtime()
+    if projects_cache and mtime_unchanged(mtime) then
+        return projects_cache
     end
+
+    local result = {}
+    local file = io.open(projects_file, "r")
+    if file then
+        local content = file:read("*a")
+        file:close()
+        if content ~= "" then
+            local ok, parsed = pcall(yaml.load, content)
+            if ok and type(parsed) == "table" then
+                result = parsed
+            end
+        end
+    end
+
+    projects_cache = result
+    cache_mtime = mtime
     return result
 end
 
--- Function to write projects to YAML file using lyaml
+-- Returns a private copy.
+local function read_projects()
+    return vim.list_extend({}, M.get_projects())
+end
+
 local function write_projects(projects)
     if not yaml_ok then
         return false
@@ -49,10 +72,10 @@ local function write_projects(projects)
         vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
         return false
     end
+
     return true
 end
 
--- Function to add the current project
 function M.add_project()
     local project_root = require("config.utils").find_project_root(vim.uv.cwd(), M.config.project_markers)
     if not project_root then
@@ -76,14 +99,12 @@ function M.add_project()
     end
 end
 
--- Function to remove a project
 local function remove_project(project_path)
     local projects = read_projects()
     if not projects then
         return false
     end
 
-    -- Find and remove the project
     local found = false
     for i, project in ipairs(projects) do
         if project.path == project_path then
@@ -105,7 +126,6 @@ local function remove_project(project_path)
     return false
 end
 
--- Function to list projects and allow selection
 function M.list_projects()
     local projects = read_projects()
     if not projects then
@@ -159,7 +179,6 @@ function M.list_projects()
                     }, function(choice)
                         if choice == "Yes" then
                             if remove_project(item.path) then
-                                -- Close the picker and reopen it to refresh the list
                                 picker:close()
                                 M.list_projects()
                             end
