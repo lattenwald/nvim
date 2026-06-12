@@ -67,6 +67,26 @@ local function reapply(name)
     end
 end
 
+-- counts[client_name][severity] from cached unfiltered diagnostics, so muted ones are included
+local function diagnostic_counts()
+    local counts = {}
+    for ns, bufs in pairs(cache) do
+        local name = ns_client[ns]
+        if name then
+            local c = counts[name] or {}
+            counts[name] = c
+            for bufnr, diags in pairs(bufs) do
+                if vim.api.nvim_buf_is_valid(bufnr) then
+                    for _, d in ipairs(diags) do
+                        c[d.severity] = (c[d.severity] or 0) + 1
+                    end
+                end
+            end
+        end
+    end
+    return counts
+end
+
 function M.is_muted(name, severity)
     return muted[name] and muted[name][severity] or false
 end
@@ -89,13 +109,16 @@ function M.pick()
                 end
             end
             table.sort(names)
+            local counts = diagnostic_counts()
             for _, name in ipairs(names) do
                 for _, sev in ipairs(SEVERITIES) do
+                    local severity = vim.diagnostic.severity[sev]
                     table.insert(items, {
                         text = name .. " " .. sev,
                         client = name,
-                        severity = vim.diagnostic.severity[sev],
+                        severity = severity,
                         sev = sev,
+                        count = counts[name] and counts[name][severity] or 0,
                     })
                 end
             end
@@ -106,6 +129,7 @@ function M.pick()
             return {
                 { ("%-20s"):format(item.client) },
                 { ("%-6s"):format(item.sev), hl },
+                { ("%5s"):format(item.count > 0 and tostring(item.count) or ""), "Number" },
                 { M.is_muted(item.client, item.severity) and " 󰖁 muted" or "", "Comment" },
             }
         end,
