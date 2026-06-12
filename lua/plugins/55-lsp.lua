@@ -10,6 +10,11 @@ return {
     {
         "neovim/nvim-lspconfig",
         config = function()
+            local lsp_mute = require("config.lsp_mute")
+            lsp_mute.setup()
+            vim.api.nvim_create_user_command("LspMute", lsp_mute.pick, { desc = "Mute LSP diagnostics per server/severity" })
+            vim.keymap.set("n", "<leader>um", lsp_mute.pick, { desc = "Mute LSP Diagnostics" })
+
             vim.api.nvim_create_autocmd("LspAttach", {
                 callback = function(ev)
                     local bufnr = ev.buf
@@ -101,4 +106,3 @@ return {
         end,
     },
 }
-

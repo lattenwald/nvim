@@ -45,6 +45,13 @@ return {
                             end,
                             color = { fg = "#bd93f9" },
                         },
+                        {
+                            function()
+                                local ok, lsp_mute = pcall(require, "config.lsp_mute")
+                                return ok and lsp_mute.lualine_component() or ""
+                            end,
+                            color = { fg = "#e0af68" },
+                        },
                         "encoding",
                         "fileformat",
                         "filetype",
