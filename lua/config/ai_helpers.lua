@@ -84,9 +84,30 @@ function M.get_current_config()
     return nil
 end
 
+-- cmd may carry args (e.g. "agy --add-dir ."), so match only the binary token
+function M.is_available(helper_name)
+    local helper = M.helpers[helper_name]
+    return helper ~= nil and vim.fn.executable(helper.cmd:match("^%S+")) == 1
+end
+
+function M.available_helpers()
+    local names = vim.tbl_filter(M.is_available, vim.tbl_keys(M.helpers))
+    table.sort(names)
+    return names
+end
+
 function M.set_helper(helper_name, skip_notify)
     if not M.helpers[helper_name] then
-        vim.notify("Unknown AI helper: " .. helper_name, vim.log.levels.ERROR)
+        if not skip_notify then
+            vim.notify("Unknown AI helper: " .. tostring(helper_name), vim.log.levels.ERROR)
+        end
+        return false
+    end
+
+    if not M.is_available(helper_name) then
+        if not skip_notify then
+            vim.notify("AI helper not installed: " .. M.helpers[helper_name].name, vim.log.levels.WARN)
+        end
         return false
     end
 
@@ -111,8 +132,12 @@ function M.set_helper(helper_name, skip_notify)
 end
 
 function M.switch_helper()
-    local helper_names = vim.tbl_keys(M.helpers)
-    table.sort(helper_names)
+    local helper_names = M.available_helpers()
+
+    if #helper_names == 0 then
+        vim.notify("No AI helpers installed", vim.log.levels.WARN)
+        return
+    end
 
     vim.ui.select(helper_names, {
         prompt = "Select AI Helper:",
@@ -394,9 +419,9 @@ function M.setup(opts)
     end
 
     local stored = M.storage[M.current_storage].load()
-    if stored and M.helpers[stored] then
-        M.set_helper(stored, true)
-    elseif M.helpers[M.default_helper] then
+    -- set_helper rejects (returns false for) uninstalled helpers, so fall back
+    -- to the default when the stored helper is missing or no longer present.
+    if not (stored and M.set_helper(stored, true)) and M.helpers[M.default_helper] then
         M.set_helper(M.default_helper, true)
     end
     vim.api.nvim_create_user_command("AIHelperSwitch", function(cmd_opts)
@@ -408,7 +433,7 @@ function M.setup(opts)
     end, {
         nargs = "?",
         complete = function()
-            return vim.tbl_keys(M.helpers)
+            return M.available_helpers()
         end,
         desc = "Switch AI helper",
     })
