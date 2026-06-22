@@ -327,6 +327,113 @@ local function is_claudecode_visible()
     return buf_visible(cc_term.get_active_terminal_bufnr())
 end
 
+-- Delete the TermClose handler before closing, else closing kills the job and its exit -1 is logged as a crash.
+-- Delete by id: the handler is in a snacks augroup, and a buffer-scoped nvim_clear_autocmds skips grouped autocmds.
+function M.kill_claude_terminal()
+    local ok, cc_term = pcall(require, "claudecode.terminal")
+    if not ok then
+        return false
+    end
+    local bufnr = cc_term.get_active_terminal_bufnr()
+    if not bufnr then
+        return false
+    end
+    for _, au in ipairs(vim.api.nvim_get_autocmds({ event = "TermClose", buffer = bufnr })) do
+        pcall(vim.api.nvim_del_autocmd, au.id)
+    end
+    cc_term.close()
+    return true
+end
+
+-- Claude subscription (work/personal) switcher.
+local sub = {
+    current = nil,
+    token = nil,
+    token_path = vim.fn.expand("~/.claude/personal-token"),
+}
+
+function M.claude_has_token_file()
+    return vim.fn.filereadable(sub.token_path) == 1
+end
+
+local function apply_sub(choice)
+    if choice == "personal" then
+        local f = io.open(sub.token_path, "r")
+        if not f then
+            vim.notify("Claude: token not found: " .. sub.token_path, vim.log.levels.ERROR)
+            return false
+        end
+        local raw = f:read("*all")
+        f:close()
+        if not raw then
+            vim.notify("Claude: failed to read token file: " .. sub.token_path, vim.log.levels.ERROR)
+            return false
+        end
+        local token = raw:match("^%s*(.-)%s*$")
+        if token == "" then
+            vim.notify("Claude: token file is empty: " .. sub.token_path, vim.log.levels.ERROR)
+            return false
+        end
+        sub.token = token
+    else
+        sub.token = nil
+    end
+    sub.current = choice
+    return true
+end
+
+-- Set the token only around the spawn, clearing even on error, so it never persists on the global env for children to inherit.
+local function run_claude(cmd)
+    vim.env.CLAUDE_CODE_OAUTH_TOKEN = sub.token
+    local ok, err = pcall(vim.cmd, cmd)
+    vim.env.CLAUDE_CODE_OAUTH_TOKEN = nil
+    if not ok then
+        error(err)
+    end
+end
+
+function M.claude_select_account(callback)
+    vim.ui.select({ "work", "personal" }, {
+        prompt = "Claude subscription:",
+        format_item = function(item)
+            return (item == sub.current and "● " or "○ ") .. item
+        end,
+    }, function(choice)
+        if not choice then
+            return
+        end
+        local prev = sub.current
+        if not apply_sub(choice) then
+            return
+        end
+        if prev and prev ~= choice then
+            local had_terminal = M.kill_claude_terminal()
+            vim.notify("Claude: " .. choice .. " (terminal restarted)", vim.log.levels.INFO)
+            if callback then
+                callback()
+            elseif had_terminal then
+                run_claude("ClaudeCode")
+            end
+        else
+            vim.notify("Claude: " .. choice, vim.log.levels.INFO)
+            if callback then
+                callback()
+            end
+        end
+    end)
+end
+
+function M.claude_toggle(cmd)
+    cmd = cmd or "ClaudeCode"
+    if sub.current then
+        run_claude(cmd)
+    else
+        M.claude_select_account(function()
+            run_claude(cmd)
+        end)
+    end
+end
+
 local function route_send(claude_action, helper_action)
     local claude = is_claudecode_visible()
     local helper = is_ai_helper_visible()

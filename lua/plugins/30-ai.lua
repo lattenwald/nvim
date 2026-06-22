@@ -17,6 +17,12 @@ return {
         config = function(_, opts)
             require("claudecode").setup(opts)
 
+            if require("config.ai_helpers").claude_has_token_file() then
+                vim.api.nvim_create_user_command("ClaudeAccount", function()
+                    require("config.ai_helpers").claude_select_account()
+                end, { desc = "Switch Claude subscription" })
+            end
+
             -- Set up buffer-local keymaps for claude-code diff context
             vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "OptionSet" }, {
                 group = vim.api.nvim_create_augroup("ClaudeCodeDiffKeymaps", { clear = true }),
@@ -85,13 +91,51 @@ return {
             })
         end,
         keys = {
-            { "<C-,>", "<cmd>ClaudeCode<cr>", mode = { "n", "t" }, desc = "Toggle Claude" },
-            { "<leader>,", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+            {
+                "<C-,>",
+                function()
+                    require("config.ai_helpers").claude_toggle()
+                end,
+                mode = { "n", "t" },
+                desc = "Toggle Claude",
+            },
+            {
+                "<leader>,",
+                function()
+                    require("config.ai_helpers").claude_toggle()
+                end,
+                desc = "Toggle Claude",
+            },
             { "<leader>w", nil, desc = "AI/Claude Code" },
-            { "<leader>wc", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
+            {
+                "<leader>wc",
+                function()
+                    require("config.ai_helpers").claude_toggle()
+                end,
+                desc = "Toggle Claude",
+            },
             { "<leader>wf", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
-            { "<leader>wr", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
-            { "<leader>wC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+            {
+                "<leader>wr",
+                function()
+                    require("config.ai_helpers").claude_toggle("ClaudeCode --resume")
+                end,
+                desc = "Resume Claude",
+            },
+            {
+                "<leader>wC",
+                function()
+                    require("config.ai_helpers").claude_toggle("ClaudeCode --continue")
+                end,
+                desc = "Continue Claude",
+            },
+            {
+                "<leader>wA",
+                function()
+                    require("config.ai_helpers").claude_select_account()
+                end,
+                desc = "Claude Account",
+            },
             {
                 "<leader>wt",
                 function()
