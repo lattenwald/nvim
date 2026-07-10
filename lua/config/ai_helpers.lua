@@ -373,45 +373,30 @@ end
 -- Claude subscription (work/personal) switcher.
 local sub = {
     current = nil,
-    token = nil,
-    token_path = vim.fn.expand("~/.claude/personal-token"),
+    config_dir = vim.fn.expand("~/.claude-personal"),
 }
 
-function M.claude_has_token_file()
-    return vim.fn.filereadable(sub.token_path) == 1
+function M.claude_has_personal_config()
+    return vim.fn.isdirectory(sub.config_dir) == 1
 end
 
 local function apply_sub(choice)
-    if choice == "personal" then
-        local f = io.open(sub.token_path, "r")
-        if not f then
-            vim.notify("Claude: token not found: " .. sub.token_path, vim.log.levels.ERROR)
-            return false
-        end
-        local raw = f:read("*all")
-        f:close()
-        if not raw then
-            vim.notify("Claude: failed to read token file: " .. sub.token_path, vim.log.levels.ERROR)
-            return false
-        end
-        local token = raw:match("^%s*(.-)%s*$")
-        if token == "" then
-            vim.notify("Claude: token file is empty: " .. sub.token_path, vim.log.levels.ERROR)
-            return false
-        end
-        sub.token = token
-    else
-        sub.token = nil
+    if choice == "personal" and not M.claude_has_personal_config() then
+        vim.notify("Claude: config dir not found: " .. sub.config_dir, vim.log.levels.ERROR)
+        return false
     end
     sub.current = choice
     return true
 end
 
--- Set the token only around the spawn, clearing even on error, so it never persists on the global env for children to inherit.
+-- Set the override only around the spawn, clearing even on error, so it never persists on the global env for children to inherit.
 local function run_claude(cmd)
-    vim.env.CLAUDE_CODE_OAUTH_TOKEN = sub.token
+    if sub.current == "personal" then
+        vim.fn.system({ "bash", vim.fn.expand("~/.claude/scripts/sync-personal-links.sh") })
+        vim.env.CLAUDE_CONFIG_DIR = sub.config_dir
+    end
     local ok, err = pcall(vim.cmd, cmd)
-    vim.env.CLAUDE_CODE_OAUTH_TOKEN = nil
+    vim.env.CLAUDE_CONFIG_DIR = nil
     if not ok then
         error(err)
     end
@@ -450,7 +435,7 @@ end
 
 function M.claude_toggle(cmd)
     cmd = cmd or "ClaudeCode"
-    if sub.current then
+    if sub.current or not M.claude_has_personal_config() then
         run_claude(cmd)
     else
         M.claude_select_account(function()

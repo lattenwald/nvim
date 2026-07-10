@@ -17,7 +17,7 @@ return {
         config = function(_, opts)
             require("claudecode").setup(opts)
 
-            if require("config.ai_helpers").claude_has_token_file() then
+            if require("config.ai_helpers").claude_has_personal_config() then
                 vim.api.nvim_create_user_command("ClaudeAccount", function()
                     require("config.ai_helpers").claude_select_account()
                 end, { desc = "Switch Claude subscription" })
