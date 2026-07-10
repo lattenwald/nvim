@@ -81,8 +81,9 @@ end, {
     complete = function(arg_lead)
         return vim.fn.getcompletion("DiffviewOpen " .. arg_lead, "cmdline")
     end,
+    desc = "Open Diffview",
 })
 
 vim.api.nvim_create_user_command("DC", function()
     vim.cmd("DiffviewClose")
-end, { nargs = 0 })
+end, { nargs = 0, desc = "Close Diffview" })
