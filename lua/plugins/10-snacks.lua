@@ -1,3 +1,18 @@
+local PREVIEW_SCROLL_LINES = 5
+local PREVIEW_PAGE_RATIO = 0.8
+
+-- Custom preview scroll; built-in preview_scroll_* jumps by 'scroll' (half a window)
+local function preview_scroll(picker, up, lines)
+    local win = picker.preview.win
+    if not (win and win:valid()) then
+        return
+    end
+    local count = lines or math.max(1, math.floor(vim.api.nvim_win_get_height(win.win) * PREVIEW_PAGE_RATIO))
+    vim.api.nvim_win_call(win.win, function()
+        vim.cmd(("normal! %d%s"):format(count, vim.keycode(up and "<C-y>" or "<C-e>")))
+    end)
+end
+
 return {
     {
         "folke/snacks.nvim",
@@ -52,16 +67,32 @@ return {
                 root = {
                     patterns = { ".git", "project-root" },
                 },
+                actions = {
+                    preview_scroll_lines_up = function(picker)
+                        preview_scroll(picker, true, PREVIEW_SCROLL_LINES)
+                    end,
+                    preview_scroll_lines_down = function(picker)
+                        preview_scroll(picker, false, PREVIEW_SCROLL_LINES)
+                    end,
+                    preview_scroll_page_up = function(picker)
+                        preview_scroll(picker, true)
+                    end,
+                    preview_scroll_page_down = function(picker)
+                        preview_scroll(picker, false)
+                    end,
+                },
                 win = {
                     input = {
                         keys = {
                             ["<s-enter>"] = { "edit_vsplit", mode = { "i", "n" } },
                             ["<c-s-enter>"] = { "edit_split", mode = { "i", "n" } },
                             ["<c-enter>"] = { "edit_tab", mode = { "i", "n" } },
-                            ["<S-PageDown>"] = { "preview_scroll_down", mode = { "i", "n" } },
-                            ["<S-PageUp>"] = { "preview_scroll_up", mode = { "i", "n" } },
+                            ["<S-PageDown>"] = { "preview_scroll_page_down", mode = { "i", "n" } },
+                            ["<S-PageUp>"] = { "preview_scroll_page_up", mode = { "i", "n" } },
                             ["<PageDown>"] = { "list_scroll_down", mode = { "i", "n" } },
                             ["<PageUp>"] = { "list_scroll_up", mode = { "i", "n" } },
+                            ["<S-Down>"] = { "preview_scroll_lines_down", mode = { "i", "n" } },
+                            ["<S-Up>"] = { "preview_scroll_lines_up", mode = { "i", "n" } },
                         },
                     },
                     list = {
