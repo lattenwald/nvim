@@ -129,6 +129,33 @@ return {
 
 
             { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
+            { "<leader>gu", function()
+                -- gitui checks GIT_EDITOR before core.editor/VISUAL/EDITOR, so this wins without touching them
+                local editor = "nvim --server " .. vim.v.servername .. " --remote-tab"
+                local term, created = Snacks.terminal.get("gitui", {
+                    win = { position = "float" },
+                    env = { GIT_EDITOR = editor },
+                })
+                if created then
+                    -- `e` jumps focus to the file, but the float would keep covering it
+                    vim.api.nvim_create_autocmd("BufLeave", {
+                        buffer = term.buf,
+                        callback = vim.schedule_wrap(function()
+                            if term:valid() then
+                                term:hide()
+                            end
+                        end),
+                    })
+                    return
+                end
+                -- `:tab split` leaves the float valid in another tab, where toggling would hide it out of sight
+                if term:valid() and not term:on_current_tab() then
+                    term:hide()
+                    term:show()
+                else
+                    term:toggle()
+                end
+            end, desc = "Gitui" },
 
             { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
 
@@ -248,29 +275,11 @@ return {
                 callback = trim_whitespace,
             })
 
-            -- Map Shift-Enter to <C-J> for Claude Code and Cursor to submit prompts,
-            -- and to escaped <CR> for other terminals
             vim.api.nvim_create_autocmd("TermOpen", {
                 pattern = "*",
                 callback = function()
                     local bufnr = vim.api.nvim_get_current_buf()
-                    vim.keymap.set("t", "<S-CR>", function()
-                        local buf = vim.api.nvim_get_current_buf()
-                        local bufname = vim.fn.bufname(buf)
-
-                        if bufname:match(":claude%f[%s%z]") then
-                            return "<C-J>"
-                        end
-
-                        local ai_helpers = require("config.ai_helpers")
-                        local helper_name = ai_helpers.get_helper_from_buffer(buf)
-
-                        if helper_name == "cursor" then
-                            return "<C-J>"
-                        else
-                            return "\\<CR>"
-                        end
-                    end, { buffer = bufnr, expr = true, desc = "Smart enter: <C-J> for cursor and claude, \\<CR> for others" })
+                    vim.keymap.set("t", "<S-CR>", "<C-J>", { buffer = bufnr, desc = "Newline without submit" })
 
                     -- Map Ctrl+. to toggle AI helper terminal in terminal mode
                     vim.keymap.set("t", "<C-.>", function()
