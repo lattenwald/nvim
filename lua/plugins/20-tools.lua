@@ -18,9 +18,12 @@ return {
                         return
                     end
                     if vim.treesitter.language.add(lang) then
-                        require("nvim-treesitter").install({ lang })
                         vim.treesitter.stop(args.buf)
                         vim.treesitter.start()
+                    elseif vim.list_contains(require("nvim-treesitter").get_available(), lang) then
+                        require("nvim-treesitter").install({ lang }):await(vim.schedule_wrap(function()
+                            vim.treesitter.start(args.buf, lang)
+                        end))
                     end
                 end,
             })
