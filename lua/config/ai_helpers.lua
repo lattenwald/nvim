@@ -65,13 +65,86 @@ M.helpers = {
         name = "Cursor",
         cmd = "cursor-agent",
         icon = "",
-        send_format = "text",
+        send_format = "file_line",
+    },
+    opencode = {
+        name = "OpenCode",
+        cmd = "opencode",
+        icon = "󱚟",
+        send_format = "file_line",
     },
 }
 
 M.current_helper = nil
 M.default_helper = ""
 M.terminal_instances = {}
+
+-- Machine-local map of helper -> env var -> pass entry, e.g.
+--   opencode:
+--     OPENROUTER_API_KEY: api/openrouter
+local env_file = vim.fn.stdpath("data") .. "/ai_helper_env.yaml"
+local env_cache = nil
+local env_cache_mtime = nil
+-- Resolved values, cached for the session so gpg-agent is hit once per entry.
+local secrets = {}
+
+-- Memoized; reloaded whenever ai_helper_env.yaml's mtime changes.
+local function read_env_map()
+    local stat = (vim.uv or vim.loop).fs_stat(env_file)
+    local mtime = stat and stat.mtime
+    if env_cache and env_cache_mtime and mtime and env_cache_mtime.sec == mtime.sec and env_cache_mtime.nsec == mtime.nsec then
+        return env_cache
+    end
+
+    local result = {}
+    -- Required lazily to keep lyaml off the startup path.
+    local yaml_ok, yaml = pcall(require, "lyaml")
+    local file = yaml_ok and io.open(env_file, "r")
+    if file then
+        local content = file:read("*a")
+        file:close()
+        if content ~= "" then
+            local ok, parsed = pcall(yaml.load, content)
+            if ok and type(parsed) == "table" then
+                result = parsed
+            else
+                vim.notify("Failed to parse " .. env_file, vim.log.levels.ERROR)
+            end
+        end
+    end
+
+    env_cache = result
+    env_cache_mtime = mtime
+    return result
+end
+
+-- false marks a failed lookup so a broken entry isn't retried on every spawn.
+local function pass_show(entry)
+    if secrets[entry] == nil then
+        local ok, res = pcall(function()
+            return vim.system({ "pass", "show", entry }, { text = true }):wait(15000)
+        end)
+        if ok and res.code == 0 then
+            secrets[entry] = vim.split(res.stdout, "\n")[1]
+        else
+            secrets[entry] = false
+            vim.notify("pass: could not read " .. entry, vim.log.levels.ERROR)
+        end
+    end
+    return secrets[entry] or nil
+end
+
+local function helper_env(helper_name)
+    local mapping = read_env_map()[helper_name]
+    if type(mapping) ~= "table" then
+        return nil
+    end
+    local env = {}
+    for var, entry in pairs(mapping) do
+        env[var] = pass_show(entry)
+    end
+    return next(env) and env or nil
+end
 
 function M.get_current()
     return M.current_helper
@@ -207,7 +280,7 @@ local function get_or_create_terminal(cmd)
         return term, false
     end
 
-    local term_opts = { cwd = vim.fn.getcwd() }
+    local term_opts = { cwd = vim.fn.getcwd(), env = helper_env(helper_name) }
 
     if M.terminal_config.type == "split" then
         local pos = M.terminal_config.position
