@@ -295,19 +295,21 @@ local function get_or_create_terminal(cmd)
     term = Snacks.terminal(cmd, term_opts)
     M.terminal_instances[helper_name] = term
     term.ai_helper = helper_name
+    -- Spawn cwd, kept for relative sends: nvim's cwd drifts via autochdir while the agent stays here
+    term.ai_cwd = term_opts.cwd
 
     return term, true
 end
 
-local function helper_filename(helper)
-    return helper.absolute_path and vim.fn.expand("%:p") or vim.fn.expand("%:.")
+-- abs is captured by callers before the terminal takes focus
+local function helper_filename(helper, abs, cwd)
+    if helper.absolute_path then
+        return abs
+    end
+    return vim.fs.relpath(cwd or vim.fn.getcwd(), abs) or abs
 end
 
-local function send_to_terminal(cmd, write)
-    local term = get_or_create_terminal(cmd)
-    if not term then
-        return
-    end
+local function send_to_terminal(term, write)
     term:show()
     write(vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id"))
     if term.win and vim.api.nvim_win_is_valid(term.win) then
@@ -343,7 +345,7 @@ function M.send_selection()
         return
     end
 
-    local file = helper_filename(helper)
+    local abs = vim.fn.expand("%:p")
 
     if helper.send_format == "file_line" then
         -- Claude Code format: @file#L1 or @file#L1-5
@@ -351,12 +353,18 @@ function M.send_selection()
         local start_line = start_pos[2]
         local end_line = end_pos[2]
 
+        local term = get_or_create_terminal(helper.cmd)
+        if not term then
+            return
+        end
+        local file = helper_filename(helper, abs, term.ai_cwd)
+
         local location = "@" .. file .. "#L" .. start_line
         if start_line ~= end_line then
             location = location .. "-" .. end_line
         end
 
-        send_to_terminal(helper.cmd, function(chan)
+        send_to_terminal(term, function(chan)
             vim.api.nvim_chan_send(chan, location .. " ")
         end)
     else
@@ -366,9 +374,15 @@ function M.send_selection()
             return
         end
 
+        local term = get_or_create_terminal(helper.cmd)
+        if not term then
+            return
+        end
+        local file = helper_filename(helper, abs, term.ai_cwd)
+
         local header = "--- " .. file .. ":" .. start_pos[2] .. "-" .. end_pos[2] .. "\n"
 
-        send_to_terminal(helper.cmd, function(chan)
+        send_to_terminal(term, function(chan)
             vim.api.nvim_chan_send(chan, header)
             for line in selection:gmatch("[^\n]+") do
                 vim.api.nvim_chan_send(chan, line .. "\n")
@@ -385,9 +399,14 @@ function M.send_buffer()
         return
     end
 
-    local file = helper_filename(helper)
+    local abs = vim.fn.expand("%:p")
+    local term = get_or_create_terminal(helper.cmd)
+    if not term then
+        return
+    end
+    local file = helper_filename(helper, abs, term.ai_cwd)
 
-    send_to_terminal(helper.cmd, function(chan)
+    send_to_terminal(term, function(chan)
         vim.api.nvim_chan_send(chan, "@" .. file .. " ")
     end)
 end
