@@ -23,69 +23,29 @@ return {
                 end, { desc = "Switch Claude subscription" })
             end
 
-            -- Set up buffer-local keymaps for claude-code diff context
-            vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "OptionSet" }, {
+            -- Buffer-local diff keymaps, matching the gitsigns h* pattern
+            local diff_keys = {
+                ["hs"] = { "<cmd>ClaudeCodeDiffAccept<cr>", "Accept (stage) diff" },
+                ["<leader>ha"] = { "<cmd>ClaudeCodeDiffAccept<cr>", "Accept all diffs" },
+                ["<leader>wa"] = { "<cmd>ClaudeCodeDiffAccept<cr>", "Accept diff" },
+                ["<leader>hr"] = { "<cmd>ClaudeCodeDiffDeny<cr>", "Reset (deny) diff" },
+                ["<leader>hd"] = { "<cmd>ClaudeCodeDiffDeny<cr>", "Deny all diffs" },
+                ["<leader>wd"] = { "<cmd>ClaudeCodeDiffDeny<cr>", "Deny diff" },
+                ["<leader>hp"] = { "<cmd>normal! zR<cr>", "Open all folds in diff" },
+            }
+
+            -- ClaudeCodeDiffOpened fires once per diff with the proposed-edit window (see claudecode README)
+            vim.api.nvim_create_autocmd("User", {
                 group = vim.api.nvim_create_augroup("ClaudeCodeDiffKeymaps", { clear = true }),
-                pattern = { "*", "diff" },
-                callback = function()
-                    local current_buf = vim.api.nvim_get_current_buf()
-
-                    -- Multiple ways to detect diff mode
-                    local is_diff_mode = vim.wo.diff
-                        or vim.opt_local.diff:get()
-                        or vim.api.nvim_win_get_option(0, "diff")
-                        or vim.fn.getwinvar(0, "&diff") == 1
-
-                    -- Check if we're in a claude-code diff context
-                    local is_claude_diff = vim.b[current_buf].claudecode_diff_tab_name ~= nil
-                        or vim.b[current_buf].claudecode_diff_new_win ~= nil
-                        or (vim.fn.bufname() or ""):match("%.new$")
-                        or (vim.fn.bufname() or ""):match("%(New%)")
-                        or (vim.fn.bufname() or ""):match("%(proposed%)")
-
-                    if is_diff_mode and is_claude_diff then
-                        -- Buffer-local keymaps matching gitsigns pattern
-                        local opts = { buffer = current_buf, silent = true }
-
-                        -- Navigation (like gitsigns ]c/[c)
-                        vim.keymap.set("n", "]c", function()
-                            if vim.wo.diff then
-                                vim.cmd.normal({ "]c", bang = true })
-                            end
-                        end, vim.tbl_extend("force", opts, { desc = "Next diff hunk" }))
-
-                        vim.keymap.set("n", "[c", function()
-                            if vim.wo.diff then
-                                vim.cmd.normal({ "[c", bang = true })
-                            end
-                        end, vim.tbl_extend("force", opts, { desc = "Previous diff hunk" }))
-
-                        -- Hunk operations (like gitsigns h* pattern)
-                        vim.keymap.set("n", "hs", "<cmd>ClaudeCodeDiffAccept<cr>", vim.tbl_extend("force", opts, { desc = "Accept (stage) diff" }))
-                        vim.keymap.set(
-                            "n",
-                            "<leader>hr",
-                            "<cmd>ClaudeCodeDiffDeny<cr>",
-                            vim.tbl_extend("force", opts, { desc = "Reset (deny) diff" })
-                        )
-                        vim.keymap.set("n", "<leader>hp", function()
-                            -- Preview current hunk in diff mode
-                            if vim.wo.diff then
-                                vim.cmd("normal! zR") -- Open all folds to see diff
-                            end
-                        end, vim.tbl_extend("force", opts, { desc = "Preview diff hunk" }))
-
-                        -- Additional claude-code specific operations
-                        vim.keymap.set(
-                            "n",
-                            "<leader>ha",
-                            "<cmd>ClaudeCodeDiffAccept<cr>",
-                            vim.tbl_extend("force", opts, { desc = "Accept all diffs" })
-                        )
-                        vim.keymap.set("n", "<leader>hd", "<cmd>ClaudeCodeDiffDeny<cr>", vim.tbl_extend("force", opts, { desc = "Deny all diffs" }))
-
-                        vim.keymap.set("n", "<leader>wa", "<cmd>ClaudeCodeDiffAccept<cr>", vim.tbl_extend("force", opts, { desc = "Accept diff" }))
-                        vim.keymap.set("n", "<leader>wd", "<cmd>ClaudeCodeDiffDeny<cr>", vim.tbl_extend("force", opts, { desc = "Deny diff" }))
+                pattern = "ClaudeCodeDiffOpened",
+                callback = function(ev)
+                    local win = ev.data and ev.data.diff_window
+                    if not (win and vim.api.nvim_win_is_valid(win)) then
+                        return
+                    end
+                    local buf = vim.api.nvim_win_get_buf(win)
+                    for lhs, spec in pairs(diff_keys) do
+                        vim.keymap.set("n", lhs, spec[1], { buffer = buf, silent = true, desc = spec[2] })
                     end
                 end,
             })

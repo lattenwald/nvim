@@ -147,15 +147,20 @@ function M.current_repo_name()
     return project_root and vim.fs.basename(project_root) or nil
 end
 
-function M.load_yaml(path)
+-- silent: no warning for a missing file or missing lyaml; parse errors always notify.
+function M.load_yaml(path, silent)
     local ok, yaml = pcall(require, "lyaml")
     if not ok then
-        vim.notify("lyaml not available - install via luarocks.nvim", vim.log.levels.WARN)
+        if not silent then
+            vim.notify("lyaml not available - install via luarocks.nvim", vim.log.levels.WARN)
+        end
         return nil
     end
     local file = io.open(path, "r")
     if not file then
-        vim.notify("Failed to open YAML file: " .. path, vim.log.levels.ERROR)
+        if not silent then
+            vim.notify("Failed to open YAML file: " .. path, vim.log.levels.ERROR)
+        end
         return nil
     end
     local content = file:read("*a")
@@ -165,7 +170,7 @@ function M.load_yaml(path)
     end
     local success, result = pcall(yaml.load, content)
     if not success or not result then
-        vim.notify("Failed to parse YAML file", vim.log.levels.ERROR)
+        vim.notify("Failed to parse YAML file: " .. path, vim.log.levels.ERROR)
         return nil
     end
     return result

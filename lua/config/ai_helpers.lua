@@ -1,38 +1,17 @@
 local M = {}
 
--- Storage backends for persisting selected helper
-M.storage = {
-    memory = {
-        data = nil,
-        save = function(helper_name)
-            M.storage.memory.data = helper_name
-        end,
-        load = function()
-            return M.storage.memory.data
-        end,
-    },
-    file = {
-        path = vim.fn.stdpath("data") .. "/ai_helper_selection.txt",
-        save = function(helper_name)
-            local file = io.open(M.storage.file.path, "w")
-            if file then
-                file:write(helper_name)
-                file:close()
-            end
-        end,
-        load = function()
-            local file = io.open(M.storage.file.path, "r")
-            if file then
-                local content = file:read("*all")
-                file:close()
-                return content:match("^%s*(.-)%s*$")
-            end
-            return nil
-        end,
-    },
-}
+-- Selected helper, persisted across sessions.
+local selection_file = vim.fn.stdpath("data") .. "/ai_helper_selection.txt"
 
-M.current_storage = "memory" -- can be changed to "file" for persistence
+local function save_selection(helper_name)
+    pcall(vim.fn.writefile, { helper_name }, selection_file)
+end
+
+local function load_selection()
+    local ok, lines = pcall(vim.fn.readfile, selection_file)
+    local name = ok and lines[1]
+    return name and vim.trim(name) or nil
+end
 
 -- Terminal configuration (can be overridden in setup)
 M.terminal_config = {
@@ -47,37 +26,33 @@ M.helpers = {
         name = "Antigravity",
         cmd = "agy --add-dir .",
         icon = "󰊭",
-        send_format = "file_line",
     },
     droid = {
         name = "Droid",
         cmd = "droid",
         icon = "󰚩",
-        send_format = "file_line",
     },
     codex = {
         name = "Codex",
         cmd = "codex",
         icon = "󰧑",
-        send_format = "file_line",
     },
     cursor = {
         name = "Cursor",
         cmd = "cursor-agent",
-        icon = "",
-        send_format = "file_line",
+        icon = "",
     },
     opencode = {
         name = "OpenCode",
         cmd = "opencode",
         icon = "󱚟",
-        send_format = "file_line",
     },
 }
 
 M.current_helper = nil
-M.default_helper = ""
 M.terminal_instances = {}
+
+local default_helper = nil
 
 -- Machine-local map of helper -> env var -> pass entry, e.g.
 --   opencode:
@@ -96,26 +71,12 @@ local function read_env_map()
         return env_cache
     end
 
-    local result = {}
-    -- Required lazily to keep lyaml off the startup path.
-    local yaml_ok, yaml = pcall(require, "lyaml")
-    local file = yaml_ok and io.open(env_file, "r")
-    if file then
-        local content = file:read("*a")
-        file:close()
-        if content ~= "" then
-            local ok, parsed = pcall(yaml.load, content)
-            if ok and type(parsed) == "table" then
-                result = parsed
-            else
-                vim.notify("Failed to parse " .. env_file, vim.log.levels.ERROR)
-            end
-        end
-    end
+    -- Silent: the file is optional. load_yaml requires lyaml lazily, keeping it off the startup path.
+    local parsed = require("config.utils").load_yaml(env_file, true)
 
-    env_cache = result
+    env_cache = type(parsed) == "table" and parsed or {}
     env_cache_mtime = mtime
-    return result
+    return env_cache
 end
 
 -- false marks a failed lookup so a broken entry isn't retried on every spawn.
@@ -146,10 +107,6 @@ local function helper_env(helper_name)
     return next(env) and env or nil
 end
 
-function M.get_current()
-    return M.current_helper
-end
-
 function M.get_current_config()
     if M.current_helper then
         return M.helpers[M.current_helper]
@@ -158,9 +115,13 @@ function M.get_current_config()
 end
 
 -- cmd may carry args (e.g. "agy --add-dir ."), so match only the binary token
+local function helper_bin(helper)
+    return helper.cmd:match("^%S+")
+end
+
 function M.is_available(helper_name)
     local helper = M.helpers[helper_name]
-    return helper ~= nil and vim.fn.executable(helper.cmd:match("^%S+")) == 1
+    return helper ~= nil and vim.fn.executable(helper_bin(helper)) == 1
 end
 
 function M.available_helpers()
@@ -185,10 +146,7 @@ function M.set_helper(helper_name, skip_notify)
     end
 
     M.current_helper = helper_name
-
-    if M.storage[M.current_storage] then
-        M.storage[M.current_storage].save(helper_name)
-    end
+    save_selection(helper_name)
 
     if not skip_notify then
         vim.notify("AI Helper: " .. M.helpers[helper_name].name, vim.log.levels.INFO)
@@ -229,54 +187,26 @@ end
 -- Visual marks '< and '> are only set after leaving visual mode (:help '<).
 -- When invoked via lazy.nvim's first-load stub the marks may still be [0,0,0,0],
 -- so we read live positions while in visual mode and fall back to marks otherwise.
-local function visual_bounds()
+local function visual_lines()
     local mode = vim.fn.mode()
-    local s_pos, e_pos
+    local first, last
     if mode == "v" or mode == "V" or mode == "\22" then
-        s_pos = vim.fn.getpos("v")
-        e_pos = vim.fn.getpos(".")
+        first, last = vim.fn.getpos("v")[2], vim.fn.getpos(".")[2]
     else
-        s_pos = vim.fn.getpos("'<")
-        e_pos = vim.fn.getpos("'>")
+        first, last = vim.fn.getpos("'<")[2], vim.fn.getpos("'>")[2]
     end
-    if s_pos[2] > e_pos[2] or (s_pos[2] == e_pos[2] and s_pos[3] > e_pos[3]) then
-        s_pos, e_pos = e_pos, s_pos
+    if first > last then
+        first, last = last, first
     end
-    if mode == "V" then
-        s_pos[3] = 1
-        e_pos[3] = vim.v.maxcol
-    end
-    return s_pos, e_pos
+    return first, last
 end
 
-function M.get_selection()
-    local start_pos, end_pos = visual_bounds()
-    local lines = vim.fn.getline(start_pos[2], end_pos[2])
-
-    if #lines == 0 then
-        return nil, start_pos, end_pos
-    end
-
-    if #lines == 1 then
-        lines[1] = string.sub(lines[1], start_pos[3], end_pos[3])
-    else
-        lines[1] = string.sub(lines[1], start_pos[3])
-        lines[#lines] = string.sub(lines[#lines], 1, end_pos[3])
-    end
-
-    return table.concat(lines, "\n"), start_pos, end_pos
-end
-
--- Snacks terminal exposes buf as a number on some versions and as a table on others
-local function term_bufnr(term)
-    return type(term.buf) == "number" and term.buf or term.buf.buf
-end
-
+-- A hidden terminal keeps its buffer but has no window, so reuse on buf_valid.
 local function get_or_create_terminal(cmd)
     local helper_name = M.current_helper
     local term = M.terminal_instances[helper_name]
 
-    if term and term:valid() then
+    if term and term:buf_valid() then
         return term, false
     end
 
@@ -301,21 +231,28 @@ local function get_or_create_terminal(cmd)
     return term, true
 end
 
--- abs is captured by callers before the terminal takes focus
-local function helper_filename(helper, abs, cwd)
-    if helper.absolute_path then
-        return abs
+-- The buffer path must be read before the terminal takes focus.
+local function terminal_and_file()
+    local helper = M.get_current_config()
+    if not helper then
+        vim.notify("No AI helper selected. Use :AIHelperSwitch", vim.log.levels.WARN)
+        return nil
     end
-    return vim.fs.relpath(cwd or vim.fn.getcwd(), abs) or abs
+
+    local abs = vim.fn.expand("%:p")
+    local term = get_or_create_terminal(helper.cmd)
+    if not term then
+        return nil
+    end
+
+    return term, vim.fs.relpath(term.ai_cwd or vim.fn.getcwd(), abs) or abs
 end
 
 local function send_to_terminal(term, write)
     term:show()
-    write(vim.api.nvim_buf_get_var(term_bufnr(term), "terminal_job_id"))
-    if term.win and vim.api.nvim_win_is_valid(term.win) then
-        vim.api.nvim_set_current_win(term.win)
-        vim.cmd("startinsert")
-    end
+    write(vim.b[term.buf].terminal_job_id)
+    term:focus()
+    vim.cmd("startinsert")
 end
 
 function M.toggle_terminal()
@@ -327,84 +264,34 @@ function M.toggle_terminal()
 
     local term, created = get_or_create_terminal(helper.cmd)
     -- Newly created terminals are already shown by Snacks.terminal()
-    if not term or created then
-        return
-    end
-    local win_visible = term.win and vim.api.nvim_win_is_valid(term.win)
-    if win_visible then
-        term:hide()
-    else
-        term:show()
+    if term and not created then
+        term:toggle()
     end
 end
 
+-- Claude Code format: @file#L1 or @file#L1-5
 function M.send_selection()
-    local helper = M.get_current_config()
-    if not helper then
-        vim.notify("No AI helper selected. Use :AIHelperSwitch", vim.log.levels.WARN)
-        return
-    end
-
-    local abs = vim.fn.expand("%:p")
-
-    if helper.send_format == "file_line" then
-        -- Claude Code format: @file#L1 or @file#L1-5
-        local start_pos, end_pos = visual_bounds()
-        local start_line = start_pos[2]
-        local end_line = end_pos[2]
-
-        local term = get_or_create_terminal(helper.cmd)
-        if not term then
-            return
-        end
-        local file = helper_filename(helper, abs, term.ai_cwd)
-
-        local location = "@" .. file .. "#L" .. start_line
-        if start_line ~= end_line then
-            location = location .. "-" .. end_line
-        end
-
-        send_to_terminal(term, function(chan)
-            vim.api.nvim_chan_send(chan, location .. " ")
-        end)
-    else
-        local selection, start_pos, end_pos = M.get_selection()
-        if not selection then
-            vim.notify("No selection found", vim.log.levels.WARN)
-            return
-        end
-
-        local term = get_or_create_terminal(helper.cmd)
-        if not term then
-            return
-        end
-        local file = helper_filename(helper, abs, term.ai_cwd)
-
-        local header = "--- " .. file .. ":" .. start_pos[2] .. "-" .. end_pos[2] .. "\n"
-
-        send_to_terminal(term, function(chan)
-            vim.api.nvim_chan_send(chan, header)
-            for line in selection:gmatch("[^\n]+") do
-                vim.api.nvim_chan_send(chan, line .. "\n")
-            end
-            vim.api.nvim_chan_send(chan, "---\n")
-        end)
-    end
-end
-
-function M.send_buffer()
-    local helper = M.get_current_config()
-    if not helper then
-        vim.notify("No AI helper selected. Use :AIHelperSwitch", vim.log.levels.WARN)
-        return
-    end
-
-    local abs = vim.fn.expand("%:p")
-    local term = get_or_create_terminal(helper.cmd)
+    local start_line, end_line = visual_lines()
+    local term, file = terminal_and_file()
     if not term then
         return
     end
-    local file = helper_filename(helper, abs, term.ai_cwd)
+
+    local location = "@" .. file .. "#L" .. start_line
+    if start_line ~= end_line then
+        location = location .. "-" .. end_line
+    end
+
+    send_to_terminal(term, function(chan)
+        vim.api.nvim_chan_send(chan, location .. " ")
+    end)
+end
+
+function M.send_buffer()
+    local term, file = terminal_and_file()
+    if not term then
+        return
+    end
 
     send_to_terminal(term, function(chan)
         vim.api.nvim_chan_send(chan, "@" .. file .. " ")
@@ -415,7 +302,7 @@ function M.get_helper_from_buffer(bufnr)
     bufnr = bufnr or vim.api.nvim_get_current_buf()
 
     for helper_name, term in pairs(M.terminal_instances) do
-        if term and term:valid() and term_bufnr(term) == bufnr then
+        if term and term:buf_valid() and term.buf == bufnr then
             return helper_name
         end
     end
@@ -429,36 +316,52 @@ end
 
 local function is_ai_helper_visible()
     for _, term in pairs(M.terminal_instances) do
-        if term and term:valid() and buf_visible(term_bufnr(term)) then
+        if term and term:buf_valid() and buf_visible(term.buf) then
             return true
         end
     end
     return false
 end
 
+local function cc_bufnr()
+    local ok, cc = pcall(require, "claudecode.terminal")
+    return ok and cc.get_active_terminal_bufnr() or nil
+end
+
 local function is_claudecode_visible()
-    local ok, cc_term = pcall(require, "claudecode.terminal")
-    if not ok then
-        return false
+    return buf_visible(cc_bufnr())
+end
+
+-- Which agent owns a buffer: helper name, "claude", or nil.
+function M.agent_for_buf(bufnr)
+    return M.get_helper_from_buffer(bufnr) or (cc_bufnr() == bufnr and "claude" or nil)
+end
+
+local ai_cmd_set = nil
+
+-- Binary names that mark an AI terminal we don't own: claude plus every helper command.
+function M.ai_commands()
+    if not ai_cmd_set then
+        ai_cmd_set = { claude = true }
+        for _, helper in pairs(M.helpers) do
+            ai_cmd_set[vim.fs.basename(helper_bin(helper))] = true
+        end
     end
-    return buf_visible(cc_term.get_active_terminal_bufnr())
+    return ai_cmd_set
 end
 
 -- Delete the TermClose handler before closing, else closing kills the job and its exit -1 is logged as a crash.
 -- Delete by id: the handler is in a snacks augroup, and a buffer-scoped nvim_clear_autocmds skips grouped autocmds.
 function M.kill_claude_terminal()
-    local ok, cc_term = pcall(require, "claudecode.terminal")
-    if not ok then
-        return false
-    end
-    local bufnr = cc_term.get_active_terminal_bufnr()
+    local ok, cc = pcall(require, "claudecode.terminal")
+    local bufnr = ok and cc.get_active_terminal_bufnr()
     if not bufnr then
         return false
     end
     for _, au in ipairs(vim.api.nvim_get_autocmds({ event = "TermClose", buffer = bufnr })) do
         pcall(vim.api.nvim_del_autocmd, au.id)
     end
-    cc_term.close()
+    cc.close()
     return true
 end
 
@@ -563,9 +466,8 @@ end
 
 function M.smart_send_selection()
     route_send(function()
-        -- Explicit range, not '<,'>: marks aren't set on the first lazy call, but visual_bounds() reads live positions.
-        local start_pos, end_pos = visual_bounds()
-        vim.cmd(string.format("%d,%dClaudeCodeSend", start_pos[2], end_pos[2]))
+        -- Explicit range, not '<,'>: marks aren't set on the first lazy call, but visual_lines() reads live positions.
+        vim.cmd(string.format("%d,%dClaudeCodeSend", visual_lines()))
     end, M.send_selection)
 end
 
@@ -587,11 +489,7 @@ function M.setup(opts)
     opts = opts or {}
 
     if opts.default_helper then
-        M.default_helper = opts.default_helper
-    end
-
-    if opts.storage then
-        M.current_storage = opts.storage
+        default_helper = opts.default_helper
     end
 
     if opts.terminal then
@@ -600,13 +498,14 @@ function M.setup(opts)
 
     if opts.helpers then
         M.helpers = vim.tbl_deep_extend("force", M.helpers, opts.helpers)
+        ai_cmd_set = nil
     end
 
-    local stored = M.storage[M.current_storage].load()
+    local stored = load_selection()
     -- set_helper rejects (returns false for) uninstalled helpers, so fall back
     -- to the default when the stored helper is missing or no longer present.
-    if not (stored and M.set_helper(stored, true)) and M.helpers[M.default_helper] then
-        M.set_helper(M.default_helper, true)
+    if not (stored and M.set_helper(stored, true)) and M.helpers[default_helper] then
+        M.set_helper(default_helper, true)
     end
     vim.api.nvim_create_user_command("AIHelperSwitch", function(cmd_opts)
         if cmd_opts.args ~= "" then
@@ -622,17 +521,11 @@ function M.setup(opts)
         desc = "Switch AI helper",
     })
 
-    vim.api.nvim_create_user_command("AIHelperToggle", function()
-        M.toggle_terminal()
-    end, { desc = "Toggle AI helper terminal" })
+    vim.api.nvim_create_user_command("AIHelperToggle", M.toggle_terminal, { desc = "Toggle AI helper terminal" })
 
-    vim.api.nvim_create_user_command("AIHelperSend", function()
-        M.send_selection()
-    end, { desc = "Send selection to AI helper", range = true })
+    vim.api.nvim_create_user_command("AIHelperSend", M.send_selection, { desc = "Send selection to AI helper", range = true })
 
-    vim.api.nvim_create_user_command("AIHelperSendBuffer", function()
-        M.send_buffer()
-    end, { desc = "Send current buffer to AI helper" })
+    vim.api.nvim_create_user_command("AIHelperSendBuffer", M.send_buffer, { desc = "Send current buffer to AI helper" })
 end
 
 return M

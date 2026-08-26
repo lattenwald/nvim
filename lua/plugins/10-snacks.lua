@@ -253,8 +253,7 @@ return {
         init = function()
             -- Setup AI helpers
             require("config.ai_helpers").setup({
-                storage = "file", -- or "file" for persistence across sessions
-                default_helper = "gemini",
+                default_helper = "opencode",
                 terminal = {
                     type = "split", -- "float" or "split"
                     position = "right", -- for split: "right", "left", "top", "bottom"
@@ -280,11 +279,6 @@ return {
                 callback = function()
                     local bufnr = vim.api.nvim_get_current_buf()
                     vim.keymap.set("t", "<S-CR>", "<C-J>", { buffer = bufnr, desc = "Newline without submit" })
-
-                    -- Map Ctrl+. to toggle AI helper terminal in terminal mode
-                    vim.keymap.set("t", "<C-.>", function()
-                        require("config.ai_helpers").toggle_terminal()
-                    end, { buffer = bufnr, desc = "Toggle AI Terminal" })
                 end,
             })
 

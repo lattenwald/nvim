@@ -104,23 +104,6 @@ local function term_command(bufnr)
     return base ~= "" and base or first
 end
 
--- Command names that mark an AI terminal: claude plus the ai_helpers commands.
-local function ai_commands()
-    local set = { claude = true }
-    local ok, ai = pcall(require, "config.ai_helpers")
-    if ok and type(ai.helpers) == "table" then
-        for _, helper in pairs(ai.helpers) do
-            if type(helper) == "table" and type(helper.cmd) == "string" then
-                local first = helper.cmd:match("^%S+")
-                if first then
-                    set[vim.fs.basename(first)] = true
-                end
-            end
-        end
-    end
-    return set
-end
-
 -- AI(<cmd>) / term(<cmd>) for a terminal buffer, or nil for non-terminals.
 local function terminal_label(bufnr)
     if vim.bo[bufnr].buftype ~= "terminal" then
@@ -128,26 +111,14 @@ local function terminal_label(bufnr)
     end
 
     local cmd = term_command(bufnr)
-    local is_ai = false
-
     local ok, ai = pcall(require, "config.ai_helpers")
-    if ok and type(ai.get_helper_from_buffer) == "function" and ai.get_helper_from_buffer(bufnr) then
-        is_ai = true
+    local owner = ok and ai.agent_for_buf(bufnr) or nil
+
+    if owner == "claude" and (not cmd or cmd == "") then
+        cmd = "claude"
     end
 
-    if not is_ai then
-        local cc_ok, cc = pcall(require, "claudecode.terminal")
-        if cc_ok and type(cc.get_active_terminal_bufnr) == "function" and cc.get_active_terminal_bufnr() == bufnr then
-            is_ai = true
-            if not cmd or cmd == "" then
-                cmd = "claude"
-            end
-        end
-    end
-
-    if not is_ai and cmd and ai_commands()[cmd] then
-        is_ai = true
-    end
+    local is_ai = owner ~= nil or (ok and cmd ~= nil and ai.ai_commands()[cmd] == true)
 
     cmd = cmd or "term"
     return (is_ai and "AI(" or "term(") .. cmd .. ")"
