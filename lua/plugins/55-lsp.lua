@@ -18,7 +18,6 @@ return {
             vim.api.nvim_create_autocmd("LspAttach", {
                 callback = function(ev)
                     local bufnr = ev.buf
-                    print("LS attached buf=" .. bufnr .. " client=" .. vim.lsp.get_client_by_id(ev.data.client_id).name)
                     vim.keymap.set("n", "<leader>n", function()
                         return ":IncRename " .. vim.fn.expand("<cword>")
                     end, { buffer = bufnr, expr = true, desc = "LSP rename symbol" })

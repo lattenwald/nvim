@@ -1,10 +1,12 @@
 -- Mute LSP diagnostics per client and severity via a wrapped vim.diagnostic.set,
--- so muted diagnostics disappear everywhere (signs, virtual text, pickers, statusline)
+-- so muted diagnostics disappear everywhere (signs, virtual text, pickers, statusline).
+-- vim.diagnostic.config() can't do this: it never reaches vim.diagnostic.get().
 local M = {}
 
+-- Indexed by severity: vim.diagnostic.severity is 1-4 in this order
 local SEVERITIES = { "ERROR", "WARN", "INFO", "HINT" }
 
--- muted[client_name][severity] = true
+-- muted[client_name][severity] = true; a client with nothing muted is dropped entirely
 local muted = {}
 
 -- Unfiltered diagnostics per namespace+buffer, so unmuting restores instantly
@@ -18,24 +20,16 @@ local orig_set = vim.diagnostic.set
 
 -- LSP namespaces are named "nvim.lsp.<client_name>.<client_id>[.provider]"
 local function client_name_for_ns(ns)
-    if ns_client[ns] ~= nil then
-        return ns_client[ns] or nil
+    if ns_client[ns] == nil then
+        local info = vim.diagnostic.get_namespaces()[ns]
+        ns_client[ns] = info and info.name and info.name:match("^nvim%.lsp%.(.-)%.%d+") or false
     end
-    local info = vim.diagnostic.get_namespaces()[ns]
-    local ns_name = info and info.name or ""
-    for _, client in ipairs(vim.lsp.get_clients()) do
-        local prefix = ("nvim.lsp.%s.%d"):format(client.name, client.id)
-        if ns_name == prefix or vim.startswith(ns_name, prefix .. ".") then
-            ns_client[ns] = client.name
-            return client.name
-        end
-    end
-    ns_client[ns] = false
+    return ns_client[ns] or nil
 end
 
 local function filter(name, diagnostics)
     local m = muted[name]
-    if not m or next(m) == nil then
+    if not m then
         return diagnostics
     end
     return vim.tbl_filter(function(d)
@@ -73,12 +67,11 @@ local function diagnostic_counts()
     for ns, bufs in pairs(cache) do
         local name = ns_client[ns]
         if name then
-            local c = counts[name] or {}
-            counts[name] = c
+            counts[name] = counts[name] or {}
             for bufnr, diags in pairs(bufs) do
                 if vim.api.nvim_buf_is_valid(bufnr) then
                     for _, d in ipairs(diags) do
-                        c[d.severity] = (c[d.severity] or 0) + 1
+                        counts[name][d.severity] = (counts[name][d.severity] or 0) + 1
                     end
                 end
             end
@@ -91,33 +84,54 @@ function M.is_muted(name, severity)
     return muted[name] and muted[name][severity] or false
 end
 
+-- Rebuilt on toggle only; lualine calls the component on every redraw
+local status = ""
+
+local function rebuild_status()
+    local names = vim.tbl_keys(muted)
+    table.sort(names)
+
+    local parts = {}
+    for _, name in ipairs(names) do
+        local letters = {}
+        for severity, sev in ipairs(SEVERITIES) do
+            if M.is_muted(name, severity) then
+                table.insert(letters, sev:sub(1, 1))
+            end
+        end
+        table.insert(parts, name .. ":" .. table.concat(letters))
+    end
+
+    status = #parts > 0 and ("󰖁 " .. table.concat(parts, " ")) or ""
+end
+
 function M.toggle(name, severity)
-    muted[name] = muted[name] or {}
-    muted[name][severity] = not muted[name][severity] and true or nil
+    local m = muted[name] or {}
+    m[severity] = not m[severity] or nil
+    muted[name] = next(m) ~= nil and m or nil
     reapply(name)
+    rebuild_status()
 end
 
 function M.pick()
-    require("snacks").picker.pick({
+    Snacks.picker.pick({
         title = "Mute LSP Diagnostics",
         finder = function()
-            local seen, names, items = {}, {}, {}
+            local seen = {}
             for _, client in ipairs(vim.lsp.get_clients()) do
-                if not seen[client.name] then
-                    seen[client.name] = true
-                    table.insert(names, client.name)
-                end
+                seen[client.name] = true
             end
+            local names = vim.tbl_keys(seen)
             table.sort(names)
+
             local counts = diagnostic_counts()
+            local items = {}
             for _, name in ipairs(names) do
-                for _, sev in ipairs(SEVERITIES) do
-                    local severity = vim.diagnostic.severity[sev]
+                for severity, sev in ipairs(SEVERITIES) do
                     table.insert(items, {
                         text = name .. " " .. sev,
                         client = name,
                         severity = severity,
-                        sev = sev,
                         count = counts[name] and counts[name][severity] or 0,
                     })
                 end
@@ -125,10 +139,11 @@ function M.pick()
             return items
         end,
         format = function(item)
-            local hl = "Diagnostic" .. item.sev:sub(1, 1) .. item.sev:sub(2):lower()
+            local sev = SEVERITIES[item.severity]
+            local hl = "Diagnostic" .. sev:sub(1, 1) .. sev:sub(2):lower()
             return {
                 { ("%-20s"):format(item.client) },
-                { ("%-6s"):format(item.sev), hl },
+                { ("%-6s"):format(sev), hl },
                 { ("%5s"):format(item.count > 0 and tostring(item.count) or ""), "Number" },
                 { M.is_muted(item.client, item.severity) and " 󰖁 muted" or "", "Comment" },
             }
@@ -144,35 +159,17 @@ function M.pick()
 end
 
 function M.lualine_component()
-    local names = vim.tbl_keys(muted)
-    table.sort(names)
-    local parts = {}
-    for _, name in ipairs(names) do
-        local letters = {}
-        for _, sev in ipairs(SEVERITIES) do
-            if muted[name][vim.diagnostic.severity[sev]] then
-                table.insert(letters, sev:sub(1, 1))
-            end
-        end
-        if #letters > 0 then
-            table.insert(parts, name .. ":" .. table.concat(letters))
-        end
-    end
-    if #parts == 0 then
-        return ""
-    end
-    return "󰖁 " .. table.concat(parts, " ")
+    return status
 end
 
-local installed = false
-
 function M.setup()
-    if installed then
+    if vim.diagnostic.set == wrapped_set then
         return
     end
-    installed = true
     vim.diagnostic.set = wrapped_set
+
     vim.api.nvim_create_autocmd("BufWipeout", {
+        group = vim.api.nvim_create_augroup("LspMute", { clear = true }),
         callback = function(ev)
             for _, bufs in pairs(cache) do
                 bufs[ev.buf] = nil
