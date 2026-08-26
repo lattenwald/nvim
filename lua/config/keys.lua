@@ -24,9 +24,9 @@ end
 -- Normal & Visual: Shift+Insert pastes like Ctrl+V does elsewhere
 vim.keymap.set({ "n", "v" }, "<S-Insert>", '"+p', { noremap = true, silent = true })
 -- Insert: Shift+Insert inserts the + register without leaving insert mode
-vim.keymap.set("i", "<S-Insert>", '<C-R>+', { noremap = true, silent = true })
+vim.keymap.set("i", "<S-Insert>", "<C-R>+", { noremap = true, silent = true })
 -- Command-line (/:, ?:, :): Shift+Insert pastes into the prompt
-vim.keymap.set("c", "<S-Insert>", '<C-R>+', { noremap = true, silent = true })
+vim.keymap.set("c", "<S-Insert>", "<C-R>+", { noremap = true, silent = true })
 
 -- vim.keymap.set doesn't work
 -- Map <Down> to act as <Right> in wildmenu, otherwise as normal <Down>

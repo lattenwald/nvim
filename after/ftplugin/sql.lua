@@ -5,4 +5,3 @@ require("conform").setup({
         sql = { "sql_formatter" },
     },
 })
-

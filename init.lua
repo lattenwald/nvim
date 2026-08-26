@@ -19,7 +19,7 @@ vim.filetype.add({
 vim.filetype.add({
     filename = {
         ["kamailio.cfg"] = "kamailio",
-    }
+    },
 })
 
 require("config.nix")

@@ -9,4 +9,3 @@ require("conform").setup({
         nix = { "nixpkgs_fmt" },
     },
 })
-
