@@ -5,7 +5,7 @@ return {
         init = function()
             local function load_project_rust_config(start_path)
                 local utils = require("config.utils")
-                local root = utils.find_project_root(start_path, { ".git", "project-root" })
+                local root = utils.find_project_root(start_path)
 
                 if not root then
                     return {}, nil

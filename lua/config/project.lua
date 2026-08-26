@@ -3,47 +3,27 @@
 
 local M = {}
 
-local uv = vim.loop
-local yaml_ok, yaml = pcall(require, "lyaml")
-if not yaml_ok then
-    vim.notify("lyaml not available - project persistence disabled", vim.log.levels.WARN)
-end
-
 local projects_file = vim.fn.stdpath("data") .. "/projects.yaml"
 
 -- Memoized; reloaded whenever projects.yaml's mtime changes.
 local projects_cache = nil
 local cache_mtime = nil
 
-local function file_mtime()
-    local stat = uv.fs_stat(projects_file)
-    return stat and stat.mtime
-end
-
-local function mtime_unchanged(mtime)
-    return cache_mtime and mtime and cache_mtime.sec == mtime.sec and cache_mtime.nsec == mtime.nsec
-end
-
--- Quiet read of projects.yaml.
+-- Quiet read of projects.yaml. Paths are normalized here so consumers can compare them directly.
 function M.get_projects()
-    if not yaml_ok then
-        return {}
-    end
-
-    local mtime = file_mtime()
-    if projects_cache and mtime_unchanged(mtime) then
+    local stat = vim.uv.fs_stat(projects_file)
+    local mtime = stat and stat.mtime
+    if projects_cache and cache_mtime and mtime and cache_mtime.sec == mtime.sec and cache_mtime.nsec == mtime.nsec then
         return projects_cache
     end
 
+    local parsed = require("config.utils").load_yaml(projects_file, true)
     local result = {}
-    local file = io.open(projects_file, "r")
-    if file then
-        local content = file:read("*a")
-        file:close()
-        if content ~= "" then
-            local ok, parsed = pcall(yaml.load, content)
-            if ok and type(parsed) == "table" then
-                result = parsed
+    if type(parsed) == "table" then
+        for _, project in ipairs(parsed) do
+            if type(project) == "table" and type(project.path) == "string" then
+                local path = vim.fs.normalize(project.path)
+                result[#result + 1] = { name = project.name or vim.fs.basename(path), path = path }
             end
         end
     end
@@ -53,20 +33,20 @@ function M.get_projects()
     return result
 end
 
--- Returns a private copy.
+-- Private copy of the list, so add/remove don't mutate the cache.
 local function read_projects()
     return vim.list_extend({}, M.get_projects())
 end
 
 local function write_projects(projects)
+    local yaml_ok, yaml = pcall(require, "lyaml")
     if not yaml_ok then
+        vim.notify("lyaml not available - project persistence disabled", vim.log.levels.WARN)
         return false
     end
+
     local ok, err = pcall(function()
-        local yaml_content = yaml.dump({ projects })
-        local file = assert(io.open(projects_file, "w"))
-        file:write(yaml_content)
-        file:close()
+        vim.fn.writefile(vim.split(yaml.dump({ projects }), "\n", { trimempty = true }), projects_file)
     end)
     if not ok then
         vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
@@ -77,14 +57,14 @@ local function write_projects(projects)
 end
 
 function M.add_project()
-    local project_root = require("config.utils").find_project_root(vim.uv.cwd(), M.config.project_markers)
+    local project_root = require("config.utils").find_project_root(vim.uv.cwd())
     if not project_root then
         vim.notify("No project root found.", vim.log.levels.WARN)
         return
     end
 
-    local project_name = project_root:match(".*/(.*)")
-    local projects = read_projects() or {}
+    local project_name = vim.fs.basename(project_root)
+    local projects = read_projects()
 
     for _, project in ipairs(projects) do
         if project.path == project_root then
@@ -101,9 +81,6 @@ end
 
 local function remove_project(project_path)
     local projects = read_projects()
-    if not projects then
-        return false
-    end
 
     local found = false
     for i, project in ipairs(projects) do
@@ -128,9 +105,6 @@ end
 
 function M.list_projects()
     local projects = read_projects()
-    if not projects then
-        return
-    end
 
     if #projects == 0 then
         vim.notify("No projects found.", vim.log.levels.WARN)
@@ -142,7 +116,6 @@ function M.list_projects()
         table.insert(items, {
             text = project.name,
             description = project.path,
-            path = project.path,
             file = project.path,
         })
     end
@@ -152,39 +125,26 @@ function M.list_projects()
         actions = {
             confirm = function(picker)
                 local item = picker:current()
-                if item then
-                    local project_dir = vim.fn.fnameescape(item.path)
-                    vim.cmd("cd " .. project_dir)
-                    local git_root = require("config.utils").find_project_root(project_dir, { ".git" })
-
-                    if git_root then
-                        Snacks.picker.files({
-                            cwd = git_root,
-                            hidden = true,
-                            ignored = true,
-                        })
-                    else
-                        Snacks.picker.files({ cwd = project_dir })
-                    end
+                if not item then
+                    return
                 end
+                vim.cmd("cd " .. vim.fn.fnameescape(item.file))
+                local git_root = require("config.utils").find_project_root(item.file, { ".git" })
+                Snacks.picker.files(git_root and { cwd = git_root, hidden = true, ignored = true } or { cwd = item.file })
             end,
             delete_project = function(picker)
                 local item = picker:current()
-                if item then
-                    vim.ui.select({ "No", "Yes" }, {
-                        prompt = "Delete project '" .. item.text .. "'?",
-                        format_item = function(choice)
-                            return choice
-                        end,
-                    }, function(choice)
-                        if choice == "Yes" then
-                            if remove_project(item.path) then
-                                picker:close()
-                                M.list_projects()
-                            end
-                        end
-                    end)
+                if not item then
+                    return
                 end
+                vim.ui.select({ "No", "Yes" }, {
+                    prompt = "Delete project '" .. item.text .. "'?",
+                }, function(choice)
+                    if choice == "Yes" and remove_project(item.file) then
+                        picker:close()
+                        M.list_projects()
+                    end
+                end)
             end,
             add_current_project = function(picker)
                 picker:close()
@@ -206,18 +166,9 @@ function M.list_projects()
     })
 end
 
-function M.setup(config)
-    M.config = vim.tbl_deep_extend("force", {
-        project_markers = { ".git", "project-root" },
-    }, config or {})
-
-    vim.api.nvim_create_user_command("ProjectAdd", function()
-        require("config.project").add_project()
-    end, { desc = "Add the current project" })
-
-    vim.api.nvim_create_user_command("ProjectList", function()
-        require("config.project").list_projects()
-    end, { desc = "List all projects" })
+function M.setup()
+    vim.api.nvim_create_user_command("ProjectAdd", M.add_project, { desc = "Add the current project" })
+    vim.api.nvim_create_user_command("ProjectList", M.list_projects, { desc = "List all projects" })
 end
 
 return M

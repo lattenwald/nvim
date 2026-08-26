@@ -55,38 +55,40 @@ local function disambiguate(proj_chunks, others)
     return proj_chunks[n]
 end
 
+-- Valid while cwd holds: get_projects returns the same table until projects.yaml changes.
+local cached = {}
+
 -- Registered project containing cwd (nearest ancestor), or nil.
 local function compute_prefix(cwd)
     cwd = vim.fs.normalize(cwd)
     local projects = require("config.project").get_projects()
+    if cached.cwd == cwd and cached.projects == projects then
+        return cached.prefix
+    end
 
     local match_path
     for _, project in ipairs(projects) do
-        if type(project) == "table" and type(project.path) == "string" then
-            local path = vim.fs.normalize(project.path)
-            if cwd == path or cwd:sub(1, #path + 1) == path .. "/" then
-                if not match_path or #path > #match_path then
-                    match_path = path
-                end
+        local path = project.path
+        if cwd == path or cwd:sub(1, #path + 1) == path .. "/" then
+            if not match_path or #path > #match_path then
+                match_path = path
             end
         end
     end
 
-    if not match_path then
-        return nil
-    end
-
-    local others = {}
-    for _, project in ipairs(projects) do
-        if type(project) == "table" and type(project.path) == "string" then
-            local path = vim.fs.normalize(project.path)
-            if path ~= match_path then
-                others[#others + 1] = path_chunks(path)
+    local prefix
+    if match_path then
+        local others = {}
+        for _, project in ipairs(projects) do
+            if project.path ~= match_path then
+                others[#others + 1] = path_chunks(project.path)
             end
         end
+        prefix = { display = disambiguate(path_chunks(match_path), others), path = match_path }
     end
 
-    return { display = disambiguate(path_chunks(match_path), others), path = match_path }
+    cached = { cwd = cwd, projects = projects, prefix = prefix }
+    return prefix
 end
 
 -- Command basename from the "term://…:<cmd>" buffer name.
@@ -170,7 +172,8 @@ function M.setup()
         group = group,
         callback = update_title,
     })
-    update_title()
+    -- Deferred: the first run pulls in lyaml and parses projects.yaml, and no title is visible yet.
+    vim.schedule(update_title)
 end
 
 return M

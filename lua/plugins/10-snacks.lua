@@ -65,7 +65,7 @@ return {
             picker = {
                 enabled = true,
                 root = {
-                    patterns = { ".git", "project-root" },
+                    patterns = require("config.utils").root_patterns,
                 },
                 actions = {
                     preview_scroll_lines_up = function(picker)
@@ -163,7 +163,7 @@ return {
 
             { "<leader>T", function()
                 local current_dir = vim.fn.expand("%:p:h")
-                local project_root = require("config.utils").find_project_root(current_dir, { ".git", "project-root" })
+                local project_root = require("config.utils").find_project_root(current_dir)
                 if not project_root then
                     Snacks.notify.warn("No project root found")
                     return
@@ -189,17 +189,12 @@ return {
 
             { "<leader>f", function()
                 local current_dir = vim.fn.expand("%:p:h")
-                local project_root = require("config.utils").find_project_root(current_dir, { ".git", "project-root" })
+                local root = require("config.utils").find_project_root(current_dir)
 
-                if project_root then
-                    local cwd = project_root
-                    local ok = pcall(Snacks.picker.git_files, { cwd = cwd })
-                    if not ok then
-                        Snacks.picker.files({ cwd = cwd })
-                    end
-                else
-                    Snacks.picker.files({ cwd = current_dir })
+                if root and pcall(Snacks.picker.git_files, { cwd = root }) then
+                    return
                 end
+                Snacks.picker.files({ cwd = root or current_dir })
             end, desc = "Find Files (Git/Project Root)" },
 
             -- LSP

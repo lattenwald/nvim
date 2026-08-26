@@ -3,14 +3,6 @@ local M = {}
 
 local last_dir = nil
 
-local function get_root_type(root_path)
-    local git_path = root_path .. "/.git"
-    local git_type = require("config.utils").get_git_type(git_path)
-
-    -- If no .git found, it's a generic project (e.g., has project-root marker)
-    return git_type or "project"
-end
-
 local function auto_chdir()
     local current_file = vim.api.nvim_buf_get_name(0)
 
@@ -19,13 +11,15 @@ local function auto_chdir()
         return
     end
 
-    local project_root = require("config.utils").find_project_root(current_file, { ".git", "project-root" })
+    local utils = require("config.utils")
+    local project_root = utils.find_project_root(current_file)
 
     if project_root and project_root ~= last_dir then
         vim.cmd("cd " .. vim.fn.fnameescape(project_root))
         last_dir = project_root
 
-        local root_type = get_root_type(project_root)
+        -- No .git means a generic project (e.g. a project-root marker)
+        local root_type = utils.get_git_type(project_root .. "/.git") or "project"
         local root_name = vim.fs.basename(project_root)
         vim.notify(string.format("📂 %s (%s)", root_name, root_type), vim.log.levels.INFO)
     end

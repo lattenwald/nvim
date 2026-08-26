@@ -3,6 +3,12 @@ local M = {}
 -- Cache for root finding to prevent redundant filesystem searches
 local root_cache = {}
 
+-- Default project root markers, shared with Snacks' picker root detection.
+M.root_patterns = { ".git", "project-root" }
+
+-- Stop at home and the filesystem root so a stray path can't walk the whole tree.
+local stop_dirs = { vim.fn.expand("~"), "/" }
+
 function M.get_git_type(git_path)
     local stat = vim.loop.fs_stat(git_path)
 
@@ -30,58 +36,36 @@ function M.get_git_type(git_path)
 end
 
 -- Safe root finding with boundaries, caching, and submodule support
-function M.find_project_root(start_path, patterns, opts)
-    opts = opts or {}
-    local ignore_submodules = opts.ignore_submodules ~= false
-
-    patterns = patterns or { ".git", "project-root" }
-    -- Add ignore_submodules to cache key to differentiate results
-    local cache_key = start_path .. ":" .. table.concat(patterns, ",") .. ":sub=" .. tostring(ignore_submodules)
-
-    if root_cache[cache_key] ~= nil then
-        return root_cache[cache_key]
-    end
-
-    local stop_dirs = { vim.fn.expand("~"), "/" }
+function M.find_project_root(start_path, patterns)
+    patterns = patterns or M.root_patterns
 
     -- Ensure we start searching from a directory
-    local start_dir
     local start_stat = vim.loop.fs_stat(start_path)
-    if start_stat and start_stat.type == "directory" then
-        start_dir = start_path
-    else
-        start_dir = vim.fs.dirname(start_path)
+    local start_dir = (start_stat and start_stat.type == "directory") and start_path or vim.fs.dirname(start_path)
+    local current_path = vim.fs.normalize(start_dir)
+
+    -- Keyed by directory, not by the file path callers pass in, which would miss once per file.
+    local key_suffix = ":" .. table.concat(patterns, ",")
+    if root_cache[current_path .. key_suffix] ~= nil then
+        return root_cache[current_path .. key_suffix]
     end
 
-    local current_path = vim.fs.normalize(start_dir)
     local root = nil
+    local walked = {}
 
     while current_path and not vim.tbl_contains(stop_dirs, current_path) do
-        local found_marker = false
+        walked[#walked + 1] = current_path
 
         for _, pattern in ipairs(patterns) do
             local marker_path = current_path .. "/" .. pattern
-            local stat = vim.loop.fs_stat(marker_path)
-
-            if stat then
-                if pattern == ".git" then
-                    local git_type = M.get_git_type(marker_path)
-                    local should_skip = git_type == "submodule" and ignore_submodules
-
-                    if not should_skip then
-                        root = current_path
-                        found_marker = true
-                        break
-                    end
-                else
-                    root = current_path
-                    found_marker = true
-                    break
-                end
+            -- A submodule has its own .git file but belongs to the parent repository
+            if vim.loop.fs_stat(marker_path) and not (pattern == ".git" and M.get_git_type(marker_path) == "submodule") then
+                root = current_path
+                break
             end
         end
 
-        if found_marker then
+        if root then
             break
         end
 
@@ -92,8 +76,10 @@ function M.find_project_root(start_path, patterns, opts)
         current_path = parent
     end
 
-    -- Cache result (even if nil) to prevent future searches
-    root_cache[cache_key] = root
+    -- Every directory walked shares this root, so warm them all and never repeat the walk
+    for _, dir in ipairs(walked) do
+        root_cache[dir .. key_suffix] = root
+    end
     return root
 end
 
