@@ -7,6 +7,20 @@ return {
         },
         config = function()
             local lualine = require("lualine")
+
+            -- lualine re-runs sections on CursorMoved, so resolve the repo once per buffer path
+            local git_markers = { ".git" }
+            local repo_names = {}
+
+            local function current_repo_name()
+                local file = vim.api.nvim_buf_get_name(0)
+                if repo_names[file] == nil then
+                    local root = require("config.utils").find_project_root(vim.fs.dirname(file), git_markers)
+                    repo_names[file] = root and vim.fs.basename(root) or false
+                end
+                return repo_names[file] or ""
+            end
+
             local lsp_progress = require("lsp-progress")
             lsp_progress.setup({
                 event = "LspProgressUpdate",
@@ -29,7 +43,7 @@ return {
                         end,
                         "mode",
                     },
-                    lualine_b = { require("config.utils").current_repo_name, "branch", "diff", "diagnostics" },
+                    lualine_b = { current_repo_name, "branch", "diff", "diagnostics" },
                     lualine_c = { "filename", lsp_progress.progress },
                     lualine_x = {
                         {
