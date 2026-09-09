@@ -12,8 +12,10 @@ return {
         config = function()
             local lsp_mute = require("config.lsp_mute")
             lsp_mute.setup()
-            vim.api.nvim_create_user_command("LspMute", lsp_mute.pick, { desc = "Mute LSP diagnostics per server/severity" })
+            vim.api.nvim_create_user_command("LspMute", lsp_mute.pick, { desc = "Mute LSP diagnostics per server/severity/code" })
+            vim.api.nvim_create_user_command("LspMuteCode", lsp_mute.mute_code_at_cursor, { desc = "Mute LSP diagnostic code under cursor" })
             vim.keymap.set("n", "<leader>um", lsp_mute.pick, { desc = "Mute LSP Diagnostics" })
+            vim.keymap.set("n", "<leader>uM", lsp_mute.mute_code_at_cursor, { desc = "Mute LSP Diagnostic Code Under Cursor" })
 
             vim.api.nvim_create_autocmd("LspAttach", {
                 callback = function(ev)
