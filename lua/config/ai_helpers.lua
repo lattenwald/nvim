@@ -46,6 +46,8 @@ M.helpers = {
         name = "OpenCode",
         cmd = "opencode",
         icon = "󱚟",
+        -- Dead port: otherwise opencode scans ~/.claude/ide/*.lock and joins claudecode.nvim's broadcasts
+        env = { OPENCODE_EDITOR_SSE_PORT = "1" },
     },
 }
 
@@ -96,13 +98,12 @@ local function pass_show(entry)
 end
 
 local function helper_env(helper_name)
+    local env = vim.deepcopy(M.helpers[helper_name].env or {})
     local mapping = read_env_map()[helper_name]
-    if type(mapping) ~= "table" then
-        return nil
-    end
-    local env = {}
-    for var, entry in pairs(mapping) do
-        env[var] = pass_show(entry)
+    if type(mapping) == "table" then
+        for var, entry in pairs(mapping) do
+            env[var] = pass_show(entry)
+        end
     end
     return next(env) and env or nil
 end
