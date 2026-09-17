@@ -35,10 +35,6 @@ vim.keymap.set("c", "<S-Insert>", "<C-R>+", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("c", "<Down>", 'v:lua.get_wildmenu_key("<Right>", "<Down>")', { expr = true, noremap = true })
 vim.api.nvim_set_keymap("c", "<Up>", 'v:lua.get_wildmenu_key("<Left>", "<Up>")', { expr = true, noremap = true })
 
-vim.keymap.set({ "n", "v" }, "<leader>p", function()
-    require("config.project").list_projects()
-end, { desc = "Projects" })
-
 local is_lsp_attached = function(bufnr)
     local clients = vim.lsp.get_clients and vim.lsp.get_clients() or {}
     return next(clients) ~= nil
