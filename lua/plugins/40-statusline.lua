@@ -47,10 +47,7 @@ return {
                     lualine_c = { "filename", lsp_progress.progress },
                     lualine_x = {
                         {
-                            function()
-                                local ok, lsp_mute = pcall(require, "config.lsp_mute")
-                                return ok and lsp_mute.lualine_component() or ""
-                            end,
+                            require("config.lsp_mute").lualine_component,
                             color = { fg = "#e0af68" },
                         },
                         "encoding",

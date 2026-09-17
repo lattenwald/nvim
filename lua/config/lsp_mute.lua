@@ -306,10 +306,10 @@ function M.lualine_component()
 end
 
 function M.setup()
-    if vim.diagnostic.set == wrapped_set then
-        return
-    end
     vim.diagnostic.set = wrapped_set
+
+    vim.api.nvim_create_user_command("LspMute", M.pick, { desc = "Mute LSP diagnostics per server/severity/code" })
+    vim.api.nvim_create_user_command("LspMuteCode", M.mute_code_at_cursor, { desc = "Mute LSP diagnostic code under cursor" })
 
     vim.api.nvim_create_autocmd("BufWipeout", {
         group = vim.api.nvim_create_augroup("LspMute", { clear = true }),
