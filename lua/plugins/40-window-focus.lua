@@ -1,7 +1,7 @@
 return {
     {
-        name = "window-focus-indicator",
-        dir = vim.fn.stdpath("config"),
+        "window-focus-indicator",
+        virtual = true,
         event = "VeryLazy",
         opts = {
             enable_dimming = true, -- Dim unfocused windows
@@ -11,15 +11,6 @@ return {
             border_hl = "FloatBorder", -- Highlight group for focused window border
         },
         config = function(_, opts)
-            -- Merge with defaults
-            opts = vim.tbl_deep_extend("force", {
-                enable_dimming = true,
-                dimming_amount = 0.85,
-                enable_border = true,
-                border_style = "rounded",
-                border_hl = "FloatBorder",
-            }, opts or {})
-
             local group = vim.api.nvim_create_augroup("WindowFocusIndicator", { clear = true })
 
             -- Window dimming setup
