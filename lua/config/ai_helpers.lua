@@ -1,16 +1,25 @@
 local M = {}
 
--- Selected helper, persisted across sessions.
-local selection_file = vim.fn.stdpath("data") .. "/ai_helper_selection.txt"
+local prefs_file = vim.fn.stdpath("data") .. "/ai_helpers.json"
+local prefs = nil
 
-local function save_selection(helper_name)
-    pcall(vim.fn.writefile, { helper_name }, selection_file)
+local function get_prefs()
+    if not prefs then
+        local ok, data = pcall(function()
+            return vim.json.decode(table.concat(vim.fn.readfile(prefs_file), "\n"))
+        end)
+        data = ok and type(data) == "table" and data or {}
+        prefs = {
+            order = type(data.order) == "table" and data.order or {},
+            disabled = type(data.disabled) == "table" and data.disabled or {},
+            last = type(data.last) == "string" and data.last or nil,
+        }
+    end
+    return prefs
 end
 
-local function load_selection()
-    local ok, lines = pcall(vim.fn.readfile, selection_file)
-    local name = ok and lines[1]
-    return name and vim.trim(name) or nil
+local function save_prefs()
+    pcall(vim.fn.writefile, { vim.json.encode(prefs) }, prefs_file)
 end
 
 -- Terminal configuration (can be overridden in setup)
@@ -51,10 +60,7 @@ M.helpers = {
     },
 }
 
-M.current_helper = nil
 M.terminal_instances = {}
-
-local default_helper = nil
 
 -- Machine-local map of helper -> env var -> pass entry, e.g.
 --   opencode:
@@ -108,13 +114,6 @@ local function helper_env(helper_name)
     return next(env) and env or nil
 end
 
-function M.get_current_config()
-    if M.current_helper then
-        return M.helpers[M.current_helper]
-    end
-    return nil
-end
-
 -- cmd may carry args (e.g. "agy --add-dir ."), so match only the binary token
 local function helper_bin(helper)
     return helper.cmd:match("^%S+")
@@ -125,64 +124,152 @@ function M.is_available(helper_name)
     return helper ~= nil and vim.fn.executable(helper_bin(helper)) == 1
 end
 
-function M.available_helpers()
-    local names = vim.tbl_filter(M.is_available, vim.tbl_keys(M.helpers))
-    table.sort(names)
-    return names
+function M.is_enabled(helper_name)
+    return not get_prefs().disabled[helper_name]
 end
 
-function M.set_helper(helper_name, skip_notify)
-    if not M.helpers[helper_name] then
-        if not skip_notify then
-            vim.notify("Unknown AI helper: " .. tostring(helper_name), vim.log.levels.ERROR)
+function M.ordered_helpers()
+    local seen, names = {}, {}
+    for _, name in ipairs(get_prefs().order) do
+        if M.helpers[name] and not seen[name] then
+            seen[name] = true
+            names[#names + 1] = name
         end
-        return false
     end
-
-    if not M.is_available(helper_name) then
-        if not skip_notify then
-            vim.notify("AI helper not installed: " .. M.helpers[helper_name].name, vim.log.levels.WARN)
-        end
-        return false
-    end
-
-    M.current_helper = helper_name
-    save_selection(helper_name)
-
-    if not skip_notify then
-        vim.notify("AI Helper: " .. M.helpers[helper_name].name, vim.log.levels.INFO)
-    end
-
-    vim.schedule(function()
-        local ok, lualine = pcall(require, "lualine")
-        if ok then
-            lualine.refresh()
-        end
-    end)
-
-    return true
+    local rest = vim.tbl_filter(function(name)
+        return not seen[name]
+    end, vim.tbl_keys(M.helpers))
+    table.sort(rest)
+    return vim.list_extend(names, rest)
 end
 
-function M.switch_helper()
-    local helper_names = M.available_helpers()
+function M.enabled_helpers()
+    return vim.tbl_filter(function(name)
+        return M.is_enabled(name) and M.is_available(name)
+    end, M.ordered_helpers())
+end
 
-    if #helper_names == 0 then
-        vim.notify("No AI helpers installed", vim.log.levels.WARN)
+local function is_running(helper_name)
+    local term = M.terminal_instances[helper_name]
+    return term ~= nil and term:buf_valid()
+end
+
+local function remember_last(helper_name)
+    local p = get_prefs()
+    if p.last ~= helper_name then
+        p.last = helper_name
+        save_prefs()
+    end
+end
+
+local function pick_helper(on_choice)
+    local names = M.enabled_helpers()
+    if #names == 0 then
+        vim.notify("No AI helpers enabled. Use :AIHelperManage", vim.log.levels.WARN)
         return
     end
+    if #names == 1 then
+        return on_choice(names[1])
+    end
 
-    vim.ui.select(helper_names, {
-        prompt = "Select AI Helper:",
-        format_item = function(item)
-            local helper = M.helpers[item]
-            local current = item == M.current_helper and " [current]" or ""
-            return helper.icon .. " " .. helper.name .. current
+    local last = get_prefs().last
+    vim.ui.select(names, {
+        prompt = "AI Helper",
+        format_item = function(name)
+            local helper = M.helpers[name]
+            return helper.icon .. " " .. helper.name .. (is_running(name) and " [running]" or "")
         end,
-    }, function(choice)
-        if choice then
-            M.set_helper(choice)
+        snacks = {
+            on_show = function(picker)
+                for i, name in ipairs(names) do
+                    if name == last then
+                        picker.list:set_target(i) -- snacks holds the target until row i exists
+                        break
+                    end
+                end
+            end,
+        },
+    }, function(name)
+        if name then
+            remember_last(name)
+            on_choice(name)
         end
     end)
+end
+
+function M.manage_helpers()
+    local p = get_prefs()
+
+    local function move(picker, delta)
+        local item = picker:current()
+        local names = M.ordered_helpers()
+        local to = item and item.idx + delta
+        if not to or to < 1 or to > #names then
+            return
+        end
+        names[item.idx], names[to] = names[to], names[item.idx]
+        p.order = names
+        save_prefs()
+        picker.list:set_target(picker.list.cursor + delta, nil, { force = true })
+        picker:refresh()
+    end
+
+    local keys = {
+        ["<Tab>"] = { "toggle_helper", mode = { "n", "i" } },
+        ["<a-j>"] = { "move_down", mode = { "n", "i" } },
+        ["<a-k>"] = { "move_up", mode = { "n", "i" } },
+    }
+
+    Snacks.picker.pick({
+        title = "AI Helpers  <Tab> toggle  <A-j/k> move  <CR> open",
+        layout = { preset = "select" },
+        finder = function()
+            local items = {}
+            for i, name in ipairs(M.ordered_helpers()) do
+                items[#items + 1] = { idx = i, name = name, text = M.helpers[name].name, installed = M.is_available(name) }
+            end
+            return items
+        end,
+        format = function(item)
+            local helper = M.helpers[item.name]
+            local enabled = M.is_enabled(item.name)
+            local ret = {
+                { enabled and "● " or "○ ", enabled and "DiagnosticOk" or "Comment" },
+                { helper.icon .. " " .. helper.name, item.installed and "Normal" or "Comment" },
+            }
+            if not item.installed then
+                ret[#ret + 1] = { "  not installed", "Comment" }
+            elseif is_running(item.name) then
+                ret[#ret + 1] = { "  running", "DiagnosticInfo" }
+            end
+            return ret
+        end,
+        actions = {
+            toggle_helper = function(picker, item)
+                if item then
+                    p.disabled[item.name] = M.is_enabled(item.name) or nil
+                    save_prefs()
+                    picker:refresh()
+                end
+            end,
+            move_up = function(picker)
+                move(picker, -1)
+            end,
+            move_down = function(picker)
+                move(picker, 1)
+            end,
+            confirm = function(picker, item)
+                picker:close()
+                if item then
+                    remember_last(item.name)
+                    vim.schedule(function()
+                        M.toggle_terminal(item.name)
+                    end)
+                end
+            end,
+        },
+        win = { input = { keys = keys }, list = { keys = keys } },
+    })
 end
 
 -- Visual marks '< and '> are only set after leaving visual mode (:help '<).
@@ -203,12 +290,9 @@ local function visual_lines()
 end
 
 -- A hidden terminal keeps its buffer but has no window, so reuse on buf_valid.
-local function get_or_create_terminal(cmd)
-    local helper_name = M.current_helper
-    local term = M.terminal_instances[helper_name]
-
-    if term and term:buf_valid() then
-        return term, false
+local function get_or_create_terminal(helper_name)
+    if is_running(helper_name) then
+        return M.terminal_instances[helper_name], false
     end
 
     local term_opts = { cwd = vim.fn.getcwd(), env = helper_env(helper_name) }
@@ -223,7 +307,7 @@ local function get_or_create_terminal(cmd)
         }
     end
 
-    term = Snacks.terminal(cmd, term_opts)
+    local term = Snacks.terminal(M.helpers[helper_name].cmd, term_opts)
     M.terminal_instances[helper_name] = term
     term.ai_helper = helper_name
     -- Spawn cwd, kept for relative sends: nvim's cwd drifts via autochdir while the agent stays here
@@ -232,40 +316,65 @@ local function get_or_create_terminal(cmd)
     return term, true
 end
 
--- The buffer path must be read before the terminal takes focus.
-local function terminal_and_file()
-    local helper = M.get_current_config()
-    if not helper then
-        vim.notify("No AI helper selected. Use :AIHelperSwitch", vim.log.levels.WARN)
-        return nil
-    end
+local function buf_visible(bufnr)
+    return bufnr ~= nil and #vim.fn.win_findbuf(bufnr) > 0
+end
 
+local function visible_helpers()
+    return vim.tbl_filter(function(name)
+        return is_running(name) and buf_visible(M.terminal_instances[name].buf)
+    end, M.ordered_helpers())
+end
+
+-- claudecode.nvim patches its terminal's :hide(), so Claude Code hides like a helper.
+local function hide_agent_terminals(include_claude)
+    local hidden = 0
+    for _, term in ipairs(Snacks.terminal.list()) do
+        local agent = term:valid() and M.agent_for_buf(term.buf)
+        if agent and (include_claude or agent ~= "claude") then
+            term:hide()
+            hidden = hidden + 1
+        end
+    end
+    return hidden
+end
+
+-- The buffer path must be read before the picker or terminal takes focus.
+local function send_to_terminal(text)
     local abs = vim.fn.expand("%:p")
-    local term = get_or_create_terminal(helper.cmd)
-    if not term then
-        return nil
+    local function send(helper_name)
+        local term = get_or_create_terminal(helper_name)
+        local file = vim.fs.relpath(term.ai_cwd or vim.fn.getcwd(), abs) or abs
+        term:show()
+        vim.api.nvim_chan_send(vim.b[term.buf].terminal_job_id, text(file))
+        term:focus()
+        vim.cmd("startinsert")
     end
 
-    return term, vim.fs.relpath(term.ai_cwd or vim.fn.getcwd(), abs) or abs
+    local visible = visible_helpers()
+    if #visible > 0 then
+        send(visible[1])
+    else
+        pick_helper(send)
+    end
 end
 
-local function send_to_terminal(term, write)
-    term:show()
-    write(vim.b[term.buf].terminal_job_id)
-    term:focus()
-    vim.cmd("startinsert")
-end
-
-function M.toggle_terminal()
-    local helper = M.get_current_config()
-    if not helper then
-        vim.notify("No AI helper selected. Use :AIHelperSwitch", vim.log.levels.WARN)
+function M.toggle_terminal(helper_name)
+    if not helper_name then
+        if hide_agent_terminals(false) == 0 then
+            pick_helper(M.toggle_terminal)
+        end
         return
     end
 
-    local term, created = get_or_create_terminal(helper.cmd)
+    if not M.is_available(helper_name) then
+        vim.notify("AI helper not installed: " .. tostring(helper_name), vim.log.levels.WARN)
+        return
+    end
+
+    local term, created = get_or_create_terminal(helper_name)
     -- Newly created terminals are already shown by Snacks.terminal()
-    if term and not created then
+    if not created then
         term:toggle()
     end
 end
@@ -273,29 +382,15 @@ end
 -- Claude Code format: @file#L1 or @file#L1-5
 function M.send_selection()
     local start_line, end_line = visual_lines()
-    local term, file = terminal_and_file()
-    if not term then
-        return
-    end
-
-    local location = "@" .. file .. "#L" .. start_line
-    if start_line ~= end_line then
-        location = location .. "-" .. end_line
-    end
-
-    send_to_terminal(term, function(chan)
-        vim.api.nvim_chan_send(chan, location .. " ")
+    local range = start_line == end_line and start_line or (start_line .. "-" .. end_line)
+    send_to_terminal(function(file)
+        return "@" .. file .. "#L" .. range .. " "
     end)
 end
 
 function M.send_buffer()
-    local term, file = terminal_and_file()
-    if not term then
-        return
-    end
-
-    send_to_terminal(term, function(chan)
-        vim.api.nvim_chan_send(chan, "@" .. file .. " ")
+    send_to_terminal(function(file)
+        return "@" .. file .. " "
     end)
 end
 
@@ -311,19 +406,6 @@ function M.get_helper_from_buffer(bufnr)
     return nil
 end
 
-local function buf_visible(bufnr)
-    return bufnr ~= nil and #vim.fn.win_findbuf(bufnr) > 0
-end
-
-local function is_ai_helper_visible()
-    for _, term in pairs(M.terminal_instances) do
-        if term and term:buf_valid() and buf_visible(term.buf) then
-            return true
-        end
-    end
-    return false
-end
-
 local function cc_bufnr()
     local ok, cc = pcall(require, "claudecode.terminal")
     return ok and cc.get_active_terminal_bufnr() or nil
@@ -331,6 +413,10 @@ end
 
 local function is_claudecode_visible()
     return buf_visible(cc_bufnr())
+end
+
+function M.hide_all()
+    hide_agent_terminals(true)
 end
 
 -- Which agent owns a buffer: helper name, "claude", or nil.
@@ -442,7 +528,7 @@ end
 
 local function route_send(claude_action, helper_action)
     local claude = is_claudecode_visible()
-    local helper = is_ai_helper_visible()
+    local helper = #visible_helpers() > 0
     if claude and helper then
         local options = {
             { label = "Claude Code", action = claude_action },
@@ -478,20 +564,8 @@ function M.smart_send_buffer()
     end, M.send_buffer)
 end
 
-function M.lualine_component()
-    if M.current_helper then
-        local helper = M.helpers[M.current_helper]
-        return helper.icon .. " " .. helper.name
-    end
-    return "󰚩 No AI"
-end
-
 function M.setup(opts)
     opts = opts or {}
-
-    if opts.default_helper then
-        default_helper = opts.default_helper
-    end
 
     if opts.terminal then
         M.terminal_config = vim.tbl_deep_extend("force", M.terminal_config, opts.terminal)
@@ -502,27 +576,15 @@ function M.setup(opts)
         ai_cmd_set = nil
     end
 
-    local stored = load_selection()
-    -- set_helper rejects (returns false for) uninstalled helpers, so fall back
-    -- to the default when the stored helper is missing or no longer present.
-    if not (stored and M.set_helper(stored, true)) and M.helpers[default_helper] then
-        M.set_helper(default_helper, true)
-    end
-    vim.api.nvim_create_user_command("AIHelperSwitch", function(cmd_opts)
-        if cmd_opts.args ~= "" then
-            M.set_helper(cmd_opts.args)
-        else
-            M.switch_helper()
-        end
+    vim.api.nvim_create_user_command("AIHelperManage", M.manage_helpers, { desc = "Enable, disable and reorder AI helpers" })
+
+    vim.api.nvim_create_user_command("AIHelperToggle", function(cmd_opts)
+        M.toggle_terminal(cmd_opts.args ~= "" and cmd_opts.args or nil)
     end, {
         nargs = "?",
-        complete = function()
-            return M.available_helpers()
-        end,
-        desc = "Switch AI helper",
+        complete = M.enabled_helpers,
+        desc = "Toggle AI helper terminal",
     })
-
-    vim.api.nvim_create_user_command("AIHelperToggle", M.toggle_terminal, { desc = "Toggle AI helper terminal" })
 
     vim.api.nvim_create_user_command("AIHelperSend", M.send_selection, { desc = "Send selection to AI helper", range = true })
 

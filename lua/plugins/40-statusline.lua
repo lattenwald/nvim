@@ -48,13 +48,6 @@ return {
                     lualine_x = {
                         {
                             function()
-                                local ok, ai_helpers = pcall(require, "config.ai_helpers")
-                                return ok and ai_helpers.lualine_component() or ""
-                            end,
-                            color = { fg = "#bd93f9" },
-                        },
-                        {
-                            function()
                                 local ok, lsp_mute = pcall(require, "config.lsp_mute")
                                 return ok and lsp_mute.lualine_component() or ""
                             end,

@@ -107,9 +107,9 @@ return {
             {
                 "<leader>wh",
                 function()
-                    require("config.ai_helpers").switch_helper()
+                    require("config.ai_helpers").manage_helpers()
                 end,
-                desc = "Choose AI Helper",
+                desc = "Manage AI Helpers",
                 mode = { "n", "v" },
             },
             {

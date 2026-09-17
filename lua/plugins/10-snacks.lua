@@ -126,6 +126,7 @@ return {
             -- AI Helpers
             { "<C-.>", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "i", "v", "t" } },
             { "<leader>.", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "v" } },
+            { "<C-S-.>", function() require("config.ai_helpers").hide_all() end, desc = "Hide All AI Terminals", mode = {"n", "i", "v", "t" } },
 
 
             { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
@@ -248,7 +249,6 @@ return {
         init = function()
             -- Setup AI helpers
             require("config.ai_helpers").setup({
-                default_helper = "opencode",
                 terminal = {
                     type = "split", -- "float" or "split"
                     position = "right", -- for split: "right", "left", "top", "bottom"
