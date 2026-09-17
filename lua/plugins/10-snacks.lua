@@ -221,7 +221,6 @@ return {
             { '<leader>S"', function() Snacks.picker.registers() end, desc = "Registers" },
             { '<leader>S/', function() Snacks.picker.search_history() end, desc = "Search History" },
             { "<leader>Sa", function() Snacks.picker.autocmds() end, desc = "Autocmds" },
-            { "<leader>Sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
             { "<leader>Sc", function() Snacks.picker.command_history() end, desc = "Command History" },
             { "<leader>SC", function() Snacks.picker.commands() end, desc = "Commands" },
             { "<leader>Sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics" },
@@ -252,14 +251,6 @@ return {
             vim.api.nvim_create_autocmd("BufWritePre", {
                 pattern = "*",
                 callback = trim_whitespace,
-            })
-
-            vim.api.nvim_create_autocmd("TermOpen", {
-                pattern = "*",
-                callback = function()
-                    local bufnr = vim.api.nvim_get_current_buf()
-                    vim.keymap.set("t", "<S-CR>", "<C-J>", { buffer = bufnr, desc = "Newline without submit" })
-                end,
             })
 
             vim.api.nvim_create_autocmd("User", {

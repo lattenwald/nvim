@@ -10,6 +10,7 @@ vim.keymap.set({ "n", "t" }, "<M-down>", "<Cmd>wincmd j<enter>", { desc = "Go to
 
 vim.keymap.set("t", "<C-PageDown>", "<Cmd>tabnext<enter>", { desc = "Next tab" })
 vim.keymap.set("t", "<C-PageUp>", "<Cmd>tabprevious<enter>", { desc = "Previous tab" })
+vim.keymap.set("t", "<S-CR>", "<C-J>", { desc = "Newline without submit" })
 
 -- wildmenu (cmdline)
 vim.opt.wildmenu = true

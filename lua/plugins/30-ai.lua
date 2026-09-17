@@ -12,6 +12,8 @@ return {
                 provider_opts = {
                     external_terminal_cmd = "alacritty -e %s", -- Replace with your preferred terminal program. %s is replaced with claude command
                 },
+                -- Its buffer-local "\" + <CR> newline would shadow the global <S-CR> map in keys.lua
+                snacks_win_opts = { keys = { claude_new_line = false } },
             },
         },
         config = function(_, opts)
