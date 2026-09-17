@@ -406,9 +406,10 @@ function M.get_helper_from_buffer(bufnr)
     return nil
 end
 
+-- Not require(): lazy.nvim's require hook would load claudecode.nvim and start its server.
 local function cc_bufnr()
-    local ok, cc = pcall(require, "claudecode.terminal")
-    return ok and cc.get_active_terminal_bufnr() or nil
+    local cc = package.loaded["claudecode.terminal"]
+    return cc and cc.get_active_terminal_bufnr() or nil
 end
 
 local function is_claudecode_visible()

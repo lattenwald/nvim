@@ -123,12 +123,6 @@ return {
             { "<C-`>", function() Snacks.terminal() end, desc = "Terminal", mode = {"n", "i", "v", "t" }  },
             { "<leader>`", function() Snacks.terminal() end, desc = "Terminal", mode = {"n", "v" }  },
 
-            -- AI Helpers
-            { "<C-.>", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "i", "v", "t" } },
-            { "<leader>.", function() require("config.ai_helpers").toggle_terminal() end, desc = "Toggle AI Terminal", mode = {"n", "v" } },
-            { "<C-S-.>", function() require("config.ai_helpers").hide_all() end, desc = "Hide All AI Terminals", mode = {"n", "i", "v", "t" } },
-
-
             { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
             { "<leader>gu", function()
                 -- gitui checks GIT_EDITOR before core.editor/VISUAL/EDITOR, so this wins without touching them
@@ -247,15 +241,6 @@ return {
             { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
         },
         init = function()
-            -- Setup AI helpers
-            require("config.ai_helpers").setup({
-                terminal = {
-                    type = "split", -- "float" or "split"
-                    position = "right", -- for split: "right", "left", "top", "bottom"
-                    size = 0.4, -- for split: fraction of screen (0.0-1.0)
-                },
-            })
-
             local trim_trailing_ws = true
 
             local function trim_whitespace()

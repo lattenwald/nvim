@@ -97,22 +97,6 @@ return {
                 desc = "Claude Account",
             },
             {
-                "<leader>wt",
-                function()
-                    require("config.ai_helpers").toggle_terminal()
-                end,
-                desc = "Toggle AI Helper Terminal",
-                mode = { "n", "v" },
-            },
-            {
-                "<leader>wh",
-                function()
-                    require("config.ai_helpers").manage_helpers()
-                end,
-                desc = "Manage AI Helpers",
-                mode = { "n", "v" },
-            },
-            {
                 "<leader>wb",
                 function()
                     require("config.ai_helpers").smart_send_buffer()
@@ -133,6 +117,36 @@ return {
                 desc = "Add file",
                 ft = { "NvimTree", "neo-tree", "oil" },
             },
+        },
+    },
+    {
+        -- Own spec so helper keys don't load claudecode.nvim (and its websocket server)
+        "ai_helpers",
+        virtual = true,
+        cmd = { "AIHelperManage", "AIHelperToggle", "AIHelperSend", "AIHelperSendBuffer" },
+        opts = {
+            terminal = {
+                type = "split", -- "float" or "split"
+                position = "right", -- for split: "right", "left", "top", "bottom"
+                size = 0.4, -- for split: fraction of screen (0.0-1.0)
+            },
+        },
+        config = function(_, opts)
+            require("config.ai_helpers").setup(opts)
+        end,
+        keys = {
+            { "<C-.>", "<cmd>AIHelperToggle<cr>", mode = { "n", "i", "v", "t" }, desc = "Toggle AI Terminal" },
+            { "<leader>.", "<cmd>AIHelperToggle<cr>", mode = { "n", "v" }, desc = "Toggle AI Terminal" },
+            {
+                "<C-S-.>",
+                function()
+                    require("config.ai_helpers").hide_all()
+                end,
+                mode = { "n", "i", "v", "t" },
+                desc = "Hide All AI Terminals",
+            },
+            { "<leader>wt", "<cmd>AIHelperToggle<cr>", mode = { "n", "v" }, desc = "Toggle AI Helper Terminal" },
+            { "<leader>wh", "<cmd>AIHelperManage<cr>", mode = { "n", "v" }, desc = "Manage AI Helpers" },
         },
     },
 }
