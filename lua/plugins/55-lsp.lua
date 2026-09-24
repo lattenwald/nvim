@@ -2,6 +2,10 @@ return {
     {
         "mason-org/mason.nvim",
         opts = {},
+        config = function(_, opts)
+            require("mason").setup(opts)
+            require("config.mason_npm_fallback").setup()
+        end,
     },
     {
         "mason-org/mason-lspconfig.nvim",
