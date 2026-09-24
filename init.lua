@@ -21,6 +21,20 @@ vim.filetype.add({
         ["kamailio.cfg"] = "kamailio",
     },
 })
+local function in_helm_chart(ft)
+    return function(path)
+        if require("config.utils").find_project_root(path, { "Chart.yaml" }) then
+            return ft
+        end
+    end
+end
+vim.filetype.add({
+    pattern = {
+        [".*/templates/.*%.ya?ml"] = in_helm_chart("helm"),
+        [".*/templates/.*%.tpl"] = in_helm_chart("helm"),
+        [".*/values.*%.ya?ml"] = in_helm_chart("yaml.helm-values"),
+    },
+})
 
 require("config.nix")
 require("config.opts")
