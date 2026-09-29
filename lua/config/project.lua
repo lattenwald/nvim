@@ -39,21 +39,7 @@ local function read_projects()
 end
 
 local function write_projects(projects)
-    local yaml_ok, yaml = pcall(require, "lyaml")
-    if not yaml_ok then
-        vim.notify("lyaml not available - project persistence disabled", vim.log.levels.WARN)
-        return false
-    end
-
-    local ok, err = pcall(function()
-        vim.fn.writefile(vim.split(yaml.dump({ projects }), "\n", { trimempty = true }), projects_file)
-    end)
-    if not ok then
-        vim.notify("Failed to save projects: " .. err, vim.log.levels.ERROR)
-        return false
-    end
-
-    return true
+    return require("config.utils").save_yaml(projects_file, projects)
 end
 
 function M.add_project()

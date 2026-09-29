@@ -1,14 +1,12 @@
 local M = {}
 
-local prefs_file = vim.fn.stdpath("data") .. "/ai_helpers.json"
+local prefs_file = vim.fn.stdpath("data") .. "/ai_helpers.yaml"
 local prefs = nil
 
 local function get_prefs()
     if not prefs then
-        local ok, data = pcall(function()
-            return vim.json.decode(table.concat(vim.fn.readfile(prefs_file), "\n"))
-        end)
-        data = ok and type(data) == "table" and data or {}
+        local data = require("config.utils").load_yaml(prefs_file, true)
+        data = type(data) == "table" and data or {}
         prefs = {
             order = type(data.order) == "table" and data.order or {},
             disabled = type(data.disabled) == "table" and data.disabled or {},
@@ -19,7 +17,7 @@ local function get_prefs()
 end
 
 local function save_prefs()
-    pcall(vim.fn.writefile, { vim.json.encode(prefs) }, prefs_file)
+    require("config.utils").save_yaml(prefs_file, prefs, true)
 end
 
 -- Terminal configuration (can be overridden in setup)

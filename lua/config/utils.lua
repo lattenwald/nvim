@@ -151,6 +151,25 @@ function M.load_yaml(path, silent)
     return result
 end
 
+-- silent: no warning for missing lyaml; write errors always notify.
+function M.save_yaml(path, data, silent)
+    local ok, yaml = pcall(require, "lyaml")
+    if not ok then
+        if not silent then
+            vim.notify("lyaml not available - install via luarocks.nvim", vim.log.levels.WARN)
+        end
+        return false
+    end
+    local write_ok, err = pcall(function()
+        vim.fn.writefile(vim.split(yaml.dump({ data }), "\n", { trimempty = true }), path)
+    end)
+    if not write_ok then
+        vim.notify("Failed to write YAML file: " .. path .. ": " .. err, vim.log.levels.ERROR)
+        return false
+    end
+    return true
+end
+
 function M.has_gui()
     return vim.env.DISPLAY ~= nil or vim.env.WAYLAND_DISPLAY ~= nil or vim.g.neovide
 end
