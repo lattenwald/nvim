@@ -1,6 +1,7 @@
 return {
     {
         "coder/claudecode.nvim",
+        cond = false,
         dependencies = { "folke/snacks.nvim" },
         opts = {
             env = {
@@ -68,7 +69,6 @@ return {
                 end,
                 desc = "Toggle Claude",
             },
-            { "<leader>w", nil, desc = "AI/Claude Code" },
             {
                 "<leader>wc",
                 function()
@@ -97,21 +97,6 @@ return {
                     require("config.ai_helpers").claude_select_account()
                 end,
                 desc = "Claude Account",
-            },
-            {
-                "<leader>wb",
-                function()
-                    require("config.ai_helpers").smart_send_buffer()
-                end,
-                desc = "Send buffer to AI (smart)",
-            },
-            {
-                "<leader>ws",
-                function()
-                    require("config.ai_helpers").smart_send_selection()
-                end,
-                mode = "v",
-                desc = "Send selection to AI (smart)",
             },
             {
                 "<leader>ws",
@@ -147,8 +132,11 @@ return {
                 mode = { "n", "i", "v", "t" },
                 desc = "Hide All AI Terminals",
             },
+            { "<leader>w", nil, desc = "AI/Claude Code" },
             { "<leader>wt", "<cmd>AIHelperToggle<cr>", mode = { "n", "v" }, desc = "Toggle AI Helper Terminal" },
             { "<leader>wh", "<cmd>AIHelperManage<cr>", mode = { "n", "v" }, desc = "Manage AI Helpers" },
+            { "<leader>wb", "<cmd>AIHelperSendBuffer<cr>", desc = "Send buffer to AI" },
+            { "<leader>ws", "<cmd>AIHelperSend<cr>", mode = "v", desc = "Send selection to AI" },
         },
     },
 }

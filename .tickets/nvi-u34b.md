@@ -1,6 +1,6 @@
 ---
 id: nvi-u34b
-status: open
+status: in_progress
 deps: []
 links: []
 created: 2026-09-23T10:13:11Z
@@ -31,6 +31,27 @@ Bridge-only works: plain claude in a snacks terminal joined claudecode.nvim's br
 
 Plan for the helper: ensure claudecode.nvim is loaded, then launch `claude --ide` with CLAUDE_CODE_SSE_PORT set to this nvim's bridge port (pins the right instance when two nvims share a cwd; account-independent). Port the account switcher's CLAUDE_CONFIG_DIR + sync-personal-links.sh into the helper env.
 Untested: selection tracking and openDiff (hs/<leader>wa/<leader>wd) through the helper-launched claude; two nvims with the same cwd.
+
+## Decision (2026-09-29)
+
+Drop claudecode.nvim; the bridge-only plan above is superseded. Trial running with the plugin inactive.
+- Diff review: never used.
+- Sending: helper sends produce the same `@file#L…` mentions.
+- Selection tracking: no known use.
+- Diagnostics: the bridge's getDiagnostics returned the same 16 lua_ls warnings as standalone `lua-language-server --check=.` (standalone also found 5 unused-local hints the bridge omitted), plus 52 Harper prose hints. Standalone lua_ls gives Claude at least as much.
+
+Done:
+- 3057990: helper prefs moved from ai_helpers.json to ai_helpers.yaml; shared `utils.save_yaml`.
+- fed65f2: `claude_code` helper (named "Claude Code (work)" when ~/.claude-personal exists) and `claude_personal` (CLAUDE_CONFIG_DIR + sync-personal-links.sh via `before_spawn`); `<leader>wb`/`<leader>ws` send to helpers.
+- claudecode.nvim spec set to `cond = false`: not loaded, but lazy keeps it installed and pinned.
+
+Lost during the trial: `<C-,>`/`<leader>,` direct Claude toggles, `--resume`/`--continue` keys (helpers can't take per-call args), `ClaudeCodeTreeAdd` from file trees, `:ClaudeAccount` (replaced by picking the helper).
+
+After the trial, remove:
+- the claudecode.nvim spec (30-ai.lua) and its lazy-lock entry;
+- claudecode-only code in ai_helpers.lua: `sub`, `apply_sub`, `run_claude`, `claude_select_account`, `claude_toggle`, `kill_claude_terminal`, `route_send`, `smart_send_*`, `cc_bufnr`/`is_claudecode_visible`, and the "claude" case in `hide_agent_terminals`/`agent_for_buf`;
+- opencode's `OPENCODE_EDITOR_SSE_PORT = "1"` workaround, which only exists to dodge claudecode's lock files.
+Keep `M.claude_has_personal_config` (used by 30-agentic.lua).
 
 ## Acceptance Criteria
 

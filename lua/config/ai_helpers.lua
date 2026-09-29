@@ -58,6 +58,34 @@ M.helpers = {
     },
 }
 
+local claude_personal_dir = vim.fn.expand("~/.claude-personal")
+
+function M.claude_has_personal_config()
+    return vim.fn.isdirectory(claude_personal_dir) == 1
+end
+
+local function sync_personal_links()
+    vim.fn.system({ "bash", vim.fn.expand("~/.claude/scripts/sync-personal-links.sh") })
+end
+
+local claude_env = { CLAUDE_CODE_DISABLE_TERMINAL_TITLE = "1" }
+
+M.helpers.claude_code = {
+    name = "Claude Code",
+    cmd = "claude",
+    icon = "✻",
+    env = claude_env,
+}
+
+if M.claude_has_personal_config() then
+    M.helpers.claude_personal = vim.tbl_extend("force", M.helpers.claude_code, {
+        name = "Claude Code (personal)",
+        env = vim.tbl_extend("force", claude_env, { CLAUDE_CONFIG_DIR = claude_personal_dir }),
+        before_spawn = sync_personal_links,
+    })
+    M.helpers.claude_code.name = "Claude Code (work)"
+end
+
 M.terminal_instances = {}
 
 -- Machine-local map of helper -> env var -> pass entry, e.g.
@@ -293,6 +321,11 @@ local function get_or_create_terminal(helper_name)
         return M.terminal_instances[helper_name], false
     end
 
+    local helper = M.helpers[helper_name]
+    if helper.before_spawn then
+        helper.before_spawn()
+    end
+
     local term_opts = { cwd = vim.fn.getcwd(), env = helper_env(helper_name) }
 
     if M.terminal_config.type == "split" then
@@ -305,7 +338,7 @@ local function get_or_create_terminal(helper_name)
         }
     end
 
-    local term = Snacks.terminal(M.helpers[helper_name].cmd, term_opts)
+    local term = Snacks.terminal(helper.cmd, term_opts)
     M.terminal_instances[helper_name] = term
     term.ai_helper = helper_name
     -- Spawn cwd, kept for relative sends: nvim's cwd drifts via autochdir while the agent stays here
@@ -425,10 +458,10 @@ end
 
 local ai_cmd_set = nil
 
--- Binary names that mark an AI terminal we don't own: claude plus every helper command.
+-- Binary names that mark an AI terminal we don't own: every helper command.
 function M.ai_commands()
     if not ai_cmd_set then
-        ai_cmd_set = { claude = true }
+        ai_cmd_set = {}
         for _, helper in pairs(M.helpers) do
             ai_cmd_set[vim.fs.basename(helper_bin(helper))] = true
         end
@@ -454,16 +487,11 @@ end
 -- Claude subscription (work/personal) switcher.
 local sub = {
     current = nil,
-    config_dir = vim.fn.expand("~/.claude-personal"),
 }
-
-function M.claude_has_personal_config()
-    return vim.fn.isdirectory(sub.config_dir) == 1
-end
 
 local function apply_sub(choice)
     if choice == "personal" and not M.claude_has_personal_config() then
-        vim.notify("Claude: config dir not found: " .. sub.config_dir, vim.log.levels.ERROR)
+        vim.notify("Claude: config dir not found: " .. claude_personal_dir, vim.log.levels.ERROR)
         return false
     end
     sub.current = choice
@@ -473,8 +501,8 @@ end
 -- Set the override only around the spawn, clearing even on error, so it never persists on the global env for children to inherit.
 local function run_claude(cmd)
     if sub.current == "personal" then
-        vim.fn.system({ "bash", vim.fn.expand("~/.claude/scripts/sync-personal-links.sh") })
-        vim.env.CLAUDE_CONFIG_DIR = sub.config_dir
+        sync_personal_links()
+        vim.env.CLAUDE_CONFIG_DIR = claude_personal_dir
     end
     local ok, err = pcall(vim.cmd, cmd)
     vim.env.CLAUDE_CONFIG_DIR = nil
