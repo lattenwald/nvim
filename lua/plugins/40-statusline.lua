@@ -50,6 +50,16 @@ return {
                             require("config.lsp_mute").lualine_component,
                             color = { fg = "#e0af68" },
                         },
+                        {
+                            function()
+                                return require("wire").env() or ""
+                            end,
+                            -- wire.nvim loads on ft=http; don't load it from other buffers
+                            cond = function()
+                                return vim.bo.filetype == "http" or vim.api.nvim_buf_get_name(0) == "wire://response"
+                            end,
+                            icon = "",
+                        },
                         "encoding",
                         "fileformat",
                         "filetype",
