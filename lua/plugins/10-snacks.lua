@@ -156,31 +156,7 @@ return {
 
             { "<leader>F", function() Snacks.picker.files() end, desc = "Find Files" },
 
-            { "<leader>T", function()
-                local current_dir = vim.fn.expand("%:p:h")
-                local project_root = require("config.utils").find_project_root(current_dir)
-                if not project_root then
-                    Snacks.notify.warn("No project root found")
-                    return
-                end
-                local dirs = {}
-                for _, dir in ipairs({ ".agent", "docs", "ai" }) do
-                    local full = project_root .. "/" .. dir
-                    if vim.fn.isdirectory(full) == 1 then
-                        table.insert(dirs, full)
-                    end
-                end
-                if #dirs == 0 then
-                    Snacks.notify.warn("No .agent/, docs/, or ai/ directory found")
-                    return
-                end
-                Snacks.picker.files({
-                    dirs = dirs,
-                    ft = "md",
-                    matcher = { sort_empty = true },
-                    sort = { fields = { "score:desc", "idx:desc" } },
-                })
-            end, desc = "Project Docs" },
+            { "<leader>T", "<cmd>Tk<cr>", desc = "Tk Tickets" },
 
             { "<leader>f", function()
                 local current_dir = vim.fn.expand("%:p:h")
