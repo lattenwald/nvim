@@ -3,6 +3,9 @@ return {
         "lattenwald/wire.nvim",
         ft = "http",
         cmd = "Wire",
+        init = function()
+            vim.lsp.enable("wire")
+        end,
         opts = {
             mask = false,
             trust = { "/" },
@@ -14,6 +17,7 @@ return {
             { "<leader>Re", "<cmd>Wire env<cr>", desc = "Select environment" },
             { "<leader>Rc", "<cmd>Wire cancel<cr>", desc = "Cancel run" },
             { "<leader>Ro", "<cmd>Wire open<cr>", desc = "Open response window" },
+            { "<leader>Ry", "<cmd>Wire yank<cr>", desc = "Yank request as curl" },
         },
     },
 }
